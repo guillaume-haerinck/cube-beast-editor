@@ -37,34 +37,25 @@ Open this folder with the `CMake...` option in file->open on Visual Studio, and 
 
 Use the `CMakeTools` plugin, build with `f7` then run with `f5` (But be carefull to be on the right platform, there is a launch file for windows and for linux).
 
-### Build for the Web as WASM (linux only)
+### Build for the Web as WASM
 
 This project support Web Assembly, so it can run in a browser like Google Chrome or Firefox !
 
 The build steps are the same for any platform (however it seems broken for now on Windows). Do not forget to delete `CMakeCache.txt` if there is one on the folder.
 
-#### Conan
+You need to install the [Emscripten](https://emscripten.org/) compiler.
 
-You need to install [Conan](https://conan.io/). It will download and run the Emscripten compiler.
-
-Then, add bincrafters repo for conan to know where to get Emscripten.
-
-```bash
-conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
 ```
-
-#### Build
-
-```bash
-conan install ./wasm.recipe.py --build missing --install-folder wasm -pr ./wasm.profile
-conan build ./wasm.recipe.py --build-folder wasm
+mkdir wasm
+cd wasm
+emconfigure cmake ..
+make
 ```
-
-#### Run
 
 You can then copy the files inside `wasm/bin` into `www` and run this folder with a simple web-server. On this exemple, we are creating a simple one with python :
 
 ```bash
+cd ..
 cp -a wasm/bin/. www
 cd www
 python3 -m http.server -b 127.0.0.1
