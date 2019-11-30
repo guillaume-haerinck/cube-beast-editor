@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 if (EMSCRIPTEN)
     include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
     conan_basic_setup()
-    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -s USE_SDL=2 -s USE_WEBGL2=1 -s BINARYEN_TRAP_MODE='clamp' -s ALLOW_MEMORY_GROWTH=1 -s ASSERTIONS=2 -s SAFE_HEAP=1 -s STACK_OVERFLOW_CHECK=2 -s DEMANGLE_SUPPORT=1 -std=c++17 -g4 --preload-file ../res")
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -s USE_SDL=2 -s USE_WEBGL2=1 -s BINARYEN_TRAP_MODE='clamp' -s ALLOW_MEMORY_GROWTH=1 -s ASSERTIONS=2 -s SAFE_HEAP=1 -s STACK_OVERFLOW_CHECK=2 -s DEMANGLE_SUPPORT=1 -std=c++17 -g4")
 endif()
 
 # /////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ if (WIN32)
                        ${CMAKE_SOURCE_DIR}/lib/SDL2-2.0.10/lib/x64/SDL2main.lib)
 
 # On linux
-else()
+elseif (NOT EMSCRIPTEN)
     find_package(SDL2 REQUIRED)
 endif()
 
@@ -46,13 +46,18 @@ add_library(IMGUI STATIC ${IMGUI_SOURCES})
 
 include_directories(
     ${OPENGL_INCLUDE_DIR}
-    ${SDL2_INCLUDE_DIRS}
     lib/glad/include
     lib/imgui
     lib
     src
     res
 )
+
+if (NOT EMSCRIPTEN)
+    include_directories(
+        ${SDL2_INCLUDE_DIRS}
+    )
+endif()
 
 # /////////////////////////////////////////////////////////////////////////////
 # /////////////////////////////////// BUILD ///////////////////////////////////
@@ -63,11 +68,14 @@ add_executable(${PROJECT_NAME} ${MY_COMMON} ${MY_SOURCES})
 target_link_libraries(
     ${PROJECT_NAME}
     ${OPENGL_LIBRARIES}
-    ${SDL2_LIBRARIES}
     GLAD
     STB_IMAGE
     IMGUI
 )
+
+if (NOT EMSCRIPTEN)
+    target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
+endif()
 
 if (UNIX)
     target_link_libraries(${PROJECT_NAME} -ldl)

@@ -34,7 +34,9 @@
 # Build folder
 Build
 build
+wasm
 
 # Settings
 .vs
 .vscode
+imgui.ini
