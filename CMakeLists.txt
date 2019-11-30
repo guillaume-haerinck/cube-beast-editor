@@ -33,7 +33,7 @@ endif()
 
 # ------------------------------ BUILD IF NEEDED ------------------------------
 
-add_library(GLAD STATIC "lib/glad/src/glad.c")
+add_library(GLAD STATIC "lib/glad/src/gles2.c")
 add_library(STB_IMAGE STATIC "lib/stb_image/stb_image.cpp")
 file(GLOB_RECURSE IMGUI_SOURCES lib/imgui/*)
 add_library(IMGUI STATIC ${IMGUI_SOURCES})

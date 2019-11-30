@@ -95,7 +95,7 @@
 #elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
 #include <GL/glew.h>
 #elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
-#include <glad/glad.h>
+#include <glad/gles2.h>
 #else
 #include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #endif

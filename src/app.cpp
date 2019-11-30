@@ -1,6 +1,6 @@
 #include "app.h"
 
-#include <glad/glad.h>
+#include <glad/gles2.h>
 #include <spdlog/spdlog.h>
 #include <debug_break/debug_break.h>
 #include <imgui.h>
@@ -92,7 +92,7 @@ void App::initSDL() {
         debug_break();
     }
 
-	if (!gladLoadGLES2Loader(SDL_GL_GetProcAddress)) {
+	if (!gladLoadGLES2((GLADloadfunc) SDL_GL_GetProcAddress)) {
 		spdlog::critical("[Glad] Glad not init");
 		debug_break();
 	}
