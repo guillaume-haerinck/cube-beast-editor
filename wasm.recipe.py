@@ -1,6 +1,6 @@
 from conans import ConanFile, CMake
 
-class OpenGlPlaygroundWasm(ConanFile):
+class VoxelEditorWasm(ConanFile):
     settings = {"os": ["Emscripten"]}
     generators = ["cmake", "txt"]
 

@@ -74,7 +74,6 @@ void App::initSDL() {
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
-	SDL_GL_SetSwapInterval(1);
 
 	m_window = SDL_CreateWindow(
 		"OpenGL Playground",
@@ -97,6 +96,8 @@ void App::initSDL() {
 		spdlog::critical("[Glad] Glad not init");
 		debug_break();
 	}
+
+	SDL_GL_SetSwapInterval(1);
 }
 
 void App::initImgui() const {
