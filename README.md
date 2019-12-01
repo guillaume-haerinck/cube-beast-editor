@@ -16,14 +16,12 @@ Supports WASM build so it can be played on any web-browser like Chrome, Firefox 
 
 ### Prerequisites
 
-You need to install [Cmake](https://cmake.org/) to build the project, and a C++ compiler which handles C++17.
+You need to install [CMake](https://cmake.org/) to build the project, and a C++ compiler which handles C++17.
 
 #### Linux
 
 ```bash
-sudo apt-get install build-essential
-sudo apt-get install libsdl2-dev
-sudo apt-get install libglu1-mesa-dev mesa-common-dev
+sudo apt-get install build-essential cmake libsdl2-dev libglu1-mesa-dev mesa-common-dev
 ```
 
 #### Windows
@@ -36,6 +34,8 @@ You can handle the `CMakeLists.txt` in any way you like, here's some way to use 
 
 #### `Option 1: CLI`
 
+Go to the folder of this project and run :
+
 ```bash
 mkdir build
 cd build
@@ -47,9 +47,13 @@ make
 
 Open this folder with the `CMake...` option in file->open on Visual Studio, and run the project.
 
+![Visual studio](doc/readme-img/visual-studio-run.png)
+
 #### `Option 3: VSCode`
 
 Use the `CMakeTools` plugin, build with `f7` then run with `f5` (But be carefull to be on the right platform, there is a launch file for windows and for linux).
+
+![VS Code](doc/readme-img/vscode-run.png)
 
 ### Build for the Web as WASM
 
@@ -57,7 +61,7 @@ This project support Web Assembly, so it can run in a browser like Google Chrome
 
 #### Install Emscripten
 
-These steps might change in the future. Go check Emscripten website in case of any problem.
+These steps might change in the future. Go check Emscripten website in case of any problem. First, move to a folder outside of this project. Then run :
 
 ```bash
 git clone https://github.com/emscripten-core/emsdk.git
@@ -68,6 +72,8 @@ source ./emsdk_env.sh
 ```
 
 #### Build as Wasm
+
+Now that emscripten is configured, move back to the project folder and run :
 
 ```
 mkdir wasm
