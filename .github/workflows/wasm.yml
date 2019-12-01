@@ -9,19 +9,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: emscripten
-      run: |
-        cd ..
-        git clone https://github.com/emscripten-core/emsdk.git
-        cd emsdk
-        ./emsdk install latest
-        ./emsdk activate latest
     - name: deps
-      run: sudo apt-get install libglu1-mesa-dev mesa-common-dev
+      run: sudo apt-get install libglu1-mesa-dev mesa-common-dev emscripten
     - name: cmake
-      run: |
-        source ./emsdk_env.sh
-        cd ../voxel-editor
-        emconfigure cmake ..
+      run: emconfigure cmake ..
     - name: make
       run: make
