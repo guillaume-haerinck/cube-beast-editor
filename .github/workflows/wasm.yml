@@ -1,0 +1,26 @@
+name: wasm
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: emscripten
+      run: |
+        cd ..
+        git clone https://github.com/emscripten-core/emsdk.git
+        cd emsdk
+        ./emsdk install latest
+        ./emsdk activate latest
+        source ./emsdk_env.sh
+        cd ../voxel-editor
+    - name: deps
+      run: sudo apt-get install libglu1-mesa-dev mesa-common-dev
+    - name: cmake
+      run: emconfigure cmake ..
+    - name: make
+      run: make
