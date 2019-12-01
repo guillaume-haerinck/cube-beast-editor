@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Setup Wasm build
 if (EMSCRIPTEN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2 -s USE_WEBGL2=1 -s ALLOW_MEMORY_GROWTH=1 -s ASSERTIONS=2 -s SAFE_HEAP=1 -s STACK_OVERFLOW_CHECK=2 -s DEMANGLE_SUPPORT=1 -std=c++17 -g4")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2 -s USE_WEBGL2=1")
 endif()
 
 # /////////////////////////////////////////////////////////////////////////////
@@ -33,7 +33,9 @@ endif()
 
 # ------------------------------ BUILD IF NEEDED ------------------------------
 
-add_library(GLAD STATIC "lib/glad/src/gles2.c")
+if (NOT EMSCRIPTEN)
+    add_library(GLAD STATIC "lib/glad/src/gles2.c")
+endif()
 add_library(STB_IMAGE STATIC "lib/stb_image/stb_image.cpp")
 file(GLOB_RECURSE IMGUI_SOURCES lib/imgui/*)
 add_library(IMGUI STATIC ${IMGUI_SOURCES})
@@ -44,7 +46,6 @@ add_library(IMGUI STATIC ${IMGUI_SOURCES})
 
 include_directories(
     ${OPENGL_INCLUDE_DIR}
-    lib/glad/include
     lib/imgui
     lib
     src
@@ -54,6 +55,7 @@ include_directories(
 if (NOT EMSCRIPTEN)
     include_directories(
         ${SDL2_INCLUDE_DIRS}
+        lib/glad/include
     )
 endif()
 
@@ -65,13 +67,12 @@ set(EXECUTABLE_OUTPUT_PATH bin/${CMAKE_BUILD_TYPE})
 add_executable(${PROJECT_NAME} ${MY_COMMON} ${MY_SOURCES})
 target_link_libraries(
     ${PROJECT_NAME}
-    GLAD
     STB_IMAGE
     IMGUI
 )
 
 if (NOT EMSCRIPTEN)
-    target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
+    target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} GLAD)
 endif()
 
 if (UNIX)
