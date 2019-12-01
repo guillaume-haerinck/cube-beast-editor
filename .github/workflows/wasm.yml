@@ -10,7 +10,10 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: deps
-      run: sudo apt-get install libglu1-mesa-dev mesa-common-dev emscripten
+      run: |
+        sudo apt-get install libglu1-mesa-dev mesa-common-dev emscripten
+        emscripten
+        ls
     - name: cmake
       run: emconfigure cmake .
     - name: make
