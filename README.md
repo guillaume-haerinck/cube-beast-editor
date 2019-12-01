@@ -1,3 +1,5 @@
+[![Actions Status](https://github.com/guillaume-haerinck/voxel-editor/workflows/cpp/badge.svg)](https://github.com/guillaume-haerinck/voxel-editor/actions)
+[![Actions Status](https://github.com/guillaume-haerinck/voxel-editor/workflows/wasm/badge.svg)](https://github.com/guillaume-haerinck/voxel-editor/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # Voxel Editor
@@ -57,7 +59,7 @@ Use the `CMakeTools` plugin, build with `f7` then run with `f5` (But be carefull
 
 ### Build for the Web as WASM
 
-This project support Web Assembly, so it can run in a browser like Google Chrome or Firefox ! You need to install the [Emscripten](https://emscripten.org/) compiler to get started.
+This project support Web Assembly, so it can run in a browser like Google Chrome or Firefox ! You need to install the [Emscripten](https://emscripten.org/) compiler to get started. If you are on windows, it is recommended to use [linux subsystem for windows (WSL 2)](https://docs.microsoft.com/fr-fr/windows/wsl/install-win10), and run the next steps with a linux command line.
 
 #### Install Emscripten
 
