@@ -10,7 +10,9 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: deps
-      run: sudo apt-get install libglu1-mesa-dev mesa-common-dev libsdl2-dev
+      run: |
+        sudo apt-get update
+        sudo apt-get install libglu1-mesa-dev mesa-common-dev libsdl2-dev
     - name: cmake
       run: cmake .
     - name: make
