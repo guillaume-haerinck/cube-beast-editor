@@ -9,23 +9,37 @@ Supports WASM build so it can be played on any web-browser like Chrome, Firefox 
 ## Table of Contents
 
 + [Getting started](#Getting-Started)
+    + [Build on desktop](#Build-on-desktop)
+    + [Build for the web as wasm](#Build-for-the-web-as-wasm)
 
 ## Getting Started
 
 ### Prerequisites
 
-You need to install [Cmake](https://cmake.org/) to build the project, and a C++ compiler which handles C++17
+You need to install [Cmake](https://cmake.org/) to build the project, and a C++ compiler which handles C++17.
+
+#### Linux
+
+```bash
+sudo apt-get install build-essential
+sudo apt-get install libsdl2-dev
+sudo apt-get install libglu1-mesa-dev mesa-common-dev
+```
+
+#### Windows
+
+To get the MSVC compiler, you need to install [Visual Studio](https://visualstudio.microsoft.com/) (and not VSCode), and select C++ development during installation.
 
 ### Build on desktop
 
-You can handle the `CMakeLists.txt` in any way you like, it will download the dependecies by itself. 
-
-Here's some way to use it :
+You can handle the `CMakeLists.txt` in any way you like, here's some way to use it :
 
 #### `Option 1: CLI`
 
 ```bash
-cmake .
+mkdir build
+cd build
+cmake ..
 make
 ```
 
@@ -39,11 +53,21 @@ Use the `CMakeTools` plugin, build with `f7` then run with `f5` (But be carefull
 
 ### Build for the Web as WASM
 
-This project support Web Assembly, so it can run in a browser like Google Chrome or Firefox !
+This project support Web Assembly, so it can run in a browser like Google Chrome or Firefox ! You need to install the [Emscripten](https://emscripten.org/) compiler to get started.
 
-The build steps are the same for any platform (however it seems broken for now on Windows). Do not forget to delete `CMakeCache.txt` if there is one on the folder.
+#### Install Emscripten
 
-You need to install the [Emscripten](https://emscripten.org/) compiler.
+These steps might change in the future. Go check Emscripten website in case of any problem.
+
+```bash
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk
+./emsdk install latest
+./emsdk activate latest
+source ./emsdk_env.sh
+```
+
+#### Build as Wasm
 
 ```
 mkdir wasm
@@ -51,6 +75,8 @@ cd wasm
 emconfigure cmake ..
 make
 ```
+
+#### Run with a web-server
 
 You can then copy the files inside `wasm/bin` into `www` and run this folder with a simple web-server. On this exemple, we are creating a simple one with python :
 
