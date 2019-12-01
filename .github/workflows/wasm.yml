@@ -16,11 +16,12 @@ jobs:
         cd emsdk
         ./emsdk install latest
         ./emsdk activate latest
-        source ./emsdk_env.sh
-        cd ../voxel-editor
     - name: deps
       run: sudo apt-get install libglu1-mesa-dev mesa-common-dev
     - name: cmake
-      run: emconfigure cmake ..
+      run: |
+        source ./emsdk_env.sh
+        cd ../voxel-editor
+        emconfigure cmake ..
     - name: make
       run: make
