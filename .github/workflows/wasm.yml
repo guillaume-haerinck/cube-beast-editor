@@ -6,16 +6,13 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    
     steps:
     - uses: actions/checkout@v1
+    - uses: lovasoa/setup-emscripten@master
     - name: deps
-      run: |
-        sudo apt-get install libglu1-mesa-dev mesa-common-dev emscripten
-        emcc
+      run: sudo apt-get install libglu1-mesa-dev mesa-common-dev
     - name: cmake
-      run: |
-        ls
-        emconfigure cmake .
+      run: emconfigure cmake .
     - name: make
       run: make
