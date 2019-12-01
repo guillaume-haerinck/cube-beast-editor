@@ -12,6 +12,6 @@ jobs:
     - name: deps
       run: sudo apt-get install libglu1-mesa-dev mesa-common-dev emscripten
     - name: cmake
-      run: emconfigure cmake ..
+      run: emconfigure cmake .
     - name: make
       run: make
