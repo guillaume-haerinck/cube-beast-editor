@@ -1,11 +1,15 @@
 #include "app.h"
 
-#include <glad/glad.h>
 #include <spdlog/spdlog.h>
 #include <debug_break/debug_break.h>
 #include <imgui.h>
 #include <imgui/imgui_impl_sdl.h>
 #include <imgui/imgui_impl_opengl3.h>
+#ifdef __EMSCRIPTEN__
+	#include <GLES3/gl3.h>
+#else
+	#include <glad/gles2.h>
+#endif
 
 bool App::m_instanciated = false;
 
@@ -92,10 +96,12 @@ void App::initSDL() {
         debug_break();
     }
 
-	if (!gladLoadGLES2Loader(SDL_GL_GetProcAddress)) {
+#ifndef __EMSCRIPTEN__
+	if (!gladLoadGLES2((GLADloadfunc) SDL_GL_GetProcAddress)) {
 		spdlog::critical("[Glad] Glad not init");
 		debug_break();
 	}
+#endif
 
 	SDL_GL_SetSwapInterval(1);
 }

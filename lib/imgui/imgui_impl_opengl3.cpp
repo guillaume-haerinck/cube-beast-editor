@@ -54,7 +54,12 @@
 //  ES 3.0    300       "#version 300 es"   = WebGL 2.0
 //----------------------------------------
 
-#define IMGUI_IMPL_OPENGL_LOADER_GLAD
+#ifdef __EMSCRIPTEN__
+	#define IMGUI_IMPL_OPENGL_EMSCRIPTEN
+#else
+	#define IMGUI_IMPL_OPENGL_LOADER_GLAD
+#endif
+
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 #define _CRT_SECURE_NO_WARNINGS
@@ -95,7 +100,9 @@
 #elif defined(IMGUI_IMPL_OPENGL_LOADER_GLEW)
 #include <GL/glew.h>
 #elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
-#include <glad/glad.h>
+#include <glad/gles2.h>
+#elif defined(IMGUI_IMPL_OPENGL_EMSCRIPTEN)
+#include <GLES3/gl3.h>
 #else
 #include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #endif
