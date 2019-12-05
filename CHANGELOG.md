@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## 2019-12-04
 
 ### Added
+
 - Unit test support with Catch2.
 - Main structure of the app with `components`, `systems` and `graphics` folders.
 - Interpolation maths functions.

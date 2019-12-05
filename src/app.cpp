@@ -72,18 +72,20 @@ void App::initSDL() {
 		debug_break();
 	}
 	SDL_GL_LoadLibrary(NULL);
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 
 	m_window = SDL_CreateWindow(
 		"OpenGL Playground",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		500, 500,
-		SDL_WINDOW_OPENGL
+		SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI
     );
 	if (m_window == nullptr) {
         spdlog::critical("[SDL2] Window is null: {}", SDL_GetError());
@@ -96,14 +98,15 @@ void App::initSDL() {
         debug_break();
     }
 
+	SDL_GL_MakeCurrent(m_window, m_glContext);
+	SDL_GL_SetSwapInterval(1);
+
 #ifndef __EMSCRIPTEN__
 	if (!gladLoadGLES2((GLADloadfunc) SDL_GL_GetProcAddress)) {
 		spdlog::critical("[Glad] Glad not init");
 		debug_break();
 	}
-#endif
-
-	SDL_GL_SetSwapInterval(1);
+#endif	
 }
 
 void App::initImgui() const {
