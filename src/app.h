@@ -2,6 +2,10 @@
 
 #include <SDL2/SDL.h>
 #include <memory>
+#include <vector>
+
+#include "core/context.h"
+#include "systems/i-system.h"
 
 /**
  * @brief Base root of the app
@@ -30,4 +34,6 @@ private:
     SDL_GLContext m_glContext;
     static bool m_instanciated;
     bool m_running;
+    std::vector<ISystem*> m_systems;
+    Context m_ctx;
 };

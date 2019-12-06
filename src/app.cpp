@@ -11,6 +11,8 @@
 	#include <glad/gles2.h>
 #endif
 
+#include "systems/render-system.h"
+
 bool App::m_instanciated = false;
 
 App::App() : m_running(true)
@@ -23,10 +25,19 @@ App::App() : m_running(true)
 	initSDL();
     initImgui();
 
+	m_systems = {
+		new RenderSystem(m_ctx)
+	};
+
+	m_ctx.rcommand = std::make_unique<RenderCommand>(m_ctx);
+
 	glEnable(GL_DEPTH_TEST);
 }
 
 App::~App() {
+	for (ISystem* system : m_systems) {
+		delete system;
+	}
     ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
@@ -48,10 +59,13 @@ void App::update() {
 	ImGui_ImplSDL2_NewFrame(m_window);
 	ImGui::NewFrame();
 
-	// Render our data
-	glBindVertexArray(0);
-
+	// Update our app
+	for (ISystem* system : m_systems) {
+		system->update();
+	}
+	
 	// Update imgui
+	glBindVertexArray(0);
 	renderMenu();
 
 	// Render imgui
