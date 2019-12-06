@@ -55,20 +55,10 @@ public:
 	 */
 	scomp::ConstantBuffer createConstantBuffer(scomp::ConstantBufferIndex index, unsigned int byteWidth, void* data = nullptr) const;
 
-    /**
-	 * @param filepath - The relative path from the .exe to the .cso containing the shader
-	 */
-	scomp::VertexShader createVertexShader(const char* filePath) const;
-
 	/**
-	 * @param filePath - The relative path from the .exe to the .cso containing the shader
+	 * @brief Create a shader pipeline
 	 */
-	scomp::FragmentShader createFragmentShader(const char* filePath) const;
-
-	/**
-	 *
-	 */
-	comp::Pipeline createPipeline(const scomp::VertexShader& vs,  const scomp::FragmentShader& fs, scomp::ConstantBufferIndex* cbIndices = nullptr, unsigned int cbCount = 0) const;
+	comp::Pipeline createPipeline(const char* VSfilePath, const char* FSfilePath, scomp::ConstantBufferIndex* cbIndices = nullptr, unsigned int cbCount = 0) const;
 
     ///////////////////////////////////////////////////////////////////////////
 	////////////////////////////////// BINDING ////////////////////////////////

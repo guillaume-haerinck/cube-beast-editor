@@ -10,9 +10,7 @@ CubeFactory::~CubeFactory()
 }
 
 met::entity CubeFactory::createCube(comp::Position position) {
-    scomp::VertexShader vs = m_ctx.rcommand.createVertexShader("res/shaders/basics/basic.vert");
-	scomp::FragmentShader fs = m_ctx.rcommand.createFragmentShader("res/shaders/basics/basic.frag");
-	comp::Pipeline pipeline = m_ctx.rcommand.createPipeline(vs, fs);
+	comp::Pipeline pipeline = m_ctx.rcommand.createPipeline("res/shaders/basics/basic.vert", "res/shaders/basics/basic.frag");
     comp::Material material;
     
     // Assign data to entity

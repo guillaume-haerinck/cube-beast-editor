@@ -38,8 +38,7 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 
 	// TEMP
 	CubeFactory factory(m_ctx);
-	comp::Position pos = { 0, 0, 0 };
-	factory.createCube(pos);
+	factory.createCube({0, 0, 0});
 }
 
 App::~App() {

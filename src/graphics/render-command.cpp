@@ -140,59 +140,42 @@ scomp::ConstantBuffer RenderCommand::createConstantBuffer(scomp::ConstantBufferI
 	return cb;
 }
 
-scomp::VertexShader RenderCommand::createVertexShader(const char* filePath) const {
-	// Compile shader
-	std::string shader = readTextFile(filePath);
+comp::Pipeline RenderCommand::createPipeline(const char* VSfilePath, const char* FSfilePath, scomp::ConstantBufferIndex* cbIndices, unsigned int cbCount) const {
+	// TODO generate hash and check hashmap to see if pipeline already exist
+
+	// Compile vertex shader
+	std::string shader = readTextFile(VSfilePath);
 	const char* src = shader.c_str();
 	unsigned int vsId = glCreateShader(GL_VERTEX_SHADER);
 	GLCall(glShaderSource(vsId, 1, &src, nullptr));
 	GLCall(glCompileShader(vsId));
 	if (!hasShaderCompiled(vsId, GL_VERTEX_SHADER)) {
-		spdlog::info("[Shader] {}", filePath);
+		spdlog::info("[Shader] {}", VSfilePath);
 		spdlog::info("\n{}", shader);
 		debug_break();
 	}
 
-	// Return result
-	scomp::VertexShader vs = {};
-	vs.shaderId = vsId;
-	return vs;
-}
-
-scomp::FragmentShader RenderCommand::createFragmentShader(const char* filePath) const {
-	// Compile shader
-	std::string shader = readTextFile(filePath);
-	const char* src = shader.c_str();
+	// Compile fragment shader
+	shader = readTextFile(FSfilePath);
+	src = shader.c_str();
 	unsigned int fsId = glCreateShader(GL_FRAGMENT_SHADER);
 	GLCall(glShaderSource(fsId, 1, &src, nullptr));
 	GLCall(glCompileShader(fsId));
 	if (!hasShaderCompiled(fsId, GL_FRAGMENT_SHADER)) {
-		spdlog::info("[Shader] {}", filePath);
+		spdlog::info("[Shader] {}", FSfilePath);
 		spdlog::info("\n{}", shader);
 		debug_break();
 	}
 
-	// Return result
-	scomp::FragmentShader fs = {};
-	fs.shaderId = fsId;
-
-	return fs;
-}
-
-comp::Pipeline RenderCommand::createPipeline(const scomp::VertexShader& vs,  const scomp::FragmentShader& fs, scomp::ConstantBufferIndex* cbIndices, unsigned int cbCount) const {
-	// TODO generate hash and check hashmap to see if pipeline already exist
-
 	// Compile pipeline
 	unsigned int programId = glCreateProgram();
-	GLCall(glAttachShader(programId, vs.shaderId));
-	GLCall(glAttachShader(programId, fs.shaderId));
-
+	GLCall(glAttachShader(programId, vsId));
+	GLCall(glAttachShader(programId, fsId));
 	GLCall(glLinkProgram(programId));
-
-	GLCall(glDeleteShader(vs.shaderId));
-	GLCall(glDeleteShader(fs.shaderId));
+	GLCall(glDeleteShader(vsId));
+	GLCall(glDeleteShader(fsId));
 	
-	// Check errors
+	// Check fs and vs link errors
 	GLCall(glValidateProgram(programId));
 	GLint isLinked = 0;
 	GLCall(glGetProgramiv(programId, GL_LINK_STATUS, (int*)&isLinked));
@@ -200,7 +183,7 @@ comp::Pipeline RenderCommand::createPipeline(const scomp::VertexShader& vs,  con
 		GLint maxLength = 0;
 		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &maxLength);
 
-		// FIMXE
+		// FIXME
 		std::vector<GLchar> infoLog(maxLength);
 		glGetProgramInfoLog(programId, maxLength, &maxLength, &infoLog[0]);
 		glDeleteProgram(programId);
