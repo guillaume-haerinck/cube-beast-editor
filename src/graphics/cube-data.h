@@ -4,7 +4,8 @@
 
 /**
  * @brief Geometry data for a flat-shaded cube
- * @note If you do not need texture or lighting, you can use only 8 vertices instead of 24
+ * @note The 24 vertices allows us to have correct normals (perpendicular to each face)
+ *       8 vertices could only provide shared normals at 135 degree angle
  */
 namespace cubeData {
     //    v6----- v5

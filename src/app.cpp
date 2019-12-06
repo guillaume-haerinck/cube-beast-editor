@@ -12,6 +12,7 @@
 #endif
 
 #include "systems/render-system.h"
+#include "graphics/cube-data.h"
 
 bool App::m_instanciated = false;
 
@@ -135,21 +136,37 @@ void App::initImgui() const {
 void App::initSingletonComponents() {
 	// Init CubeMesh
 	{
-		// Vertex buffer
+		// Layout
 		VertexInputDescription inputDescription = {
-			{ ShaderDataType::Float2, "Position" }
+			{ ShaderDataType::Float3, "Position" },
+			{ ShaderDataType::Float3, "Normal" },
+			{ ShaderDataType::Float3, "Translation", BufferElementUsage::PerInstance }
 		};
+		
+		// Shared data
+		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, std::size(cubeData::positions), sizeof(glm::vec3));
+		scomp::AttributeBuffer normalBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, std::size(cubeData::positions), sizeof(glm::vec3));
+		
+		// Instance data
+		// TODO set to scene size
+		std::array<glm::vec3, 15> translations;
+		translations.fill(glm::vec3(0));
+		scomp::AttributeBuffer translationInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(translations.data(), translations.size(), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_POSITION);
 
-		//scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&positions, std::size(positions), sizeof(float));
-		//scomp::VertexBuffer vertexBuffer = m_ctx.rcommand.createVertexBuffer(inputDescription, &positionBuffer);
+		// Vertex buffer
+		scomp::AttributeBuffer attributeBuffers[] = {
+			positionBuffer, normalBuffer, translationInstanceBuffer
+		};
+		scomp::VertexBuffer vb = m_ctx.rcommand.createVertexBuffer(inputDescription, attributeBuffers);
 
 		// Index buffer
-		// TODO
+		scomp::IndexBuffer ib = m_ctx.rcommand.createIndexBuffer(cubeData::indices, std::size(cubeData::indices), scomp::IndexBuffer::dataType::UNSIGNED_BYTE);
 
-		// Pipeline
-		//scomp::VertexShader vs = m_ctx.rcommand.createVertexShader("res/shaders/basics/basic.vert");
-		//scomp::FragmentShader fs = m_ctx.rcommand.createFragmentShader("res/shaders/basics/basic.frag");
-		//comp::Pipeline pipeline = m_ctx.rcommand.createPipeline(vs, fs);
+		// Save data
+		scomp::Mesh mesh;
+		mesh.ib = ib;
+		mesh.vb = vb;
+		m_scomps.cubeMesh = mesh;
 	}
 }
 
