@@ -7,7 +7,7 @@
 namespace comp {
 	enum class AttributeBufferType {
 		PER_VERTEX_ANY = 0,
-		PER_INSTANCE_MODEL_MAT
+		PER_INSTANCE_POSITION
 	};
 
 	enum class AttributeBufferUsage {

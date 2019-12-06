@@ -79,7 +79,7 @@ public:
 	std::vector<BufferElement>::const_iterator begin() const { return m_elements.begin(); }
 	std::vector<BufferElement>::const_iterator end() const { return m_elements.end(); }
 
-	unsigned int size() const { return m_elements.size(); }
+	size_t size() const { return m_elements.size(); }
 
 private:
 	std::vector<BufferElement> m_elements;
