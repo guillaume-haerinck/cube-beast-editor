@@ -23,6 +23,7 @@ void RenderSystem::update() {
         m_ctx.rcommand.bindVertexBuffer(m_scomps.cubeMesh.vb);
         m_ctx.rcommand.bindIndexBuffer(m_scomps.cubeMesh.ib);
         m_ctx.rcommand.bindPipeline(pipeline);
-        m_ctx.rcommand.drawIndexed(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type);
+        // TEMP calculate number of entities to draw OR use a scomp
+        m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, 3);
     });
 }

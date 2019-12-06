@@ -158,6 +158,9 @@ void App::initSingletonComponents() {
 		// TODO set to scene size
 		std::array<glm::vec3, 15> translations;
 		translations.fill(glm::vec3(1));
+		// TEMP
+		translations.at(1) = glm::vec3(0);
+		translations.at(2) = glm::vec3(-1);
 		scomp::AttributeBuffer translationInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(translations.data(), static_cast<unsigned int>(translations.size()), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_POSITION);
 
 		// Vertex buffer
