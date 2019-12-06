@@ -37,4 +37,5 @@ private:
     
     std::vector<ISystem*> m_systems;
     Context m_ctx;
+    SingletonComponents m_scomps;
 };

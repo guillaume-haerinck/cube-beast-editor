@@ -22,13 +22,13 @@ RenderSystem::RenderSystem(Context& context) : m_ctx(context) {
         1.0f, -1.0f,
         0.0f,  1.0f
     };
-    comp::AttributeBuffer positionBuffer = m_ctx.rcommand->createAttributeBuffer(&positions, std::size(positions), sizeof(float));
-    comp::VertexBuffer vertexBuffer = m_ctx.rcommand->createVertexBuffer(inputDescription, &positionBuffer);
+    comp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&positions, std::size(positions), sizeof(float));
+    comp::VertexBuffer vertexBuffer = m_ctx.rcommand.createVertexBuffer(inputDescription, &positionBuffer);
 
     // Pipeline
-    auto vs = m_ctx.rcommand->createVertexShader("res/shaders/basics/basic.vert");
-    auto fs = m_ctx.rcommand->createFragmentShader("res/shaders/basics/basic.frag");
-    comp::Pipeline pipeline = m_ctx.rcommand->createPipeline(vs, fs);
+    auto vs = m_ctx.rcommand.createVertexShader("res/shaders/basics/basic.vert");
+    auto fs = m_ctx.rcommand.createFragmentShader("res/shaders/basics/basic.frag");
+    comp::Pipeline pipeline = m_ctx.rcommand.createPipeline(vs, fs);
 
     // Position
     comp::Position worldPos = {};
@@ -46,9 +46,8 @@ RenderSystem::~RenderSystem() {
 void RenderSystem::update() {
     m_ctx.registry.view<comp::VertexBuffer, comp::Pipeline, comp::Position>()
     .each([&](met::entity entity, comp::VertexBuffer& vb, comp::Pipeline& pipeline, comp::Position& position) {
-        m_ctx.rcommand->bindVertexBuffer(vb);
-        m_ctx.rcommand->bindPipeline(pipeline);
+        m_ctx.rcommand.bindVertexBuffer(vb);
+        m_ctx.rcommand.bindPipeline(pipeline);
         glDrawArrays(GL_TRIANGLES, 0, 6);
     });
 }
-

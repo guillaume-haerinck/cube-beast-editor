@@ -8,18 +8,17 @@
 
 #include "graphics/gl-exception.h"
 #include "graphics/constant-buffer.h"
-#include "core/context.h"
 
-RenderCommand::RenderCommand(Context& context) : m_ctx(context)
+RenderCommand::RenderCommand(SingletonComponents& scomps) : m_scomps(scomps)
 {
 }
 
 RenderCommand::~RenderCommand() {
-	for (auto pipeline : m_ctx.pipelines) {
+	for (auto pipeline : m_scomps.pipelines) {
 		GLCall(glDeleteProgram(pipeline.programIndex));
 	}
 
-	for (auto cb : m_ctx.constantBuffers) {
+	for (auto cb : m_scomps.constantBuffers) {
 		GLCall(glDeleteBuffers(1, &cb.bufferId));
 	}
 }
@@ -136,7 +135,7 @@ scomp::ConstantBuffer RenderCommand::createConstantBuffer(scomp::ConstantBufferI
 	cb.name = name;
 
 	// Save to singleton components
-	m_ctx.constantBuffers.at(index) = cb;
+	m_scomps.constantBuffers.at(index) = cb;
 
 	return cb;
 }
@@ -214,7 +213,7 @@ comp::Pipeline RenderCommand::createPipeline(const scomp::VertexShader& vs,  con
 	// Link constant buffers
 	scomp::Pipeline sPipeline = {};
 	for (unsigned int i = 0; i < cbCount; i++) {
-		scomp::ConstantBuffer& cb = m_ctx.constantBuffers.at(cbIndices[i]);
+		scomp::ConstantBuffer& cb = m_scomps.constantBuffers.at(cbIndices[i]);
 		unsigned int blockIndex = glGetUniformBlockIndex(programId, cb.name.c_str());
 		GLCall(glUniformBlockBinding(programId, blockIndex, i));
 		GLCall(glBindBufferBase(GL_UNIFORM_BUFFER, i, cb.bufferId));
@@ -223,11 +222,11 @@ comp::Pipeline RenderCommand::createPipeline(const scomp::VertexShader& vs,  con
 	
 	// Save to singleton components
 	sPipeline.programIndex = programId;
-	m_ctx.pipelines.push_back(sPipeline);
+	m_scomps.pipelines.push_back(sPipeline);
 
 	// Return result
 	comp::Pipeline pipeline = {};
-	pipeline.index = static_cast<unsigned int>(m_ctx.pipelines.size()) - 1;
+	pipeline.index = static_cast<unsigned int>(m_scomps.pipelines.size()) - 1;
 	return pipeline;
 }
 
@@ -240,7 +239,7 @@ void RenderCommand::bindIndexBuffer(const comp::IndexBuffer& ib) const {
 }
 
 void RenderCommand::bindPipeline(const comp::Pipeline& pipeline) const {
-	scomp::Pipeline sPipeline = m_ctx.pipelines.at(pipeline.index);
+	scomp::Pipeline sPipeline = m_scomps.pipelines.at(pipeline.index);
 	GLCall(glUseProgram(sPipeline.programIndex));
 }
 

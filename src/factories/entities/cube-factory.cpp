@@ -9,5 +9,5 @@ CubeFactory::~CubeFactory()
 }
 
 met::entity CubeFactory::createCube(const comp::Position& position) {
-    // TODO
+    return 0;
 }

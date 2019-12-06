@@ -15,8 +15,7 @@
 
 bool App::m_instanciated = false;
 
-App::App() : m_running(true)
-{
+App::App() : m_running(true), m_ctx(m_scomps) {
     assert(!m_instanciated);
 	m_instanciated = true;
 
@@ -24,7 +23,6 @@ App::App() : m_running(true)
 
 	initSDL();
     initImgui();
-    m_ctx.rcommand = std::make_unique<RenderCommand>(m_ctx);
 
 	m_systems = {
 		new RenderSystem(m_ctx)

@@ -7,17 +7,16 @@
 #endif
 #include <string>
 
+#include "core/singleton-components.h"
 #include "components/graphics/mesh.h"
 #include "components/graphics/pipeline.h"
 #include "scomponents/graphics/constant-buffers.h"
 #include "scomponents/graphics/pipelines.h"
 #include "graphics/vertex-input-description.h"
 
-struct Context; // Forward declaration to prevent circular inclusion
-
 class RenderCommand {
 public:
-    RenderCommand(Context& context);
+    RenderCommand(SingletonComponents& scomps);
     ~RenderCommand();
 
     /**
@@ -105,5 +104,5 @@ private:
 	GLenum indexBufferDataTypeToOpenGLBaseType(comp::IndexBuffer::dataType) const;
 
 private:
-	Context& m_ctx;
+	SingletonComponents& m_scomps;
 };
