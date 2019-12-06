@@ -14,6 +14,9 @@
 #include "systems/render-system.h"
 #include "graphics/cube-data.h"
 
+#include "factories/entities/cube-factory.h"
+#include "components/physics/position.h"
+
 bool App::m_instanciated = false;
 
 App::App() : m_running(true), m_ctx(m_scomps) {
@@ -32,6 +35,11 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 	m_systems = {
 		new RenderSystem(m_ctx, m_scomps)
 	};
+
+	// TEMP
+	CubeFactory factory(m_ctx);
+	comp::Position pos = { 0, 0, 0 };
+	factory.createCube(pos);
 }
 
 App::~App() {
@@ -144,14 +152,14 @@ void App::initSingletonComponents() {
 		};
 		
 		// Shared data
-		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, std::size(cubeData::positions), sizeof(glm::vec3));
-		scomp::AttributeBuffer normalBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, std::size(cubeData::positions), sizeof(glm::vec3));
+		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
+		scomp::AttributeBuffer normalBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
 		
 		// Instance data
 		// TODO set to scene size
 		std::array<glm::vec3, 15> translations;
 		translations.fill(glm::vec3(0));
-		scomp::AttributeBuffer translationInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(translations.data(), translations.size(), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_POSITION);
+		scomp::AttributeBuffer translationInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(translations.data(), static_cast<unsigned int>(translations.size()), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_POSITION);
 
 		// Vertex buffer
 		scomp::AttributeBuffer attributeBuffers[] = {
@@ -160,7 +168,7 @@ void App::initSingletonComponents() {
 		scomp::VertexBuffer vb = m_ctx.rcommand.createVertexBuffer(inputDescription, attributeBuffers);
 
 		// Index buffer
-		scomp::IndexBuffer ib = m_ctx.rcommand.createIndexBuffer(cubeData::indices, std::size(cubeData::indices), scomp::IndexBuffer::dataType::UNSIGNED_BYTE);
+		scomp::IndexBuffer ib = m_ctx.rcommand.createIndexBuffer(cubeData::indices, static_cast<unsigned int>(std::size(cubeData::indices)), scomp::IndexBuffer::dataType::UNSIGNED_BYTE);
 
 		// Save data
 		scomp::Mesh mesh;

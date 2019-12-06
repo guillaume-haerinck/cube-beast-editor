@@ -18,12 +18,11 @@ RenderSystem::~RenderSystem() {
 }
 
 void RenderSystem::update() {
-    /*
     m_ctx.registry.view<comp::Material, comp::Pipeline, comp::Position>()
     .each([&](met::entity entity, comp::Material& material, comp::Pipeline& pipeline, comp::Position& position) {
-        // m_ctx.rcommand.bindVertexBuffer(vb); // TODO use scomp
+        m_ctx.rcommand.bindVertexBuffer(m_scomps.cubeMesh.vb);
+        m_ctx.rcommand.bindIndexBuffer(m_scomps.cubeMesh.ib);
         m_ctx.rcommand.bindPipeline(pipeline);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        m_ctx.rcommand.drawIndexed(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type);
     });
-    */
 }
