@@ -12,7 +12,11 @@ jobs:
     - uses: lovasoa/setup-emscripten@master
     - name: deps
       run: sudo apt-get install libglu1-mesa-dev mesa-common-dev
+    - name: folder
+      run: |
+        mkdir wasm
+        cd wasm
     - name: cmake
-      run: emconfigure cmake .
+      run: emconfigure cmake ..
     - name: make
       run: make
