@@ -3,6 +3,12 @@
 #include "scomponents/graphics/camera.h"
 #include "graphics/constant-buffer.h"
 
+#ifdef __EMSCRIPTEN__
+#include <GLES3/gl3.h>
+#else
+#include <glad/gles2.h>
+#endif
+
 RenderSystem::RenderSystem(Context& context) : m_ctx(context) {
     // TEMP TEST
 
@@ -40,7 +46,9 @@ RenderSystem::~RenderSystem() {
 void RenderSystem::update() {
     m_ctx.registry.view<comp::VertexBuffer, comp::Pipeline, comp::Position>()
     .each([&](met::entity entity, comp::VertexBuffer& vb, comp::Pipeline& pipeline, comp::Position& position) {
-
+        m_ctx.rcommand->bindVertexBuffer(vb);
+        m_ctx.rcommand->bindPipeline(pipeline);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
     });
 }
 
