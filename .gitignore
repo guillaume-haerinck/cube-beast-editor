@@ -35,6 +35,7 @@
 Build
 build
 wasm
+out
 
 # Settings
 .vs

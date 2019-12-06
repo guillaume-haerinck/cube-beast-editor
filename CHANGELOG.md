@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2019-12-06
+
+### Added
+
+- Cube factory
+- Render system
+
 ## 2019-12-04
 
 ### Added

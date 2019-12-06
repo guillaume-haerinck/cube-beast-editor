@@ -34,6 +34,7 @@ private:
     SDL_GLContext m_glContext;
     static bool m_instanciated;
     bool m_running;
+    
     std::vector<ISystem*> m_systems;
     Context m_ctx;
 };
