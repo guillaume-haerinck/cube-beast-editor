@@ -8,21 +8,10 @@
  *		  and sent over to GPU if there is a change.
  */
 namespace scomp {
-
-	enum MaterialType {
-		NO_MATERIAL,
-		PHONG,
-		COOK_TORRANCE
-	};
-
-	///////////////////////////////////////////////////////////////////////////
-	//////////////////////////////// BLINN-PHONG //////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-
 	/**
 	 * @brief Structure of data for one Phong material
 	 */
-	struct PhongMaterial {
+	struct Material {
 		
 	};
 
@@ -32,8 +21,8 @@ namespace scomp {
 	 * @note Get the constant buffer corresponding to Materials from the shader component.
 	 *		 It will be updated in the render system if there is a change.
 	 */
-	struct PhongMaterials {
-		std::vector<PhongMaterial> materials;
+	struct Materials {
+		std::vector<Material> materials;
 		bool hasToBeUpdated = false;
 	};
 }
