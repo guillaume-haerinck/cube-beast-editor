@@ -9,4 +9,4 @@ singleton components (overwatch gdc conf and unity api and last project with eve
 constant buffers instead of uniforms
 instanced rendering
 command pattern for undo and redo
-
+per-vertex normals with a cube with 8 vertex is less efficient as we have to interpolate between 4 each time to get surface normal
