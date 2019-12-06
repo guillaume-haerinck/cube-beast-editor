@@ -4,7 +4,7 @@
 #include <string>
 #include "scomponents/graphics/materials.h"
 
-namespace comp {
+namespace scomp {
 	enum class AttributeBufferType {
 		PER_VERTEX_ANY = 0,
 		PER_INSTANCE_POSITION
@@ -55,11 +55,10 @@ namespace comp {
 	};
 
 	/**
-	 * @param materialIndex - The index in the std::vector of Materials singleton component (0 if default material).
-	 *						  The same material can be shared by multiple mesh.
+	 * @brief Mesh used by cubes. The materials are indicated by each cube entity
 	 */
-	struct CubeMesh {
-		unsigned int materialIndex = 0;
-		scomp::MaterialType materialType = scomp::MaterialType::NO_MATERIAL;
+	struct Mesh {
+		VertexBuffer vb;
+		IndexBuffer ib;
 	};
 }

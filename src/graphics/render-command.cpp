@@ -27,15 +27,15 @@ void RenderCommand::clear() const {
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
-comp::AttributeBuffer RenderCommand::createAttributeBuffer(const void* vertices, unsigned int count, unsigned int stride, comp::AttributeBufferUsage usage, comp::AttributeBufferType type) const {
+scomp::AttributeBuffer RenderCommand::createAttributeBuffer(const void* vertices, unsigned int count, unsigned int stride, scomp::AttributeBufferUsage usage, scomp::AttributeBufferType type) const {
 	unsigned int id;
 	GLCall(glGenBuffers(1, &id));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
 	GLenum glUsage;
 
 	switch (usage) {
-	case comp::AttributeBufferUsage::STATIC_DRAW: glUsage = GL_STATIC_DRAW; break;
-	case comp::AttributeBufferUsage::DYNAMIC_DRAW:  glUsage = GL_DYNAMIC_DRAW; break;
+	case scomp::AttributeBufferUsage::STATIC_DRAW: glUsage = GL_STATIC_DRAW; break;
+	case scomp::AttributeBufferUsage::DYNAMIC_DRAW:  glUsage = GL_DYNAMIC_DRAW; break;
 	default:
 		debug_break();
 		assert(false && "[createAttributeBuffer] Unknow usage");
@@ -43,7 +43,7 @@ comp::AttributeBuffer RenderCommand::createAttributeBuffer(const void* vertices,
 
 	GLCall(glBufferData(GL_ARRAY_BUFFER, stride * count, vertices, glUsage));
 
-	comp::AttributeBuffer buffer = {};
+	scomp::AttributeBuffer buffer = {};
 	buffer.bufferId = id;
 	buffer.byteWidth = stride * count;
 	buffer.count = count;
@@ -54,7 +54,7 @@ comp::AttributeBuffer RenderCommand::createAttributeBuffer(const void* vertices,
 	return buffer;
 }
 
-comp::VertexBuffer RenderCommand::createVertexBuffer(const VertexInputDescription& vib, comp::AttributeBuffer* attributeBuffers) const {
+scomp::VertexBuffer RenderCommand::createVertexBuffer(const VertexInputDescription& vib, scomp::AttributeBuffer* attributeBuffers) const {
 	GLuint va;
 	GLCall(glGenVertexArrays(1, &va));
 	GLCall(glBindVertexArray(va));
@@ -91,19 +91,19 @@ comp::VertexBuffer RenderCommand::createVertexBuffer(const VertexInputDescriptio
 
 	GLCall(glBindVertexArray(0));
 
-	comp::VertexBuffer vb = {};
+	scomp::VertexBuffer vb = {};
 	vb.vertexArrayId = va;
 	vb.buffers.assign(attributeBuffers, attributeBuffers + vib.size());
 	return vb;
 }
 
-comp::IndexBuffer RenderCommand::createIndexBuffer(const void* indices, unsigned int count, comp::IndexBuffer::dataType type) const {
+scomp::IndexBuffer RenderCommand::createIndexBuffer(const void* indices, unsigned int count, scomp::IndexBuffer::dataType type) const {
 	unsigned int id;
 	GLCall(glGenBuffers(1, &id));
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id));
 	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), indices, GL_STATIC_DRAW));
 
-	comp::IndexBuffer buffer = {};
+	scomp::IndexBuffer buffer = {};
 	buffer.bufferId = id;
 	buffer.count = count;
 	buffer.type = type;
@@ -230,11 +230,11 @@ comp::Pipeline RenderCommand::createPipeline(const scomp::VertexShader& vs,  con
 	return pipeline;
 }
 
-void RenderCommand::bindVertexBuffer(const comp::VertexBuffer& vb) const {
+void RenderCommand::bindVertexBuffer(const scomp::VertexBuffer& vb) const {
 	GLCall(glBindVertexArray(vb.vertexArrayId));
 }
 
-void RenderCommand::bindIndexBuffer(const comp::IndexBuffer& ib) const {
+void RenderCommand::bindIndexBuffer(const scomp::IndexBuffer& ib) const {
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib.bufferId));
 }
 
@@ -249,18 +249,18 @@ void RenderCommand::updateConstantBuffer(const scomp::ConstantBuffer& cb, void* 
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 }
 
-void RenderCommand::updateAttributeBuffer(const comp::AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const {
+void RenderCommand::updateAttributeBuffer(const scomp::AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const {
 	assert(dataByteWidth <= buffer.byteWidth && "New attribute buffer data exceed the size of the allocated buffer");
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer.bufferId));
 	GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, dataByteWidth, data));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
-void RenderCommand::drawIndexed(unsigned int count, comp::IndexBuffer::dataType type) const {
+void RenderCommand::drawIndexed(unsigned int count, scomp::IndexBuffer::dataType type) const {
 	GLCall(glDrawElements(GL_TRIANGLES, count, indexBufferDataTypeToOpenGLBaseType(type), (void*) 0));
 }
 
-void RenderCommand::drawIndexedInstances(unsigned int indexCount, comp::IndexBuffer::dataType type, unsigned int drawCount) const {
+void RenderCommand::drawIndexedInstances(unsigned int indexCount, scomp::IndexBuffer::dataType type, unsigned int drawCount) const {
 	GLCall(glDrawElementsInstanced(GL_TRIANGLES, indexCount, indexBufferDataTypeToOpenGLBaseType(type), (void*)0, drawCount));
 }
 
@@ -309,11 +309,11 @@ GLenum RenderCommand::shaderDataTypeToOpenGLBaseType(ShaderDataType type) const 
 	return 0;
 }
 
-GLenum RenderCommand::indexBufferDataTypeToOpenGLBaseType(comp::IndexBuffer::dataType type) const {
+GLenum RenderCommand::indexBufferDataTypeToOpenGLBaseType(scomp::IndexBuffer::dataType type) const {
 	switch (type) {
-	case comp::IndexBuffer::dataType::UNSIGNED_BYTE : return GL_UNSIGNED_BYTE;
-	case comp::IndexBuffer::dataType::UNSIGNED_SHORT : return GL_UNSIGNED_SHORT; 
-	case comp::IndexBuffer::dataType::UNSIGNED_INT : return GL_UNSIGNED_INT; 
+	case scomp::IndexBuffer::dataType::UNSIGNED_BYTE : return GL_UNSIGNED_BYTE;
+	case scomp::IndexBuffer::dataType::UNSIGNED_SHORT : return GL_UNSIGNED_SHORT; 
+	case scomp::IndexBuffer::dataType::UNSIGNED_INT : return GL_UNSIGNED_INT; 
 	}
 
 	assert(false && "Unknown indexBufferDataType!");

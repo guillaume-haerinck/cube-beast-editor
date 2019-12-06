@@ -7,11 +7,11 @@
 #endif
 #include <string>
 
-#include "core/singleton-components.h"
-#include "components/graphics/mesh.h"
+#include "scomponents/singleton-components.h"
 #include "components/graphics/pipeline.h"
 #include "scomponents/graphics/constant-buffers.h"
 #include "scomponents/graphics/pipelines.h"
+#include "scomponents/graphics/mesh.h"
 #include "graphics/vertex-input-description.h"
 
 class RenderCommand {
@@ -35,19 +35,19 @@ public:
 	 * @param usage - (Optional) Used to know if the buffer is going to be updated or not
 	 * @param type - (Optional) Used by instanced rendering to know which buffer to update
 	 */
-	comp::AttributeBuffer createAttributeBuffer(const void* vertices, unsigned int count, unsigned int stride, comp::AttributeBufferUsage usage = comp::AttributeBufferUsage::STATIC_DRAW, comp::AttributeBufferType type = comp::AttributeBufferType::PER_VERTEX_ANY) const;
+	scomp::AttributeBuffer createAttributeBuffer(const void* vertices, unsigned int count, unsigned int stride, scomp::AttributeBufferUsage usage = scomp::AttributeBufferUsage::STATIC_DRAW, scomp::AttributeBufferType type = scomp::AttributeBufferType::PER_VERTEX_ANY) const;
 
 	/**
 	 * @param vib - Layout of the buffers
 	 * @param attributeBuffers - Array of buffers describing positions, normals, etc. The count is defined by the vib size.
 	 */
-	comp::VertexBuffer createVertexBuffer(const VertexInputDescription& vib, comp::AttributeBuffer* attributeBuffers) const;
+	scomp::VertexBuffer createVertexBuffer(const VertexInputDescription& vib, scomp::AttributeBuffer* attributeBuffers) const;
 
     /**
 	 * @param indices - Array of data
 	 * @param count - The number of elements in the array
 	 */
-	comp::IndexBuffer createIndexBuffer(const void* indices, unsigned int count, comp::IndexBuffer::dataType type) const;
+	scomp::IndexBuffer createIndexBuffer(const void* indices, unsigned int count, scomp::IndexBuffer::dataType type) const;
 
 	/**
 	 * @param index 
@@ -74,8 +74,8 @@ public:
 	////////////////////////////////// BINDING ////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
-    void bindVertexBuffer(const comp::VertexBuffer& vb) const;
-	void bindIndexBuffer(const comp::IndexBuffer& ib) const;
+    void bindVertexBuffer(const scomp::VertexBuffer& vb) const;
+	void bindIndexBuffer(const scomp::IndexBuffer& ib) const;
 
 	/**
 	 * @brief Will bind all the shaders of the said pipeline
@@ -88,20 +88,20 @@ public:
 
     void updateConstantBuffer(const scomp::ConstantBuffer& cb, void* data) const;
 
-	void updateAttributeBuffer(const comp::AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const;
+	void updateAttributeBuffer(const scomp::AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const;
 
     ///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////// DRAWING /////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
-	void drawIndexed(unsigned int count, comp::IndexBuffer::dataType type) const;
-	void drawIndexedInstances(unsigned int indexCount, comp::IndexBuffer::dataType type, unsigned int drawCount) const;
+	void drawIndexed(unsigned int count, scomp::IndexBuffer::dataType type) const;
+	void drawIndexedInstances(unsigned int indexCount, scomp::IndexBuffer::dataType type, unsigned int drawCount) const;
 
 private:
 	bool hasShaderCompiled(unsigned int shaderId, unsigned int shaderType) const;
 	GLenum shaderDataTypeToOpenGLBaseType(ShaderDataType type) const;
 	std::string readTextFile(const char* filePath) const;
-	GLenum indexBufferDataTypeToOpenGLBaseType(comp::IndexBuffer::dataType) const;
+	GLenum indexBufferDataTypeToOpenGLBaseType(scomp::IndexBuffer::dataType) const;
 
 private:
 	SingletonComponents& m_scomps;

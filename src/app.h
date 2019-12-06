@@ -1,10 +1,9 @@
 #pragma once
 
 #include <SDL2/SDL.h>
-#include <memory>
-#include <vector>
 
-#include "core/context.h"
+#include "context.h"
+#include "layers/i-layer.h"
 #include "systems/i-system.h"
 
 /**
@@ -25,9 +24,9 @@ public:
 private:
     void initSDL();
     void initImgui() const;
+    void initSingletonComponents();
 
     void handleSDLEvents();
-    void renderMenu();
 
 private:
     SDL_Window* m_window;
@@ -35,7 +34,8 @@ private:
     static bool m_instanciated;
     bool m_running;
     
-    std::vector<ISystem*> m_systems;
     Context m_ctx;
     SingletonComponents m_scomps;
+    std::vector<ILayer*> m_layers;
+    std::vector<ISystem*> m_systems;
 };

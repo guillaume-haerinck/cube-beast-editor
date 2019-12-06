@@ -2,7 +2,7 @@
 
 #include <met/met.hpp>
 
-#include "core/context.h"
+#include "context.h"
 #include "components/physics/position.h"
 
 class CubeFactory {

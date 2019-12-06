@@ -16,19 +16,21 @@
 bool App::m_instanciated = false;
 
 App::App() : m_running(true), m_ctx(m_scomps) {
-    assert(!m_instanciated);
+	// Ensure that there is only one app
+    assert(!m_instanciated && "Application already instanciated !");
 	m_instanciated = true;
-
-    spdlog::set_pattern("[%l] %^ %v %$");
-
+    
+	// Start application
+	spdlog::set_pattern("[%l] %^ %v %$");
 	initSDL();
     initImgui();
-
-	m_systems = {
-		new RenderSystem(m_ctx)
-	};
-
+	initSingletonComponents();
 	glEnable(GL_DEPTH_TEST);
+
+	// Order system updates
+	m_systems = {
+		new RenderSystem(m_ctx, m_scomps)
+	};
 }
 
 App::~App() {
@@ -63,8 +65,10 @@ void App::update() {
 	
 	// Update imgui
 	glBindVertexArray(0);
-	renderMenu();
-
+	for (ILayer* layer : m_layers) {
+		layer->update();
+	}
+	
 	// Render imgui
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -128,6 +132,27 @@ void App::initImgui() const {
 	ImGui::StyleColorsDark();
 }
 
+void App::initSingletonComponents() {
+	// Init CubeMesh
+	{
+		// Vertex buffer
+		VertexInputDescription inputDescription = {
+			{ ShaderDataType::Float2, "Position" }
+		};
+
+		//scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&positions, std::size(positions), sizeof(float));
+		//scomp::VertexBuffer vertexBuffer = m_ctx.rcommand.createVertexBuffer(inputDescription, &positionBuffer);
+
+		// Index buffer
+		// TODO
+
+		// Pipeline
+		//scomp::VertexShader vs = m_ctx.rcommand.createVertexShader("res/shaders/basics/basic.vert");
+		//scomp::FragmentShader fs = m_ctx.rcommand.createFragmentShader("res/shaders/basics/basic.frag");
+		//comp::Pipeline pipeline = m_ctx.rcommand.createPipeline(vs, fs);
+	}
+}
+
 void App::handleSDLEvents() {
 	SDL_Event e;
 	while (SDL_PollEvent(&e)) {
@@ -156,27 +181,6 @@ void App::handleSDLEvents() {
 
 	if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
 	}
-}
-
-
-void App::renderMenu() {
-	ImGui::Begin("Main debug window");
-
-	ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
-	if (ImGui::CollapsingHeader("Help")) {
-		ImGui::Text("Camera controls :");
-		ImGui::BulletText("Orbit - Left mouse button / Middle mouse button");
-		ImGui::BulletText("Pan - Right mouse button");
-		ImGui::BulletText("Zoom - Mousewheel");
-		ImGui::BulletText("Reset - Left mouse double click");
-	}
-
-	ImGui::Spacing();
-
-	ImGui::Text("Exemples:");
-
-	ImGui::End();
 }
 
 /////////////////////////////////////////////////////////////////////////////
