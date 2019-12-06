@@ -1,6 +1,6 @@
 #pragma once
 
-#include <met/met.hpp>
+// #include <met/met.hpp>
 #include "graphics/render-command.h"
 #include "scomponents/singleton-components.h"
 
@@ -10,6 +10,6 @@
 struct Context {
 	Context(SingletonComponents& scomps) : rcommand(scomps) {}
 
-	met::Registry registry;
+	// met::Registry registry;
 	RenderCommand rcommand;
 };

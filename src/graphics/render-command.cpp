@@ -286,6 +286,7 @@ GLenum RenderCommand::shaderDataTypeToOpenGLBaseType(ShaderDataType type) const 
 	case ShaderDataType::Int3:     return GL_INT;
 	case ShaderDataType::Int4:     return GL_INT;
 	case ShaderDataType::Bool:     return GL_BOOL;
+	case ShaderDataType::None:	   break;
 	}
 
 	assert(false && "Unknown ShaderDataType!");
@@ -296,7 +297,8 @@ GLenum RenderCommand::indexBufferDataTypeToOpenGLBaseType(scomp::IndexBuffer::da
 	switch (type) {
 	case scomp::IndexBuffer::dataType::UNSIGNED_BYTE : return GL_UNSIGNED_BYTE;
 	case scomp::IndexBuffer::dataType::UNSIGNED_SHORT : return GL_UNSIGNED_SHORT; 
-	case scomp::IndexBuffer::dataType::UNSIGNED_INT : return GL_UNSIGNED_INT; 
+	case scomp::IndexBuffer::dataType::UNSIGNED_INT : return GL_UNSIGNED_INT;
+	default:	break;
 	}
 
 	assert(false && "Unknown indexBufferDataType!");

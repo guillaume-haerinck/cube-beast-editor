@@ -25,6 +25,7 @@ static uint32_t shaderDataTypeSize(ShaderDataType type) {
 	case ShaderDataType::Int3:     return 4 * 3;
 	case ShaderDataType::Int4:     return 4 * 4;
 	case ShaderDataType::Bool:     return 1;
+	case ShaderDataType::None:	   break;
 	}
 
 	assert(false && "Unknown ShaderDataType!");
@@ -59,6 +60,7 @@ struct BufferElement {
 		case ShaderDataType::Int3:    return 3;
 		case ShaderDataType::Int4:    return 4;
 		case ShaderDataType::Bool:    return 1;
+		case ShaderDataType::None:	  break;
 		}
 
 		assert(false && "Unknown ShaderDataType!");

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <met/met.hpp>
-
 #include "context.h"
 #include "scomponents/singleton-components.h"
 #include "components/physics/position.h"
@@ -13,7 +11,7 @@ public:
     CubeFactory(Context& context);
     ~CubeFactory();
 
-    met::entity createCube(const comp::Position& position);
+    unsigned int createCube(const comp::Position& position);
 
 private:
     Context& m_ctx;
