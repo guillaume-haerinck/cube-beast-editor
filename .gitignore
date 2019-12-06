@@ -26,6 +26,9 @@
 *.a
 *.lib
 
+# Wasm debug
+*.wast
+
 # Executables
 *.exe
 *.out
