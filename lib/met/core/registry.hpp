@@ -4,6 +4,7 @@
 #include <deque>
 #include <unordered_map>
 #include <typeinfo>
+#include <string>
 #include <cassert>
 
 #include "../config/config.hpp"

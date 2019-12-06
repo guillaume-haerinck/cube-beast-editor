@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Setup Wasm build
 if (EMSCRIPTEN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2 -s USE_WEBGL2=1 -std=c++17")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2 -s USE_WEBGL2=1 --preload-file ../res -std=c++17")
 endif()
 
 # /////////////////////////////////////////////////////////////////////////////
@@ -93,5 +93,7 @@ endif()
 # /////////////////////////////////// TESTS ///////////////////////////////////
 # /////////////////////////////////////////////////////////////////////////////
 
-file(GLOB_RECURSE MY_TESTS test/*)
-add_executable(${PROJECT_NAME}-tests ${MY_TESTS})
+if (NOT EMSCRIPTEN)
+    file(GLOB_RECURSE MY_TESTS test/*)
+    add_executable(${PROJECT_NAME}-tests ${MY_TESTS})
+endif()

@@ -18,7 +18,6 @@ RenderSystem::~RenderSystem() {
 }
 
 void RenderSystem::update() {
-    /*
     m_ctx.registry.view<comp::Material, comp::Pipeline, comp::Position>()
     .each([&](met::entity entity, comp::Material& material, comp::Pipeline& pipeline, comp::Position& position) {
         m_ctx.rcommand.bindVertexBuffer(m_scomps.cubeMesh.vb);
@@ -27,5 +26,4 @@ void RenderSystem::update() {
         // TEMP calculate number of entities to draw OR use a scomp
         m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, 3);
     });
-    */
 }
