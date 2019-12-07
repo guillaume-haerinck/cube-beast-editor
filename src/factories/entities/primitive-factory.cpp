@@ -1,6 +1,7 @@
 #include "primitive-factory.h"
 
 PrimitiveFactory::PrimitiveFactory(Context& context) : m_ctx(context) {
+    // TODO move to scomp init in app
     scomp::ConstantBufferIndex cbIndices[] = {
 		scomp::PER_FRAME
 	};

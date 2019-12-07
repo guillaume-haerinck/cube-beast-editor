@@ -14,8 +14,8 @@
 #include "scomponents/graphics/mesh.h"
 #include "scomponents/graphics/render-targets.h"
 #include "scomponents/graphics/texture.h"
-#include "graphics/vertex-input-description.h"
-#include "graphics/render-targets-description.h"
+#include "graphics/pipeline-input-description.h"
+#include "graphics/pipeline-output-description.h"
 
 class RenderCommand {
 public:
@@ -44,7 +44,7 @@ public:
 	 * @param vib - Layout of the buffers
 	 * @param attributeBuffers - Array of buffers describing positions, normals, etc. The count is defined by the vib size.
 	 */
-	scomp::VertexBuffer createVertexBuffer(const VertexInputDescription& vib, scomp::AttributeBuffer* attributeBuffers) const;
+	scomp::VertexBuffer createVertexBuffer(const PipelineInputDescription& vib, scomp::AttributeBuffer* attributeBuffers) const;
 
     /**
 	 * @param indices - Array of integrer
@@ -68,7 +68,7 @@ public:
 	/**
 	 * @brief Allow a fragment shader to render to texture(s).
 	 */
-	scomp::RenderTargets createRenderTargets(const RenderTargetsDescription& rtd) const;
+	scomp::RenderTargets createRenderTargets(const PipelineOutputDescription& rtd) const;
 
     ///////////////////////////////////////////////////////////////////////////
 	////////////////////////////////// BINDING ////////////////////////////////

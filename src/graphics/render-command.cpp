@@ -64,7 +64,7 @@ scomp::AttributeBuffer RenderCommand::createAttributeBuffer(const void* vertices
 	return buffer;
 }
 
-scomp::VertexBuffer RenderCommand::createVertexBuffer(const VertexInputDescription& vib, scomp::AttributeBuffer* attributeBuffers) const {
+scomp::VertexBuffer RenderCommand::createVertexBuffer(const PipelineInputDescription& vib, scomp::AttributeBuffer* attributeBuffers) const {
 	GLuint va;
 	GLCall(glGenVertexArrays(1, &va));
 	GLCall(glBindVertexArray(va));
@@ -223,7 +223,7 @@ comp::Pipeline RenderCommand::createPipeline(const char* VSfilePath, const char*
 	return pipeline;
 }
 
-scomp::RenderTargets RenderCommand::createRenderTargets(const RenderTargetsDescription& rtd) const {
+scomp::RenderTargets RenderCommand::createRenderTargets(const PipelineOutputDescription& rtd) const {
 	// Create new framebuffer
 	unsigned int fb;
 	GLCall(glGenFramebuffers(1, &fb));

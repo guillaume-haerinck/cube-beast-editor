@@ -158,7 +158,7 @@ void App::initSingletonComponents() {
 	// Init CubeMesh
 	{
 		// Layout
-		VertexInputDescription inputDescription = {
+		PipelineInputDescription inputDescription = {
 			{ ShaderDataType::Float3, "Position" },
 			{ ShaderDataType::Float3, "Normal" },
 			{ ShaderDataType::Float3, "Translation", BufferElementUsage::PerInstance }
@@ -209,8 +209,8 @@ void App::handleSDLEvents() {
 			int newPosY = e.button.y;
 			m_scomps.inputs.delta.x = m_scomps.inputs.mousePos.x - newPosX;
 			m_scomps.inputs.delta.y = m_scomps.inputs.mousePos.y - newPosY;
-			m_scomps.inputs.mousePos.x = newPosX;
-			m_scomps.inputs.mousePos.y = newPosY;
+			m_scomps.inputs.mousePos.x = static_cast<float>(newPosX);
+			m_scomps.inputs.mousePos.y = static_cast<float>(newPosY);
 			break;
 		}
 
