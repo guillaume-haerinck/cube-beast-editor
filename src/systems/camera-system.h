@@ -1,7 +1,6 @@
 #pragma once
 
 #include "i-system.h"
-#include "context.h"
 #include "scomponents/singleton-components.h"
 
 class CameraSystem : public ISystem {

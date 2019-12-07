@@ -13,7 +13,13 @@ RenderCommand::RenderCommand(SingletonComponents& scomps) : m_scomps(scomps)
 {
 }
 
+// TODO delete all other missing objets
 RenderCommand::~RenderCommand() {
+	glDeleteVertexArrays(1, &m_scomps.cubeMesh.vb.vertexArrayId);
+	for (auto buffer : m_scomps.cubeMesh.vb.buffers) {
+		glDeleteBuffers(1, &buffer.bufferId);
+	}
+
 	for (auto pipeline : m_scomps.pipelines) {
 		GLCall(glDeleteProgram(pipeline.programIndex));
 	}
@@ -26,6 +32,10 @@ RenderCommand::~RenderCommand() {
 void RenderCommand::clear() const {
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////// CREATION ////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 
 scomp::AttributeBuffer RenderCommand::createAttributeBuffer(const void* vertices, unsigned int count, unsigned int stride, scomp::AttributeBufferUsage usage, scomp::AttributeBufferType type) const {
 	unsigned int id;
@@ -209,9 +219,38 @@ comp::Pipeline RenderCommand::createPipeline(const char* VSfilePath, const char*
 
 	// Return result
 	comp::Pipeline pipeline = {};
-	pipeline.index = static_cast<unsigned int>(m_scomps.pipelines.size()) - 1;
+	pipeline.sIndex = static_cast<unsigned int>(m_scomps.pipelines.size()) - 1;
 	return pipeline;
 }
+
+scomp::RenderTargets RenderCommand::createRenderTargets(const RenderTargetsDescription& rtd) const {
+	// Create new framebuffer
+	unsigned int fb;
+	GLCall(glGenFramebuffers(1, &fb));
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, fb));
+	
+	// TODO
+	
+	// Check for errors
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		spdlog::error("[createRenderTarget] FrameBuffer is not complete !");
+		debug_break();
+		assert(false);
+	}
+
+	// Unbind
+	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
+    GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+    GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+
+	scomp::RenderTargets rts;
+	rts.frameBufferId = fb;
+	return rts;
+}
+
+///////////////////////////////////////////////////////////////////////////
+////////////////////////////////// BINDING ////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 
 void RenderCommand::bindVertexBuffer(const scomp::VertexBuffer& vb) const {
 	GLCall(glBindVertexArray(vb.vertexArrayId));
@@ -222,9 +261,25 @@ void RenderCommand::bindIndexBuffer(const scomp::IndexBuffer& ib) const {
 }
 
 void RenderCommand::bindPipeline(const comp::Pipeline& pipeline) const {
-	scomp::Pipeline sPipeline = m_scomps.pipelines.at(pipeline.index);
+	scomp::Pipeline sPipeline = m_scomps.pipelines.at(pipeline.sIndex);
 	GLCall(glUseProgram(sPipeline.programIndex));
 }
+
+void RenderCommand::bindRenderTargets(const scomp::RenderTargets rds) const {
+	// TODO
+}
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////// UNBINDING ///////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+void RenderCommand::unbindRenderTargets() const {
+	// TODO
+}
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////// UPDATING ////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 
 void RenderCommand::updateConstantBuffer(const scomp::ConstantBuffer& cb, void* data) const {
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, cb.bufferId));
@@ -239,6 +294,10 @@ void RenderCommand::updateAttributeBuffer(const scomp::AttributeBuffer& buffer, 
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////// DRAWING /////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
 void RenderCommand::drawIndexed(unsigned int count, scomp::IndexBuffer::dataType type) const {
 	GLCall(glDrawElements(GL_TRIANGLES, count, indexBufferDataTypeToOpenGLBaseType(type), (void*) 0));
 }
@@ -246,6 +305,10 @@ void RenderCommand::drawIndexed(unsigned int count, scomp::IndexBuffer::dataType
 void RenderCommand::drawIndexedInstances(unsigned int indexCount, scomp::IndexBuffer::dataType type, unsigned int drawCount) const {
 	GLCall(glDrawElementsInstanced(GL_TRIANGLES, indexCount, indexBufferDataTypeToOpenGLBaseType(type), (void*)0, drawCount));
 }
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////// PRIVATE METHODS /////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 
 bool RenderCommand::hasShaderCompiled(unsigned int shaderId, unsigned int shaderType) const {
 	int result;

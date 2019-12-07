@@ -12,7 +12,10 @@
 #include "scomponents/graphics/constant-buffers.h"
 #include "scomponents/graphics/pipelines.h"
 #include "scomponents/graphics/mesh.h"
+#include "scomponents/graphics/render-targets.h"
+#include "scomponents/graphics/texture.h"
 #include "graphics/vertex-input-description.h"
+#include "graphics/render-targets-description.h"
 
 class RenderCommand {
 public:
@@ -44,14 +47,16 @@ public:
 	scomp::VertexBuffer createVertexBuffer(const VertexInputDescription& vib, scomp::AttributeBuffer* attributeBuffers) const;
 
     /**
-	 * @param indices - Array of data
+	 * @param indices - Array of integrer
 	 * @param count - The number of elements in the array
+	 * @param type - The type of integrer used in the array
 	 */
 	scomp::IndexBuffer createIndexBuffer(const void* indices, unsigned int count, scomp::IndexBuffer::dataType type) const;
 
 	/**
-	 * @param index 
-	 * @note Save as singleton component
+	 * @param index - The type of constant buffer to create. It is used as an array index in singleton components
+	 * @param byteWidth
+	 * @param data
 	 */
 	scomp::ConstantBuffer createConstantBuffer(scomp::ConstantBufferIndex index, unsigned int byteWidth, void* data = nullptr) const;
 
@@ -59,6 +64,11 @@ public:
 	 * @brief Create a shader pipeline
 	 */
 	comp::Pipeline createPipeline(const char* VSfilePath, const char* FSfilePath, scomp::ConstantBufferIndex* cbIndices = nullptr, unsigned int cbCount = 0) const;
+
+	/**
+	 * @brief Allow a fragment shader to render to texture(s).
+	 */
+	scomp::RenderTargets createRenderTargets(const RenderTargetsDescription& rtd) const;
 
     ///////////////////////////////////////////////////////////////////////////
 	////////////////////////////////// BINDING ////////////////////////////////
@@ -71,6 +81,14 @@ public:
 	 * @brief Will bind all the shaders of the said pipeline
 	 */
 	void bindPipeline(const comp::Pipeline& pipeline) const;
+
+	void bindRenderTargets(const scomp::RenderTargets rds) const;
+
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////// UNBINDING ///////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+
+	void unbindRenderTargets() const;
 
     ///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////// UPDATING ////////////////////////////////

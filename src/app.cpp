@@ -63,7 +63,7 @@ App::~App() {
 
 
 void App::update() {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	m_ctx.rcommand.clear();
 
 	// Feed inputs
 	handleSDLEvents();
