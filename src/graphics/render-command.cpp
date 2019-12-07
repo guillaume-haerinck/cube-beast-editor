@@ -236,15 +236,15 @@ scomp::RenderTargets RenderCommand::createRenderTargets(const PipelineOutputDesc
 
         switch (target.type) {
         case RenderTargetType::Texture:
-            glGenTextures(1, &textureId);
-            glBindTexture(GL_TEXTURE_2D, textureId);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            GLCall(glGenTextures(1, &textureId));
+            GLCall(glBindTexture(GL_TEXTURE_2D, textureId));
+            GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+            GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
             break;
 
         case RenderTargetType::RenderBuffer:
-            glGenRenderbuffers(1, &rbo);
-            glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+            GLCall(glGenRenderbuffers(1, &rbo));
+            GLCall(glBindRenderbuffer(GL_RENDERBUFFER, rbo));
             break;
 
         default:
@@ -257,32 +257,32 @@ scomp::RenderTargets RenderCommand::createRenderTargets(const PipelineOutputDesc
         switch (target.usage) {
         case RenderTargetUsage::Color:
             if (target.type == RenderTargetType::Texture) {
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 500, 500, 0, GL_RGB, GL_UNSIGNED_BYTE, 0); // TODO get width and height of window from scomps
-                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, textureId, 0);
+                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 500, 500, 0, GL_RGB, GL_UNSIGNED_BYTE, 0)); // TODO get width and height of window from scomps
+                GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, textureId, 0));
             } else if (target.type == RenderTargetType::RenderBuffer) {
-                glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 500, 500); // TODO get width and height of window from scomps
-                glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_RENDERBUFFER, rbo);
+                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 500, 500)); // TODO get width and height of window from scomps
+                GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_RENDERBUFFER, rbo));
             }
             slot++;
             break;
    
         case RenderTargetUsage::Depth:
             if (target.type == RenderTargetType::Texture) {
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 500, 500, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL); // TODO get width and height of window from scomps
-                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureId, 0);
+                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 500, 500, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL)); // TODO get width and height of window from scomps
+                GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureId, 0));
             } else if (target.type == RenderTargetType::RenderBuffer) {
-                glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 500, 500); // TODO get width and height of window from scomps
-                glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
+                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 500, 500)); // TODO get width and height of window from scomps
+                GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo));
             }
             break;
 
         case RenderTargetUsage::DepthStencil:
             if (target.type == RenderTargetType::Texture) {
-                glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, 500, 500, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0); // TODO get width and height of window from scomps
-                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, textureId, 0);
+                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, 500, 500, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0)); // TODO get width and height of window from scomps
+                GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, textureId, 0));
             } else if (target.type == RenderTargetType::RenderBuffer) {
-                glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 500, 500); // TODO get width and height of window from scomps
-                glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 500, 500)); // TODO get width and height of window from scomps
+                GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo));
             }
             break;
 
