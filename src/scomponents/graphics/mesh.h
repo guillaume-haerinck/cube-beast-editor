@@ -33,6 +33,7 @@ namespace scomp {
 	 * @note Attributes are stored in separate buffers (PPP)(TTT)(NNN).
 	 *		 This instead of interleaved (PTNPTNPTN) or packed (PPPTTTNNN).
 	 */
+	// TODO store vertex input description
 	struct VertexBuffer {
 		std::vector<AttributeBuffer> buffers;
 		unsigned int vertexArrayId;

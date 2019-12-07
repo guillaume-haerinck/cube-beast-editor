@@ -1,8 +1,8 @@
 #pragma once
 
 #include <met/met.hpp>
+#include <glm/glm.hpp>
 #include "inputs.h"
-#include "components/physics/position.h"
 
 namespace scomp {
 	/**
@@ -14,8 +14,8 @@ namespace scomp {
 	 */
 	struct History {
 		InputAction action;
-		comp::Position from;
-		comp::Position to;
+		glm::ivec3 from;
+		glm::ivec3 to;
 		glm::vec3 option;
 	};
 }

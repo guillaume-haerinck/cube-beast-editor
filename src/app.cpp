@@ -15,7 +15,7 @@
 #include "graphics/primitive-data.h"
 
 #include "factories/entities/primitive-factory.h"
-#include "components/physics/position.h"
+#include "components/physics/transform.h"
 
 bool App::m_instanciated = false;
 
@@ -38,7 +38,9 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 
 	// TEMP
 	PrimitiveFactory factory(m_ctx);
-	factory.createCube({0, 0, 0});
+	factory.createCube(glm::ivec3(0));
+	factory.createCube(glm::ivec3(-1));
+	factory.createCube(glm::ivec3(1));
 }
 
 App::~App() {
@@ -156,11 +158,7 @@ void App::initSingletonComponents() {
 		
 		// Instance data
 		// TODO set to scene size
-		std::array<glm::vec3, 15> translations;
-		translations.fill(glm::vec3(1));
-		// TEMP
-		translations.at(1) = glm::vec3(0);
-		translations.at(2) = glm::vec3(-1);
+		std::array< comp::Transform, 15> translations;
 		scomp::AttributeBuffer translationInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(translations.data(), static_cast<unsigned int>(translations.size()), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_POSITION);
 
 		// Vertex buffer

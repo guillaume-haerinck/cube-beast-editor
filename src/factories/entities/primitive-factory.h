@@ -2,7 +2,7 @@
 
 #include "context.h"
 #include "scomponents/singleton-components.h"
-#include "components/physics/position.h"
+#include "components/physics/transform.h"
 #include "components/graphics/material.h"
 #include "components/graphics/pipeline.h"
 
@@ -11,7 +11,7 @@ public:
     PrimitiveFactory(Context& context);
     ~PrimitiveFactory();
 
-    unsigned int createCube(const comp::Position& position);
+    unsigned int createCube(const comp::Transform& position);
 
 private:
     Context& m_ctx;
