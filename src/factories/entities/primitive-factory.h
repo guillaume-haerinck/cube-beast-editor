@@ -6,10 +6,10 @@
 #include "components/graphics/material.h"
 #include "components/graphics/pipeline.h"
 
-class CubeFactory {
+class PrimitiveFactory {
 public:
-    CubeFactory(Context& context);
-    ~CubeFactory();
+    PrimitiveFactory(Context& context);
+    ~PrimitiveFactory();
 
     unsigned int createCube(const comp::Position& position);
 

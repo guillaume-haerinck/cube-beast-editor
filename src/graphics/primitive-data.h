@@ -71,3 +71,41 @@ namespace cubeData {
         20,21,22,  22,23,20		  // back
     };
 }
+
+/**
+ * @brief Geometry data for a square
+ */
+namespace squareData {
+    //  v1-------v0
+    //  |         |
+    //  |         |
+    //  |         |
+    //  v2-------v3
+    const glm::vec3 positions[] = {
+        // v0,v1,v2,v3
+        glm::vec3(0.5, 0.5, 0.5), glm::vec3(-0.5, 0.5, 0.5), glm::vec3(-0.5, -0.5, 0.5), glm::vec3(0.5, -0.5, 0.5)
+    };
+
+    //   X---------X
+    //  /|        /|
+    //   |         |
+    //   |         |
+    //   X---------X
+    //  /         /
+    const glm::vec3 normals[] = {
+        glm::vec3(0, 0, 1), glm::vec3(0, 0, 1), glm::vec3(0, 0, 1), glm::vec3(0, 0, 1)
+    };
+
+    // 0;0 ----- 1;0
+    //  |         |
+    //  |         |
+    //  |         |
+    // 0;1 ----- 1;1
+    const glm::vec2 texCoords[] = {
+        glm::vec2(1, 0), glm::vec2(0, 0), glm::vec2(0, 1), glm::vec2(1, 1)
+    };
+
+    const unsigned char indices[] = {
+        0, 1, 2,   2, 3, 0
+    };
+}

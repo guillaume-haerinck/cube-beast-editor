@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 - Cube factory
 - Render system
+- Instanced rendering
 
 ## 2019-12-04
 

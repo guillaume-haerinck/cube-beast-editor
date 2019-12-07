@@ -12,9 +12,9 @@
 #endif
 
 #include "systems/render-system.h"
-#include "graphics/cube-data.h"
+#include "graphics/primitive-data.h"
 
-#include "factories/entities/cube-factory.h"
+#include "factories/entities/primitive-factory.h"
 #include "components/physics/position.h"
 
 bool App::m_instanciated = false;
@@ -37,7 +37,7 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 	};
 
 	// TEMP
-	CubeFactory factory(m_ctx);
+	PrimitiveFactory factory(m_ctx);
 	factory.createCube({0, 0, 0});
 }
 
@@ -105,7 +105,7 @@ void App::initSDL() {
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 	m_window = SDL_CreateWindow(
-		"OpenGL Playground",
+		"Voxel Editor",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		500, 500,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI
