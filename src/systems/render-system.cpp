@@ -11,7 +11,7 @@
 #include "components/graphics/material.h"
 #include "components/graphics/pipeline.h"
 
-RenderSystem::RenderSystem(Context& context, const SingletonComponents& scomps) : m_ctx(context), m_scomps(scomps) {
+RenderSystem::RenderSystem(Context& context, SingletonComponents& scomps) : m_ctx(context), m_scomps(scomps) {
     m_tempTranslations.reserve(15);
 }
 
@@ -19,6 +19,19 @@ RenderSystem::~RenderSystem() {
 }
 
 void RenderSystem::update() {
+    // Update per frame constant buffer
+	{
+		cb::perFrame cbData;
+        scomp::ConstantBuffer& perFrameCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_FRAME);
+
+        // Set data
+        cbData.cameraPos = m_scomps.camera.position;
+        cbData.matViewProj =  m_scomps.camera.proj * m_scomps.camera.view;
+
+        // Send data
+		m_ctx.rcommand.updateConstantBuffer(perFrameCB, &cbData);
+	}
+
     auto view = m_ctx.registry.view<comp::Material, comp::Pipeline, comp::Transform>();
     unsigned int nbInstances = 0;
 

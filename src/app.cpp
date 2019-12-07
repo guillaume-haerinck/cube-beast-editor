@@ -12,7 +12,9 @@
 #endif
 
 #include "systems/render-system.h"
+#include "systems/camera-system.h"
 #include "graphics/primitive-data.h"
+#include "graphics/constant-buffer.h"
 
 #include "factories/entities/primitive-factory.h"
 #include "components/physics/transform.h"
@@ -33,7 +35,8 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 
 	// Order system updates
 	m_systems = {
-		new RenderSystem(m_ctx, m_scomps)
+		new RenderSystem(m_ctx, m_scomps),
+		new CameraSystem(m_scomps)
 	};
 
 	// TEMP
@@ -82,6 +85,11 @@ void App::update() {
 	// Render imgui
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	// Reset input deltas
+	m_scomps.inputs.delta = glm::vec2(0.0f);
+	m_scomps.inputs.wheelDelta = 0;
+	m_scomps.inputs.actionState.fill(false);
 
 	SDL_GL_SwapWindow(m_window);
 }
@@ -143,6 +151,11 @@ void App::initImgui() const {
 }
 
 void App::initSingletonComponents() {
+	// Init Constant Buffers
+	{
+		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_FRAME, sizeof(cb::perFrame));
+	}
+
 	// Init CubeMesh
 	{
 		// Layout
@@ -188,15 +201,26 @@ void App::handleSDLEvents() {
 			break;
 
 		case SDL_MOUSEWHEEL:
+			m_scomps.inputs.wheelDelta = e.wheel.y;
+			m_scomps.inputs.actionState.at(scomp::InputAction::CAM_DOLLY) = true;
 			break;
 
-		case SDL_MOUSEMOTION:
+		case SDL_MOUSEMOTION: {
+			int newPosX = e.button.x;
+			int newPosY = e.button.y;
+			m_scomps.inputs.delta.x = m_scomps.inputs.mousePos.x - newPosX;
+			m_scomps.inputs.delta.y = m_scomps.inputs.mousePos.y - newPosY;
+			m_scomps.inputs.mousePos.x = newPosX;
+			m_scomps.inputs.mousePos.y = newPosY;
 			break;
+		}
 
 		case SDL_MOUSEBUTTONDOWN:
+			m_scomps.inputs.actionState.at(scomp::InputAction::CAM_ORBIT) = true;
 			break;
 
 		case SDL_MOUSEBUTTONUP:
+			m_scomps.inputs.actionState.at(scomp::InputAction::CAM_ORBIT) = false;
 			break;
 
 		default:

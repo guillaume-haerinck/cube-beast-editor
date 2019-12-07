@@ -10,13 +10,13 @@
 
 class RenderSystem : public ISystem {
 public:
-	RenderSystem(Context& context, const SingletonComponents& scomps);
+	RenderSystem(Context& context, SingletonComponents& scomps);
 	virtual ~RenderSystem();
 
 	void update() override;
 
 private:
 	Context& m_ctx;
-	const SingletonComponents& m_scomps;
+	SingletonComponents& m_scomps;
 	std::vector<glm::vec3> m_tempTranslations;
 };
