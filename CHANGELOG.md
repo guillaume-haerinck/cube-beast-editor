@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2019-12-07
+
+### Added
+
+- Framebuffer support
+
+## 2019-12-07
+
+### Added
+
+- Trackball camera
+
 ## 2019-12-06
 
 ### Added

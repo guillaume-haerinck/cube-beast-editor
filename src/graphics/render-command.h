@@ -41,10 +41,10 @@ public:
 	scomp::AttributeBuffer createAttributeBuffer(const void* vertices, unsigned int count, unsigned int stride, scomp::AttributeBufferUsage usage = scomp::AttributeBufferUsage::STATIC_DRAW, scomp::AttributeBufferType type = scomp::AttributeBufferType::PER_VERTEX_ANY) const;
 
 	/**
-	 * @param vib - Layout of the buffers
-	 * @param attributeBuffers - Array of buffers describing positions, normals, etc. The count is defined by the vib size.
+	 * @param description - Layout of the buffers
+	 * @param attributeBuffers - Array of buffers describing positions, normals, etc. The count is defined by the description size.
 	 */
-	scomp::VertexBuffer createVertexBuffer(const PipelineInputDescription& vib, scomp::AttributeBuffer* attributeBuffers) const;
+	scomp::VertexBuffer createVertexBuffer(const PipelineInputDescription& description, scomp::AttributeBuffer* attributeBuffers) const;
 
     /**
 	 * @param indices - Array of integrer
@@ -68,7 +68,7 @@ public:
 	/**
 	 * @brief Allow a fragment shader to render to texture(s).
 	 */
-	scomp::RenderTargets createRenderTargets(const PipelineOutputDescription& rtd) const;
+	scomp::RenderTargets createRenderTargets(const PipelineOutputDescription& description) const;
 
     ///////////////////////////////////////////////////////////////////////////
 	////////////////////////////////// BINDING ////////////////////////////////
