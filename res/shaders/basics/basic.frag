@@ -7,5 +7,5 @@ layout (std140) uniform perFrame {
 };
 
 void main() {
-	color = vec4(1, 0, 0, 1);
+	color = vec4(cameraPos, 1);
 }

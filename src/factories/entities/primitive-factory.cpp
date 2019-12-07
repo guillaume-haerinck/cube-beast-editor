@@ -1,7 +1,10 @@
 #include "primitive-factory.h"
 
 PrimitiveFactory::PrimitiveFactory(Context& context) : m_ctx(context) {
-    m_pipeline = m_ctx.rcommand.createPipeline("res/shaders/basics/basic.vert", "res/shaders/basics/basic.frag");
+    scomp::ConstantBufferIndex cbIndices[] = {
+		scomp::PER_FRAME
+	};
+    m_pipeline = m_ctx.rcommand.createPipeline("res/shaders/basics/basic.vert", "res/shaders/basics/basic.frag", cbIndices, std::size(cbIndices));
 }
 
 PrimitiveFactory::~PrimitiveFactory()

@@ -9,5 +9,5 @@ layout (std140) uniform perFrame {
 };
 
 void main() {
-	gl_Position = vec4(position, 1.0) + vec4(translation, 1.0);
+	gl_Position = matViewProj * (vec4(position, 1.0) + vec4(translation, 1.0));
 }

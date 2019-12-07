@@ -89,7 +89,6 @@ void App::update() {
 	// Reset input deltas
 	m_scomps.inputs.delta = glm::vec2(0.0f);
 	m_scomps.inputs.wheelDelta = 0;
-	m_scomps.inputs.actionState.fill(false);
 
 	SDL_GL_SwapWindow(m_window);
 }
@@ -229,6 +228,7 @@ void App::handleSDLEvents() {
 	}
 
 	if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
+		m_scomps.inputs.actionState.fill(false);
 	}
 }
 
