@@ -228,8 +228,71 @@ scomp::RenderTargets RenderCommand::createRenderTargets(const PipelineOutputDesc
 	unsigned int fb;
 	GLCall(glGenFramebuffers(1, &fb));
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, fb));
-	
-	// TODO
+
+    unsigned int slot = 0;
+    for (const auto& target : description) {
+        unsigned int rbo;
+        unsigned int textureId;
+
+        switch (target.type) {
+        case RenderTargetType::Texture:
+            glGenTextures(1, &textureId);
+            glBindTexture(GL_TEXTURE_2D, textureId);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            break;
+
+        case RenderTargetType::RenderBuffer:
+            glGenRenderbuffers(1, &rbo);
+            glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+            break;
+
+        default:
+            spdlog::error("[createRenderTarget] Unknown render target type");
+            debug_break();
+            assert(false);
+            break;
+        }
+
+        switch (target.usage) {
+        case RenderTargetUsage::Color:
+            if (target.type == RenderTargetType::Texture) {
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 500, 500, 0, GL_RGB, GL_UNSIGNED_BYTE, 0); // TODO get width and height of window from scomps
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, textureId, 0);
+            } else if (target.type == RenderTargetType::RenderBuffer) {
+                glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 500, 500); // TODO get width and height of window from scomps
+                glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_RENDERBUFFER, rbo);
+            }
+            slot++;
+            break;
+   
+        case RenderTargetUsage::Depth:
+            if (target.type == RenderTargetType::Texture) {
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 500, 500, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL); // TODO get width and height of window from scomps
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureId, 0);
+            } else if (target.type == RenderTargetType::RenderBuffer) {
+                glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 500, 500); // TODO get width and height of window from scomps
+                glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
+            }
+            break;
+
+        case RenderTargetUsage::DepthStencil:
+            if (target.type == RenderTargetType::Texture) {
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, 500, 500, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0); // TODO get width and height of window from scomps
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, textureId, 0);
+            } else if (target.type == RenderTargetType::RenderBuffer) {
+                glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 500, 500); // TODO get width and height of window from scomps
+                glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+            }
+            break;
+
+        default:
+            spdlog::error("[createRenderTarget] Unknown render target usage");
+            debug_break();
+            assert(false);
+            break;
+        }
+    }
 	
 	// Check for errors
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -266,7 +329,7 @@ void RenderCommand::bindPipeline(const comp::Pipeline& pipeline) const {
 }
 
 void RenderCommand::bindRenderTargets(const scomp::RenderTargets rds) const {
-	// TODO
+    GLCall(glBindFramebuffer(GL_FRAMEBUFFER, rds.frameBufferId));
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -274,7 +337,7 @@ void RenderCommand::bindRenderTargets(const scomp::RenderTargets rds) const {
 ///////////////////////////////////////////////////////////////////////////
 
 void RenderCommand::unbindRenderTargets() const {
-	// TODO
+    GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
 ///////////////////////////////////////////////////////////////////////////
