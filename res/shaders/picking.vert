@@ -8,11 +8,9 @@ layout (std140) uniform perFrame {
 	lowp vec3 cameraPos;
 };
 
-out FSInput {
-	vec3 myValue;
-} vout;
+out vec3 myValue;
 
 void main() {
-	vout.myValue = vec3(0, 0, 1);
+	myValue = vec3(0, 0, 1);
 	gl_Position = matViewProj * (vec4(position, 1.0) + vec4(translation, 1.0));
 }

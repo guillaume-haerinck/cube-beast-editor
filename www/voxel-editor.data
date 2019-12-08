@@ -3,12 +3,46 @@ layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec3 translation;
 
+layout (std140) uniform perFrame {
+    lowp mat4 matViewProj;
+	lowp vec3 cameraPos;
+};
+
+out vec3 myValue;
+
 void main() {
-	gl_Position = vec4(position, 1.0) + vec4(translation, 1.0);
+	myValue = vec3(0, 0, 1);
+	gl_Position = matViewProj * (vec4(position, 1.0) + vec4(translation, 1.0));
+}
+#version 300 es
+layout(location = 0) out lowp vec3 color;
+
+in lowp vec3 myValue;
+
+void main() {
+	color = myValue;
+}
+#version 300 es
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 normal;
+layout(location = 2) in vec3 translation;
+
+layout (std140) uniform perFrame {
+    lowp mat4 matViewProj;
+	lowp vec3 cameraPos;
+};
+
+void main() {
+	gl_Position = matViewProj * (vec4(position, 1.0) + vec4(translation, 1.0));
 }
 #version 300 es
 layout(location = 0) out lowp vec4 color;
 
+layout (std140) uniform perFrame {
+    lowp mat4 matViewProj;
+	lowp vec3 cameraPos;
+};
+
 void main() {
-	color = vec4(1, 0, 0, 1);
+	color = vec4(cameraPos, 1);
 }
