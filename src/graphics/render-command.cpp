@@ -266,7 +266,7 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
    
         case RenderTargetUsage::Depth:
             if (target.type == RenderTargetType::Texture) {
-                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 500, 500, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL)); // TODO get width and height of window from scomps
+                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 500, 500, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0)); // TODO get width and height of window from scomps
                 GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureId, 0));
             } else if (target.type == RenderTargetType::RenderBuffer) {
                 GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 500, 500)); // TODO get width and height of window from scomps

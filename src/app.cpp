@@ -65,8 +65,6 @@ App::~App() {
 
 
 void App::update() {
-	m_ctx.rcommand.clear();
-
 	// Feed inputs
 	handleSDLEvents();
 	ImGui_ImplOpenGL3_NewFrame();
@@ -205,7 +203,8 @@ void App::initSingletonComponents() {
         scomp::ConstantBufferIndex cbIndices[] = {
             scomp::ConstantBufferIndex::PER_FRAME
         };
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_BASIC, "res/shaders/basics/basic.vert", "res/shaders/basics/basic.frag", cbIndices, std::size(cbIndices));
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_BASIC, "res/shaders/basic.vert", "res/shaders/basic.frag", cbIndices, std::size(cbIndices));
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_PICKING, "res/shaders/basic.vert", "res/shaders/picking.frag", cbIndices, std::size(cbIndices));
     }
 
     // Init Render Targets

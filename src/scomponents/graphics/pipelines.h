@@ -22,6 +22,7 @@ namespace scomp {
 
     enum PipelineIndex {
         PIP_BASIC = 0,
+        PIP_PICKING,
         _PIP_MAX
     };
 

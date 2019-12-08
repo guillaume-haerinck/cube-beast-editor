@@ -54,11 +54,15 @@ void RenderSystem::update() {
             m_ctx.rcommand.bindVertexBuffer(m_scomps.cubeMesh.vb);
             m_ctx.rcommand.bindIndexBuffer(m_scomps.cubeMesh.ib);
 
-            // TODO Color picking pass
-            // m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_PICKING));
-
+            // Picking pass
+            m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_PICKING));
+            m_ctx.rcommand.clear();
+            m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_PICKING));
+            m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
+            
             // Basic pass
             m_ctx.rcommand.unbindRenderTargets();
+            m_ctx.rcommand.clear();
             m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_BASIC));
             m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
         }
