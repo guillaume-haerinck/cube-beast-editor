@@ -11,6 +11,7 @@
 
 RenderSystem::RenderSystem(Context& context, SingletonComponents& scomps) : m_ctx(context), m_scomps(scomps) {
     m_tempTranslations.reserve(15);
+    m_tempEntityIds.reserve(15);
 }
 
 RenderSystem::~RenderSystem() {
@@ -37,6 +38,7 @@ void RenderSystem::update() {
     view.each([&](met::entity entity, comp::Material& material, comp::Transform& transform) {
         nbInstances++;
         m_tempTranslations.push_back(transform.position);
+        m_tempEntityIds.push_back(entity);
 
         if (nbInstances >= view.size()) {
             // Update instance buffers
@@ -45,6 +47,11 @@ void RenderSystem::update() {
                 case scomp::AttributeBufferType::PER_INSTANCE_TRANSLATION:
                     m_ctx.rcommand.updateAttributeBuffer(buffer, m_tempTranslations.data(), sizeof(glm::vec3) * nbInstances);
                     m_tempTranslations.clear();
+                    break;
+
+                case scomp::AttributeBufferType::PER_INSTANCE_ENTITY_ID:
+                    m_ctx.rcommand.updateAttributeBuffer(buffer, m_tempEntityIds.data(), sizeof(met::entity) * nbInstances);
+                    m_tempEntityIds.clear();
                     break;
 
                 default: break;
@@ -61,6 +68,7 @@ void RenderSystem::update() {
             m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
             
             // Basic pass
+            // TODO use picking pass and apply its texture on a quad to prevent multiple pass. Must use an ubershader
             m_ctx.rcommand.unbindRenderTargets();
             m_ctx.rcommand.clear();
             m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_BASIC));

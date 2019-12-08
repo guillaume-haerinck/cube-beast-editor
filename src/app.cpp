@@ -216,22 +216,23 @@ void App::initSingletonComponents() {
 
 	// Init CubeMesh
 	{
-		// Layout
-		PipelineInputDescription inputDescription = {
-			{ ShaderDataType::Float3, "Position" },
-			{ ShaderDataType::Float3, "Normal" },
-			{ ShaderDataType::Float3, "Translation", BufferElementUsage::PerInstance }
-		};
-		
 		// Attributes
 		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
 		scomp::AttributeBuffer normalBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
-		std::array< comp::Transform, 15> translations; // TODO set to scene size
+		std::array<comp::Transform, 15> translations; // TODO set to scene size
 		scomp::AttributeBuffer translationInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(translations.data(), static_cast<unsigned int>(translations.size()), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_TRANSLATION);
+		std::array<met::entity, 15> entityIds;
+		scomp::AttributeBuffer entityInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(entityIds.data(), static_cast<unsigned int>(entityIds.size()), sizeof(met::entity), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_ENTITY_ID);
 
 		// Vertex & Index buffers
+		PipelineInputDescription inputDescription = {
+			{ ShaderDataType::Float3, "Position" },
+			{ ShaderDataType::Float3, "Normal" },
+			{ ShaderDataType::Float3, "Translation", BufferElementUsage::PerInstance },
+			{ ShaderDataType::Int, "EntityId", BufferElementUsage::PerInstance }
+		};
 		scomp::AttributeBuffer attributeBuffers[] = {
-			positionBuffer, normalBuffer, translationInstanceBuffer
+			positionBuffer, normalBuffer, translationInstanceBuffer, entityInstanceBuffer
 		};
 		scomp::VertexBuffer vb = m_ctx.rcommand.createVertexBuffer(inputDescription, attributeBuffers);
 		scomp::IndexBuffer ib = m_ctx.rcommand.createIndexBuffer(cubeData::indices, static_cast<unsigned int>(std::size(cubeData::indices)), scomp::IndexBuffer::dataType::UNSIGNED_BYTE);
