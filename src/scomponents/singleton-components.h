@@ -12,6 +12,9 @@
 #include "scomponents/io/inputs.h"
 #include "scomponents/io/history.h"
 
+/**
+ * @brief Global object used to store the state of the app
+ */
 struct SingletonComponents {
 	std::vector<scomp::Pipeline> pipelines;
 	std::array<scomp::ConstantBuffer, scomp::ConstantBufferIndex::_CONST_BUFFER_MAX> constantBuffers;

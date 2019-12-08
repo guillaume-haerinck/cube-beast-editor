@@ -78,7 +78,8 @@ void App::update() {
 	}
 	
 	// Update imgui
-	glBindVertexArray(0);
+    m_ctx.rcommand.unbindVertexBuffer();
+    m_ctx.rcommand.unbindRenderTargets();
 	for (ILayer* layer : m_layers) {
 		layer->update();
 	}
