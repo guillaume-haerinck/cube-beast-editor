@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 enum class RenderTargetType {
     Texture = 0, RenderBuffer
@@ -13,11 +14,12 @@ enum class RenderTargetUsage {
 struct RenderTargetDescription {
     RenderTargetType type;
     RenderTargetUsage usage;
+    std::string name;
 
     RenderTargetDescription() {}
 
-    RenderTargetDescription(RenderTargetUsage usage, RenderTargetType type) 
-        : usage(usage), type(type)
+    RenderTargetDescription(RenderTargetUsage usage, RenderTargetType type, std::string name) 
+        : usage(usage), type(type), name(name)
     {}
 };
 

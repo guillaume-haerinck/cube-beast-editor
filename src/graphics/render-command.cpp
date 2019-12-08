@@ -13,20 +13,23 @@ RenderCommand::RenderCommand(SingletonComponents& scomps) : m_scomps(scomps)
 {
 }
 
-// TODO delete all other missing objets
 RenderCommand::~RenderCommand() {
-	glDeleteVertexArrays(1, &m_scomps.cubeMesh.vb.vertexArrayId);
+    glDeleteVertexArrays(1, &m_scomps.cubeMesh.vb.vertexArrayId);
 	for (auto buffer : m_scomps.cubeMesh.vb.buffers) {
-		glDeleteBuffers(1, &buffer.bufferId);
+        glDeleteBuffers(1, &buffer.bufferId);
 	}
 
 	for (auto pipeline : m_scomps.pipelines) {
-		GLCall(glDeleteProgram(pipeline.programIndex));
+		glDeleteProgram(pipeline.programIndex);
 	}
 
 	for (auto cb : m_scomps.constantBuffers) {
-		GLCall(glDeleteBuffers(1, &cb.bufferId));
+		glDeleteBuffers(1, &cb.bufferId);
 	}
+
+    for (auto rts : m_scomps.renderTargets) {
+        glDeleteFramebuffers(1, &rts.frameBufferId);
+    }
 }
 
 void RenderCommand::clear() const {
@@ -121,15 +124,17 @@ scomp::IndexBuffer RenderCommand::createIndexBuffer(const void* indices, unsigne
 	return buffer;
 }
 
-scomp::ConstantBuffer RenderCommand::createConstantBuffer(scomp::ConstantBufferIndex index, unsigned int byteWidth, void* data) const {
+void RenderCommand::createConstantBuffer(scomp::ConstantBufferIndex index, unsigned int byteWidth, void* data) const {
 	std::string name = "";
 	switch (index) {
 		case scomp::PER_FRAME: name = "perFrame"; break;
-		case scomp::PER_PHONG_MAT_CHANGE: name = "perPhongMatChange"; break;
-		case scomp::PER_COOK_MAT_CHANGE: name = "perCookMatChange"; break;
-		case scomp::PER_LIGHT_CHANGE: name = "perLightChange"; break;
+		//case scomp::PER_PHONG_MAT_CHANGE: name = "perPhongMatChange"; break;
+		//case scomp::PER_COOK_MAT_CHANGE: name = "perCookMatChange"; break;
+		//case scomp::PER_LIGHT_CHANGE: name = "perLightChange"; break;
 		default:
 			spdlog::error("[createConstantBuffer] unknown index {}", index);
+            debug_break();
+            assert(false);
 		break;
 	}
 	
@@ -146,8 +151,6 @@ scomp::ConstantBuffer RenderCommand::createConstantBuffer(scomp::ConstantBufferI
 
 	// Save to singleton components
 	m_scomps.constantBuffers.at(index) = cb;
-
-	return cb;
 }
 
 comp::Pipeline RenderCommand::createPipeline(const char* VSfilePath, const char* FSfilePath, scomp::ConstantBufferIndex* cbIndices, unsigned int cbCount) const {

@@ -50,6 +50,7 @@ App::~App() {
 	for (ISystem* system : m_systems) {
 		delete system;
 	}
+    m_ctx.rcommand.~RenderCommand();
     ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
@@ -155,6 +156,15 @@ void App::initSingletonComponents() {
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_FRAME, sizeof(cb::perFrame));
 	}
 
+    // Init Render Targets
+    {
+        PipelineOutputDescription outputDescription = {
+            { RenderTargetUsage::Color, RenderTargetType::Texture, "NormalColor" }
+        };
+        scomp::RenderTargets rts = m_ctx.rcommand.createRenderTargets(outputDescription);
+        m_scomps.renderTargets.at(scomp::RenderTargetsType::RTT_PICKING) = rts;
+    }
+
 	// Init CubeMesh
 	{
 		// Layout
@@ -164,22 +174,17 @@ void App::initSingletonComponents() {
 			{ ShaderDataType::Float3, "Translation", BufferElementUsage::PerInstance }
 		};
 		
-		// Shared data
+		// Attributes
 		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
 		scomp::AttributeBuffer normalBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
-		
-		// Instance data
-		// TODO set to scene size
-		std::array< comp::Transform, 15> translations;
+		std::array< comp::Transform, 15> translations; // TODO set to scene size
 		scomp::AttributeBuffer translationInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(translations.data(), static_cast<unsigned int>(translations.size()), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_POSITION);
 
-		// Vertex buffer
+		// Vertex & Index buffers
 		scomp::AttributeBuffer attributeBuffers[] = {
 			positionBuffer, normalBuffer, translationInstanceBuffer
 		};
 		scomp::VertexBuffer vb = m_ctx.rcommand.createVertexBuffer(inputDescription, attributeBuffers);
-
-		// Index buffer
 		scomp::IndexBuffer ib = m_ctx.rcommand.createIndexBuffer(cubeData::indices, static_cast<unsigned int>(std::size(cubeData::indices)), scomp::IndexBuffer::dataType::UNSIGNED_BYTE);
 
 		// Save data

@@ -21,7 +21,7 @@ namespace scomp {
 	};
 
 	/**
-	 * @brief An OpenGL object whicch store a vertex shader with a pixel shader with their constant buffers
+	 * @brief An OpenGL object which store a vertex shader with a pixel shader with their constant buffers
 	 */
 	struct Pipeline {
 		unsigned int programIndex = 0;

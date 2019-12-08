@@ -1,9 +1,8 @@
 #include "primitive-factory.h"
 
 PrimitiveFactory::PrimitiveFactory(Context& context) : m_ctx(context) {
-    // TODO move to scomp init in app
     scomp::ConstantBufferIndex cbIndices[] = {
-		scomp::PER_FRAME
+		scomp::ConstantBufferIndex::PER_FRAME
 	};
     m_pipeline = m_ctx.rcommand.createPipeline("res/shaders/basics/basic.vert", "res/shaders/basics/basic.frag", cbIndices, std::size(cbIndices));
 }

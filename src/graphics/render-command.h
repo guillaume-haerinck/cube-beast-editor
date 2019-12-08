@@ -55,10 +55,10 @@ public:
 
 	/**
 	 * @param index - The type of constant buffer to create. It is used as an array index in singleton components
-	 * @param byteWidth
+	 * @param byteWidth - The total size of the buffer. Allows to create an array of said type.
 	 * @param data
 	 */
-	scomp::ConstantBuffer createConstantBuffer(scomp::ConstantBufferIndex index, unsigned int byteWidth, void* data = nullptr) const;
+	void createConstantBuffer(scomp::ConstantBufferIndex index, unsigned int byteWidth, void* data = nullptr) const;
 
 	/**
 	 * @brief Create a shader pipeline
