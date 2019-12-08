@@ -5,6 +5,6 @@
  */
 class ILayer {
 public:
-    virtual ~ILayer();
+    virtual ~ILayer() {}
     virtual void update() = 0;
 };

@@ -13,11 +13,9 @@
 
 #include "systems/render-system.h"
 #include "systems/camera-system.h"
+#include "layers/viewport-layer.h"
 #include "graphics/primitive-data.h"
 #include "graphics/constant-buffer.h"
-
-#include "factories/entities/primitive-factory.h"
-#include "components/physics/transform.h"
 
 bool App::m_instanciated = false;
 
@@ -39,14 +37,16 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 		new CameraSystem(m_scomps)
 	};
 
-	// TEMP
-	PrimitiveFactory factory(m_ctx);
-	factory.createCube(glm::ivec3(0));
-	factory.createCube(glm::ivec3(-1));
-	factory.createCube(glm::ivec3(1));
+    // Order GUIs
+    m_layers = {
+        new ViewportLayer(m_ctx)
+    };
 }
 
 App::~App() {
+    for (ILayer* layer : m_layers) {
+        delete layer;
+    }
 	for (ISystem* system : m_systems) {
 		delete system;
 	}
