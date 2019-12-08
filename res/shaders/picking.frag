@@ -1,8 +1,8 @@
 #version 300 es
 layout(location = 0) out uint color;
 
-in lowp float id;
+flat in uint id;
 
 void main() {
-	color = uint(id);
+	color = id;
 }

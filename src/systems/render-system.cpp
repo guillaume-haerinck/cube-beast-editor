@@ -38,7 +38,7 @@ void RenderSystem::update() {
     view.each([&](met::entity entity, comp::Material& material, comp::Transform& transform) {
         nbInstances++;
         m_tempTranslations.push_back(transform.position);
-        m_tempEntityIds.push_back((float)entity);
+        m_tempEntityIds.push_back(entity);
 
         if (nbInstances >= view.size()) {
             // Update instance buffers
@@ -50,7 +50,7 @@ void RenderSystem::update() {
                     break;
 
                 case scomp::AttributeBufferType::PER_INSTANCE_ENTITY_ID:
-                    m_ctx.rcommand.updateAttributeBuffer(buffer, m_tempEntityIds.data(), sizeof(float) * nbInstances);
+                    m_ctx.rcommand.updateAttributeBuffer(buffer, m_tempEntityIds.data(), sizeof(met::entity) * nbInstances);
                     m_tempEntityIds.clear();
                     break;
 

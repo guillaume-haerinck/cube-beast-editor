@@ -19,5 +19,5 @@ private:
 	Context& m_ctx;
 	SingletonComponents& m_scomps;
 	std::vector<glm::vec3> m_tempTranslations;
-	std::vector<float> m_tempEntityIds;
+	std::vector<met::entity> m_tempEntityIds;
 };
