@@ -1,7 +1,7 @@
 #pragma once
 
 namespace scomp {
-    enum RenderTargetsType {
+    enum RenderTargetsIndex {
         RTT_PICKING = 0,
         _RTT_MAX
     };

@@ -16,6 +16,7 @@
 #include "layers/viewport-layer.h"
 #include "graphics/primitive-data.h"
 #include "graphics/constant-buffer.h"
+#include "scomponents/graphics/render-targets.h"
 
 bool App::m_instanciated = false;
 
@@ -157,13 +158,20 @@ void App::initSingletonComponents() {
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_FRAME, sizeof(cb::perFrame));
 	}
 
+    // Init pipelines
+    {
+        scomp::ConstantBufferIndex cbIndices[] = {
+            scomp::ConstantBufferIndex::PER_FRAME
+        };
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_BASIC, "res/shaders/basics/basic.vert", "res/shaders/basics/basic.frag", cbIndices, std::size(cbIndices));
+    }
+
     // Init Render Targets
     {
         PipelineOutputDescription outputDescription = {
             { RenderTargetUsage::Color, RenderTargetType::Texture, "NormalColor" }
         };
-        scomp::RenderTargets rts = m_ctx.rcommand.createRenderTargets(outputDescription);
-        m_scomps.renderTargets.at(scomp::RenderTargetsType::RTT_PICKING) = rts;
+        m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_PICKING, outputDescription);
     }
 
 	// Init CubeMesh
@@ -179,7 +187,7 @@ void App::initSingletonComponents() {
 		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
 		scomp::AttributeBuffer normalBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
 		std::array< comp::Transform, 15> translations; // TODO set to scene size
-		scomp::AttributeBuffer translationInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(translations.data(), static_cast<unsigned int>(translations.size()), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_POSITION);
+		scomp::AttributeBuffer translationInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(translations.data(), static_cast<unsigned int>(translations.size()), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_TRANSLATION);
 
 		// Vertex & Index buffers
 		scomp::AttributeBuffer attributeBuffers[] = {
@@ -242,6 +250,5 @@ void App::handleSDLEvents() {
 //////////////////////////// GETTERS & SETTERS //////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-SDL_Window* App::getWindow() const { return m_window; }
 bool App::isRunning() const { return m_running; }
 void App::exit() { m_running = false; }

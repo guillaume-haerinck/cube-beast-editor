@@ -20,6 +20,11 @@ namespace scomp {
 		unsigned int shaderId;
 	};
 
+    enum PipelineIndex {
+        PIP_BASIC = 0,
+        _PIP_MAX
+    };
+
 	/**
 	 * @brief An OpenGL object which store a vertex shader with a pixel shader with their constant buffers
 	 */

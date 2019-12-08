@@ -2,12 +2,13 @@
 
 #include <vector>
 #include <string>
-#include "scomponents/graphics/materials.h"
+
+#include "graphics/pipeline-input-description.h"
 
 namespace scomp {
 	enum class AttributeBufferType {
 		PER_VERTEX_ANY = 0,
-		PER_INSTANCE_POSITION
+		PER_INSTANCE_TRANSLATION
 	};
 
 	enum class AttributeBufferUsage {
@@ -33,7 +34,6 @@ namespace scomp {
 	 * @note Attributes are stored in separate buffers (PPP)(TTT)(NNN).
 	 *		 This instead of interleaved (PTNPTNPTN) or packed (PPPTTTNNN).
 	 */
-	// TODO store vertex input description
 	struct VertexBuffer {
 		std::vector<AttributeBuffer> buffers;
 		unsigned int vertexArrayId;

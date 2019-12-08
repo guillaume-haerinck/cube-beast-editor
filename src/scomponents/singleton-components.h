@@ -16,9 +16,9 @@
  * @brief Global object used to store the state of the app
  */
 struct SingletonComponents {
-	std::vector<scomp::Pipeline> pipelines;
+	std::array<scomp::Pipeline, scomp::PipelineIndex::_PIP_MAX> pipelines;
 	std::array<scomp::ConstantBuffer, scomp::ConstantBufferIndex::_CONST_BUFFER_MAX> constantBuffers;
-    std::array<scomp::RenderTargets, scomp::RenderTargetsType::_RTT_MAX> renderTargets;
+    std::array<scomp::RenderTargets, scomp::RenderTargetsIndex::_RTT_MAX> renderTargets;
 	scomp::Mesh cubeMesh;
 	scomp::Camera camera;
 	scomp::Inputs inputs;

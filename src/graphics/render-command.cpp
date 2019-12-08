@@ -153,9 +153,7 @@ void RenderCommand::createConstantBuffer(scomp::ConstantBufferIndex index, unsig
 	m_scomps.constantBuffers.at(index) = cb;
 }
 
-comp::Pipeline RenderCommand::createPipeline(const char* VSfilePath, const char* FSfilePath, scomp::ConstantBufferIndex* cbIndices, unsigned int cbCount) const {
-	// TODO generate hash and check hashmap to see if pipeline already exist
-
+void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* VSfilePath, const char* FSfilePath, scomp::ConstantBufferIndex* cbIndices, unsigned int cbCount) const {
 	// Compile vertex shader
 	std::string shader = readTextFile(VSfilePath);
 	const char* src = shader.c_str();
@@ -218,15 +216,10 @@ comp::Pipeline RenderCommand::createPipeline(const char* VSfilePath, const char*
 	
 	// Save to singleton components
 	sPipeline.programIndex = programId;
-	m_scomps.pipelines.push_back(sPipeline);
-
-	// Return result
-	comp::Pipeline pipeline = {};
-	pipeline.sIndex = static_cast<unsigned int>(m_scomps.pipelines.size()) - 1;
-	return pipeline;
+	m_scomps.pipelines.at(index) = sPipeline;
 }
 
-scomp::RenderTargets RenderCommand::createRenderTargets(const PipelineOutputDescription& description) const {
+void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const PipelineOutputDescription& description) const {
 	// Create new framebuffer
 	unsigned int fb;
 	GLCall(glGenFramebuffers(1, &fb));
@@ -309,9 +302,10 @@ scomp::RenderTargets RenderCommand::createRenderTargets(const PipelineOutputDesc
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 
+    // Assign to singleton components
 	scomp::RenderTargets rts;
 	rts.frameBufferId = fb;
-	return rts;
+    m_scomps.renderTargets.at(index) = rts;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -326,9 +320,8 @@ void RenderCommand::bindIndexBuffer(const scomp::IndexBuffer& ib) const {
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib.bufferId));
 }
 
-void RenderCommand::bindPipeline(const comp::Pipeline& pipeline) const {
-	scomp::Pipeline sPipeline = m_scomps.pipelines.at(pipeline.sIndex);
-	GLCall(glUseProgram(sPipeline.programIndex));
+void RenderCommand::bindPipeline(const scomp::Pipeline& pipeline) const {
+	GLCall(glUseProgram(pipeline.programIndex));
 }
 
 void RenderCommand::bindRenderTargets(const scomp::RenderTargets rds) const {

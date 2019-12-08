@@ -8,7 +8,6 @@
 #include <string>
 
 #include "scomponents/singleton-components.h"
-#include "components/graphics/pipeline.h"
 #include "scomponents/graphics/constant-buffers.h"
 #include "scomponents/graphics/pipelines.h"
 #include "scomponents/graphics/mesh.h"
@@ -63,12 +62,12 @@ public:
 	/**
 	 * @brief Create a shader pipeline
 	 */
-	comp::Pipeline createPipeline(const char* VSfilePath, const char* FSfilePath, scomp::ConstantBufferIndex* cbIndices = nullptr, unsigned int cbCount = 0) const;
+	void createPipeline(scomp::PipelineIndex index, const char* VSfilePath, const char* FSfilePath, scomp::ConstantBufferIndex* cbIndices = nullptr, unsigned int cbCount = 0) const;
 
 	/**
 	 * @brief Allow a fragment shader to render to texture(s).
 	 */
-	scomp::RenderTargets createRenderTargets(const PipelineOutputDescription& description) const;
+	void createRenderTargets(scomp::RenderTargetsIndex index, const PipelineOutputDescription& description) const;
 
     ///////////////////////////////////////////////////////////////////////////
 	////////////////////////////////// BINDING ////////////////////////////////
@@ -80,7 +79,7 @@ public:
 	/**
 	 * @brief Will bind all the shaders of the said pipeline
 	 */
-	void bindPipeline(const comp::Pipeline& pipeline) const;
+	void bindPipeline(const scomp::Pipeline& pipeline) const;
 
 	void bindRenderTargets(const scomp::RenderTargets rds) const;
 

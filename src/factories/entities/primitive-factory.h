@@ -5,7 +5,6 @@
 #include "context.h"
 #include "components/physics/transform.h"
 #include "components/graphics/material.h"
-#include "components/graphics/pipeline.h"
 
 class PrimitiveFactory {
 public:
@@ -17,5 +16,4 @@ public:
 private:
     Context& m_ctx;
     comp::Material m_material;
-    comp::Pipeline m_pipeline;
 };

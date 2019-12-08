@@ -16,8 +16,6 @@ public:
 
     void update();
 
-public:
-    SDL_Window* getWindow() const;
     bool isRunning() const;
     void exit();
 
