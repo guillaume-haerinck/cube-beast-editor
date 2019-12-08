@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Framebuffer support
+- Entity selection from Framebuffer
 
 ## 2019-12-07
 

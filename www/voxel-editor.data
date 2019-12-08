@@ -2,30 +2,32 @@
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec3 translation;
+layout(location = 3) in uint entityId;
 
 layout (std140) uniform perFrame {
     lowp mat4 matViewProj;
 	lowp vec3 cameraPos;
 };
 
-out vec3 myValue;
+flat out uint id;
 
 void main() {
-	myValue = vec3(0, 0, 1);
+	id = entityId;
 	gl_Position = matViewProj * (vec4(position, 1.0) + vec4(translation, 1.0));
 }
 #version 300 es
-layout(location = 0) out lowp vec3 color;
+layout(location = 0) out uint color;
 
-in lowp vec3 myValue;
+flat in uint id;
 
 void main() {
-	color = myValue;
+	color = id;
 }
 #version 300 es
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec3 translation;
+layout(location = 3) in uint entityId;
 
 layout (std140) uniform perFrame {
     lowp mat4 matViewProj;

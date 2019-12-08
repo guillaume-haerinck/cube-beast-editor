@@ -6,6 +6,8 @@
     #include <glad/gles2.h>
 #endif
 
+#include <spdlog/spdlog.h>
+
 #include "graphics/constant-buffer.h"
 #include "components/graphics/material.h"
 
@@ -70,7 +72,11 @@ void RenderSystem::update() {
             // Temp
             unsigned int pixel;
             glReadBuffer(GL_COLOR_ATTACHMENT0);
-            glReadPixels(300, 300, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &pixel);
+            glReadPixels(m_scomps.inputs.mousePos.x, 500 - m_scomps.inputs.mousePos.y, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &pixel);
+            if (pixel != lastSelect) {
+                spdlog::info("Entity selected is: {}", pixel);
+                lastSelect = pixel;
+            }
             
             // Basic pass
             // TODO use picking pass and apply its texture on a quad to prevent multiple pass. Must use an ubershader

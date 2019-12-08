@@ -20,4 +20,5 @@ private:
 	SingletonComponents& m_scomps;
 	std::vector<glm::vec3> m_tempTranslations;
 	std::vector<met::entity> m_tempEntityIds;
+	met::entity lastSelect;
 };
