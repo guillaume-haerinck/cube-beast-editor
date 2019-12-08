@@ -1,14 +1,20 @@
 #include "viewport-layer.h"
 
+#include <met/met.hpp>
 #include <glm/glm.hpp>
 #include <imgui.h>
-#include "factories/entities/primitive-factory.h"
+
+#include "components/graphics/material.h"
+#include "components/physics/transform.h"
 
 ViewportLayer::ViewportLayer(Context& ctx) : m_ctx(ctx) {
-    PrimitiveFactory factory(ctx);
-    factory.createCube(glm::ivec3(0));
-    factory.createCube(glm::ivec3(-1));
-    factory.createCube(glm::ivec3(1));
+    comp::Material material;
+
+    for (int i = -1; i < 3; i++) {
+        met::entity entity = m_ctx.registry.create();
+        m_ctx.registry.assign<comp::Material>(entity, material);
+        m_ctx.registry.assign<comp::Transform>(entity, glm::ivec3(i));
+    }
 }
 
 ViewportLayer::~ViewportLayer() {}
