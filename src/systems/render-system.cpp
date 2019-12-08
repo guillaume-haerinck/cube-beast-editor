@@ -66,6 +66,13 @@ void RenderSystem::update() {
             m_ctx.rcommand.clear();
             m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_PICKING));
             m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
+
+            // Temp
+            /*
+            unsigned int pixel;
+            glReadBuffer(GL_COLOR_ATTACHMENT0);
+            glReadPixels(250, 250, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &pixel);
+            */
             
             // Basic pass
             // TODO use picking pass and apply its texture on a quad to prevent multiple pass. Must use an ubershader
