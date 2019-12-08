@@ -1,8 +1,8 @@
 #version 300 es
-layout(location = 0) out lowp vec3 color;
+layout(location = 0) out lowp uint color;
 
-in lowp vec3 myValue;
+flat in lowp uint id;
 
 void main() {
-	color = myValue;
+	color = id;
 }

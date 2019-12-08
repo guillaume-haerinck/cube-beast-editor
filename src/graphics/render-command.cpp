@@ -258,7 +258,7 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
         switch (target.usage) {
         case RenderTargetUsage::Color:
             if (target.type == RenderTargetType::Texture) {
-                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 500, 500, 0, GL_RGB, GL_UNSIGNED_BYTE, 0)); // TODO get width and height of window from scomps
+                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, 500, 500, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, 0)); // TODO get width and height of window from scomps
                 GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, textureId, 0));
             } else if (target.type == RenderTargetType::RenderBuffer) {
                 GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 500, 500)); // TODO get width and height of window from scomps
@@ -416,8 +416,8 @@ GLenum RenderCommand::shaderDataTypeToOpenGLBaseType(ShaderDataType type) const 
 	case ShaderDataType::Int2:     return GL_INT;
 	case ShaderDataType::Int3:     return GL_INT;
 	case ShaderDataType::Int4:     return GL_INT;
+	case ShaderDataType::UInt:     return GL_UNSIGNED_INT;
 	case ShaderDataType::Bool:     return GL_BOOL;
-	case ShaderDataType::None:	   break;
 	}
 
 	assert(false && "Unknown ShaderDataType!");
