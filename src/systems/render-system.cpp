@@ -38,7 +38,7 @@ void RenderSystem::update() {
     view.each([&](met::entity entity, comp::Material& material, comp::Transform& transform) {
         nbInstances++;
         m_tempTranslations.push_back(transform.position);
-        m_tempEntityIds.push_back(entity);
+        m_tempEntityIds.push_back((float)entity);
 
         if (nbInstances >= view.size()) {
             // Update instance buffers
@@ -50,7 +50,7 @@ void RenderSystem::update() {
                     break;
 
                 case scomp::AttributeBufferType::PER_INSTANCE_ENTITY_ID:
-                    m_ctx.rcommand.updateAttributeBuffer(buffer, m_tempEntityIds.data(), sizeof(met::entity) * nbInstances);
+                    m_ctx.rcommand.updateAttributeBuffer(buffer, m_tempEntityIds.data(), sizeof(float) * nbInstances);
                     m_tempEntityIds.clear();
                     break;
 
@@ -70,7 +70,7 @@ void RenderSystem::update() {
             // Temp
             unsigned int pixel;
             glReadBuffer(GL_COLOR_ATTACHMENT0);
-            glReadPixels(250, 250, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &pixel);
+            glReadPixels(300, 300, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &pixel);
             
             // Basic pass
             // TODO use picking pass and apply its texture on a quad to prevent multiple pass. Must use an ubershader

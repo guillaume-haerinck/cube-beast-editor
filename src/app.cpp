@@ -229,7 +229,7 @@ void App::initSingletonComponents() {
 			{ ShaderDataType::Float3, "Position" },
 			{ ShaderDataType::Float3, "Normal" },
 			{ ShaderDataType::Float3, "Translation", BufferElementUsage::PerInstance },
-			{ ShaderDataType::UInt, "EntityId", BufferElementUsage::PerInstance }
+			{ ShaderDataType::Float, "EntityId", BufferElementUsage::PerInstance }
 		};
 		scomp::AttributeBuffer attributeBuffers[] = {
 			positionBuffer, normalBuffer, translationInstanceBuffer, entityInstanceBuffer
