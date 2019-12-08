@@ -190,18 +190,21 @@ void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* VSfil
 	
 	// Check fs and vs link errors
 	GLCall(glValidateProgram(programId));
-	GLint isLinked = 0;
+	unsigned int isLinked = 0;
 	GLCall(glGetProgramiv(programId, GL_LINK_STATUS, (int*)&isLinked));
 	if (isLinked == GL_FALSE) {
-		GLint maxLength = 0;
-		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &maxLength);
+        spdlog::error("[createPipeline] Cannot link shaders '{}' and '{}'", VSfilePath, FSfilePath);
 
-		// FIXME
-		std::vector<GLchar> infoLog(maxLength);
-		glGetProgramInfoLog(programId, maxLength, &maxLength, &infoLog[0]);
-		glDeleteProgram(programId);
+        int length;
+        glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &length);
+        if (length > 0) {
+            std::vector<char> message(length + 1);
+            glGetProgramInfoLog(programId, length, &length, &message[0]);
+            std::string e(message.begin(), message.end());
+            spdlog::error("{}", e);
+        }
 
-		spdlog::error("[createPipeline] Cannot link shader !");
+        glDeleteProgram(programId);
 		debug_break();
 		assert(false);
 	}

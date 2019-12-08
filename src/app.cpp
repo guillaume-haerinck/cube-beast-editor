@@ -78,7 +78,6 @@ void App::update() {
 	
 	// Update imgui
     m_ctx.rcommand.unbindVertexBuffer();
-    m_ctx.rcommand.unbindRenderTargets();
 	for (ILayer* layer : m_layers) {
 		layer->update();
 	}
@@ -204,7 +203,7 @@ void App::initSingletonComponents() {
             scomp::ConstantBufferIndex::PER_FRAME
         };
         m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_BASIC, "res/shaders/basic.vert", "res/shaders/basic.frag", cbIndices, std::size(cbIndices));
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_PICKING, "res/shaders/basic.vert", "res/shaders/picking.frag", cbIndices, std::size(cbIndices));
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_PICKING, "res/shaders/picking.vert", "res/shaders/picking.frag", cbIndices, std::size(cbIndices));
     }
 
     // Init Render Targets

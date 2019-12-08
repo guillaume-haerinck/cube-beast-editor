@@ -1,6 +1,10 @@
 #version 300 es
-layout(location = 0) out lowp vec4 color;
+layout(location = 0) out lowp vec3 color;
+
+in FSInput {
+	lowp vec3 myValue;
+};
 
 void main() {
-	color = vec4(1, 1, 1, 1);
+	color = myValue;
 }
