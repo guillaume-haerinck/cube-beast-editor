@@ -13,7 +13,7 @@
 #include "scomponents/io/history.h"
 
 /**
- * @brief Global object used to store the state of the app
+ * @brief Global object used to store the state of the app. Is supposed to be read-only for vast-majority of systems.
  */
 struct SingletonComponents {
 	std::array<scomp::Pipeline, scomp::PipelineIndex::_PIP_MAX> pipelines;

@@ -100,6 +100,48 @@ void App::update() {
 ///////////////////////////// PRIVATE METHODS ///////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
+void App::handleSDLEvents() {
+    SDL_Event e;
+    while (SDL_PollEvent(&e)) {
+        ImGui_ImplSDL2_ProcessEvent(&e);
+        switch (e.type) {
+        case SDL_QUIT:
+            exit();
+            break;
+
+        case SDL_MOUSEWHEEL:
+            m_scomps.inputs.wheelDelta = e.wheel.y;
+            m_scomps.inputs.actionState.at(scomp::InputAction::CAM_DOLLY) = true;
+            break;
+
+        case SDL_MOUSEMOTION:
+        {
+            int newPosX = e.button.x;
+            int newPosY = e.button.y;
+            m_scomps.inputs.delta.x = m_scomps.inputs.mousePos.x - newPosX;
+            m_scomps.inputs.delta.y = m_scomps.inputs.mousePos.y - newPosY;
+            m_scomps.inputs.mousePos.x = static_cast<float>(newPosX);
+            m_scomps.inputs.mousePos.y = static_cast<float>(newPosY);
+            break;
+        }
+
+        case SDL_MOUSEBUTTONDOWN:
+            m_scomps.inputs.actionState.at(scomp::InputAction::CAM_ORBIT) = true;
+            break;
+
+        case SDL_MOUSEBUTTONUP:
+            m_scomps.inputs.actionState.at(scomp::InputAction::CAM_ORBIT) = false;
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
+        m_scomps.inputs.actionState.fill(false);
+    }
+}
 
 void App::initSDL() {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
@@ -201,48 +243,6 @@ void App::initSingletonComponents() {
 		mesh.ib = ib;
 		mesh.vb = vb;
 		m_scomps.cubeMesh = mesh;
-	}
-}
-
-void App::handleSDLEvents() {
-	SDL_Event e;
-	while (SDL_PollEvent(&e)) {
-		ImGui_ImplSDL2_ProcessEvent(&e);
-		switch (e.type) {
-		case SDL_QUIT:
-			exit();
-			break;
-
-		case SDL_MOUSEWHEEL:
-			m_scomps.inputs.wheelDelta = e.wheel.y;
-			m_scomps.inputs.actionState.at(scomp::InputAction::CAM_DOLLY) = true;
-			break;
-
-		case SDL_MOUSEMOTION: {
-			int newPosX = e.button.x;
-			int newPosY = e.button.y;
-			m_scomps.inputs.delta.x = m_scomps.inputs.mousePos.x - newPosX;
-			m_scomps.inputs.delta.y = m_scomps.inputs.mousePos.y - newPosY;
-			m_scomps.inputs.mousePos.x = static_cast<float>(newPosX);
-			m_scomps.inputs.mousePos.y = static_cast<float>(newPosY);
-			break;
-		}
-
-		case SDL_MOUSEBUTTONDOWN:
-			m_scomps.inputs.actionState.at(scomp::InputAction::CAM_ORBIT) = true;
-			break;
-
-		case SDL_MOUSEBUTTONUP:
-			m_scomps.inputs.actionState.at(scomp::InputAction::CAM_ORBIT) = false;
-			break;
-
-		default:
-			break;
-		}
-	}
-
-	if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
-		m_scomps.inputs.actionState.fill(false);
 	}
 }
 

@@ -125,6 +125,8 @@ scomp::IndexBuffer RenderCommand::createIndexBuffer(const void* indices, unsigne
 }
 
 void RenderCommand::createConstantBuffer(scomp::ConstantBufferIndex index, unsigned int byteWidth, void* data) const {
+    assert(byteWidth % 16 == 0 && "Constant Buffer byteWidth must be a multiple of 16 !");
+
 	std::string name = "";
 	switch (index) {
 		case scomp::PER_FRAME: name = "perFrame"; break;
@@ -146,7 +148,7 @@ void RenderCommand::createConstantBuffer(scomp::ConstantBufferIndex index, unsig
 
 	scomp::ConstantBuffer cb = {};
 	cb.bufferId = cbId;
-	cb.byteWidth = byteWidth; // TODO assert that it is a multiple of 16
+	cb.byteWidth = byteWidth;
 	cb.name = name;
 
 	// Save to singleton components
