@@ -11,15 +11,20 @@ enum class RenderTargetUsage {
     Color = 0, Depth, DepthStencil
 };
 
+enum class RenderTargetChannels {
+    R = 0, RG, RGB, RGBA
+};
+
 struct RenderTargetDescription {
     RenderTargetType type;
     RenderTargetUsage usage;
+    RenderTargetChannels channels;
     std::string name;
 
     RenderTargetDescription() {}
 
-    RenderTargetDescription(RenderTargetUsage usage, RenderTargetType type, std::string name) 
-        : usage(usage), type(type), name(name)
+    RenderTargetDescription(RenderTargetUsage usage, RenderTargetType type, RenderTargetChannels channels, std::string name) 
+        : usage(usage), type(type), channels(channels), name(name)
     {}
 };
 

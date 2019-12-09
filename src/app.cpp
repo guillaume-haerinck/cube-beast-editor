@@ -209,7 +209,7 @@ void App::initSingletonComponents() {
     // Init Render Targets
     {
         PipelineOutputDescription outputDescription = {
-            { RenderTargetUsage::Color, RenderTargetType::Texture, "EntityIdToColor" }
+            { RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetChannels::R, "EntityIdToColor" }
         };
         m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_PICKING, outputDescription);
     }

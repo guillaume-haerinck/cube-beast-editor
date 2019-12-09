@@ -258,10 +258,10 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
         switch (target.usage) {
         case RenderTargetUsage::Color:
             if (target.type == RenderTargetType::Texture) {
-                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, 500, 500, 0, GL_RED, GL_UNSIGNED_BYTE, 0)); // TODO get width and height of window from scomps
+                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, renderTargetChannelsToOpenGLInternalFormat(target.channels), 500, 500, 0, renderTargetChannelsToOpenGLBaseFormat(target.channels), GL_UNSIGNED_BYTE, 0)); // TODO get width and height of window from scomps
                 GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, textureId, 0));
             } else if (target.type == RenderTargetType::RenderBuffer) {
-                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_R8, 500, 500)); // TODO get width and height of window from scomps
+                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, renderTargetChannelsToOpenGLInternalFormat(target.channels), 500, 500)); // TODO get width and height of window from scomps
                 GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_RENDERBUFFER, rbo));
             }
             slot++;
@@ -269,10 +269,10 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
    
         case RenderTargetUsage::Depth:
             if (target.type == RenderTargetType::Texture) {
-                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 500, 500, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0)); // TODO get width and height of window from scomps
+                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, 500, 500, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0)); // TODO get width and height of window from scomps
                 GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureId, 0));
             } else if (target.type == RenderTargetType::RenderBuffer) {
-                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 500, 500)); // TODO get width and height of window from scomps
+                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 500, 500)); // TODO get width and height of window from scomps
                 GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo));
             }
             break;
@@ -433,6 +433,32 @@ GLenum RenderCommand::indexBufferDataTypeToOpenGLBaseType(scomp::IndexBuffer::da
 	}
 
 	assert(false && "Unknown indexBufferDataType!");
+	return 0;
+}
+
+GLenum RenderCommand::renderTargetChannelsToOpenGLInternalFormat(RenderTargetChannels channels) const {
+	switch (channels) {
+	case RenderTargetChannels::R : 		return GL_R8;
+	case RenderTargetChannels::RG : 	return GL_RG8;
+	case RenderTargetChannels::RGB : 	return GL_RGB8;
+	case RenderTargetChannels::RGBA : 	return GL_RGBA8;
+	default:	break;
+	}
+
+	assert(false && "Unknown RenderTargetChannels type !");
+	return 0;
+}
+
+GLenum RenderCommand::renderTargetChannelsToOpenGLBaseFormat(RenderTargetChannels channels) const {
+	switch (channels) {
+	case RenderTargetChannels::R : 		return GL_RED;
+	case RenderTargetChannels::RG : 	return GL_RG;
+	case RenderTargetChannels::RGB : 	return GL_RGB;
+	case RenderTargetChannels::RGBA : 	return GL_RGBA;
+	default:	break;
+	}
+
+	assert(false && "Unknown RenderTargetChannels type!");
 	return 0;
 }
 

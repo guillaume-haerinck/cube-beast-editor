@@ -111,6 +111,8 @@ private:
 	GLenum shaderDataTypeToOpenGLBaseType(ShaderDataType type) const;
 	std::string readTextFile(const char* filePath) const;
 	GLenum indexBufferDataTypeToOpenGLBaseType(scomp::IndexBuffer::dataType) const;
+	GLenum renderTargetChannelsToOpenGLInternalFormat(RenderTargetChannels channels) const;
+	GLenum renderTargetChannelsToOpenGLBaseFormat(RenderTargetChannels channels) const;
 
 private:
 	SingletonComponents& m_scomps;
