@@ -209,7 +209,7 @@ void App::initSingletonComponents() {
     // Init Render Targets
     {
         PipelineOutputDescription outputDescription = {
-            { RenderTargetUsage::Color, RenderTargetType::RenderBuffer, "EntityIdToColor" }
+            { RenderTargetUsage::Color, RenderTargetType::Texture, "EntityIdToColor" }
         };
         m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_PICKING, outputDescription);
     }
@@ -229,7 +229,7 @@ void App::initSingletonComponents() {
 			{ ShaderDataType::Float3, "Position" },
 			{ ShaderDataType::Float3, "Normal" },
 			{ ShaderDataType::Float3, "Translation", BufferElementUsage::PerInstance },
-			{ ShaderDataType::Float, "EntityId", BufferElementUsage::PerInstance }
+			{ ShaderDataType::Float, "EntityId", BufferElementUsage::PerInstance } // FIXME False but it works
 		};
 		scomp::AttributeBuffer attributeBuffers[] = {
 			positionBuffer, normalBuffer, translationInstanceBuffer, entityInstanceBuffer
