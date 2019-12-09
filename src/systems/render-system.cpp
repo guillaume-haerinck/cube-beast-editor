@@ -12,7 +12,7 @@
 #include "graphics/constant-buffer.h"
 #include "components/graphics/material.h"
 
-RenderSystem::RenderSystem(Context& context, SingletonComponents& scomps) : m_ctx(context), m_scomps(scomps) {
+RenderSystem::RenderSystem(Context& context, SingletonComponents& scomps) : m_ctx(context), m_scomps(scomps), lastSelect(0) {
     m_tempTranslations.reserve(15);
     m_tempEntityIds.reserve(15);
 }
@@ -41,7 +41,9 @@ void RenderSystem::update() {
     view.each([&](met::entity entity, comp::Material& material, comp::Transform& transform) {
         nbInstances++;
         m_tempTranslations.push_back(transform.position);
-        m_tempEntityIds.push_back(((entity & 0x000000FF) >> 0) / 255.0f);
+        // Up to 256 different entites because 1 color channel
+        // http://www.mbsoftworks.sk/tutorials/opengl3/18-3d-picking-pt1/
+        m_tempEntityIds.push_back((entity & 0xFF) / 255.0f);
 
         if (nbInstances >= view.size()) {
             // Update instance buffers
@@ -71,7 +73,7 @@ void RenderSystem::update() {
             m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
 
             // Temp
-            unsigned int pixel;
+            int pixel = 0;
             glReadBuffer(GL_COLOR_ATTACHMENT0);
             GLCall(glReadPixels(m_scomps.inputs.mousePos.x, 500 - m_scomps.inputs.mousePos.y, 1, 1, GL_RED, GL_UNSIGNED_BYTE, &pixel));
             if (pixel != lastSelect) {
