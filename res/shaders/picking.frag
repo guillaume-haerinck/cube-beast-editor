@@ -1,7 +1,7 @@
 #version 300 es
-layout(location = 0) out uint color;
+layout(location = 0) out lowp float color;
 
-flat in uint id;
+in lowp float id;
 
 void main() {
 	color = id;

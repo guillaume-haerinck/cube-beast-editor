@@ -12,3 +12,4 @@ command pattern for undo and redo
 per-vertex normals with a cube with 8 vertex is less efficient as we have to interpolate between 4 each time to get surface normal
 rename opengl Object to well known equivalent (uniform buffer object -> constant buffer | framebuffer -> renderTarget | vertex array -> deleted )
 Uber shader to make only one pass instead of multiple with lots of binding and unbinding (measure performance gain)
+Render target with ints are a pain to use (unknown values, clear different, etc), so cast entities to float to improve it

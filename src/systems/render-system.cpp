@@ -7,6 +7,7 @@
 #endif
 
 #include <spdlog/spdlog.h>
+#include "graphics/gl-exception.h"
 
 #include "graphics/constant-buffer.h"
 #include "components/graphics/material.h"
@@ -40,7 +41,7 @@ void RenderSystem::update() {
     view.each([&](met::entity entity, comp::Material& material, comp::Transform& transform) {
         nbInstances++;
         m_tempTranslations.push_back(transform.position);
-        m_tempEntityIds.push_back(entity);
+        m_tempEntityIds.push_back((float) entity);
 
         if (nbInstances >= view.size()) {
             // Update instance buffers
@@ -52,7 +53,7 @@ void RenderSystem::update() {
                     break;
 
                 case scomp::AttributeBufferType::PER_INSTANCE_ENTITY_ID:
-                    m_ctx.rcommand.updateAttributeBuffer(buffer, m_tempEntityIds.data(), sizeof(met::entity) * nbInstances);
+                    m_ctx.rcommand.updateAttributeBuffer(buffer, m_tempEntityIds.data(), sizeof(float) * nbInstances);
                     m_tempEntityIds.clear();
                     break;
 
@@ -72,7 +73,7 @@ void RenderSystem::update() {
             // Temp
             unsigned int pixel;
             glReadBuffer(GL_COLOR_ATTACHMENT0);
-            glReadPixels(m_scomps.inputs.mousePos.x, 500 - m_scomps.inputs.mousePos.y, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &pixel);
+            GLCall(glReadPixels(m_scomps.inputs.mousePos.x, 500 - m_scomps.inputs.mousePos.y, 1, 1, GL_RED, GL_UNSIGNED_BYTE, &pixel));
             if (pixel != lastSelect) {
                 spdlog::info("Entity selected is: {}", pixel);
                 lastSelect = pixel;
