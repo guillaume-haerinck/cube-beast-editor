@@ -195,7 +195,7 @@ Module['FS_createPath']('/res', 'shaders', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 387, "filename": "/res/shaders/picking.vert"}, {"start": 387, "audio": 0, "end": 495, "filename": "/res/shaders/picking.frag"}, {"start": 495, "audio": 0, "end": 851, "filename": "/res/shaders/basic.vert"}, {"start": 851, "audio": 0, "end": 1043, "filename": "/res/shaders/basic.frag"}], "remote_package_size": 1043, "package_uuid": "1860d6a1-9d33-49ba-b31a-61ed5aceda3f"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 387, "filename": "/res/shaders/picking.vert"}, {"start": 387, "audio": 0, "end": 495, "filename": "/res/shaders/picking.frag"}, {"start": 495, "audio": 0, "end": 851, "filename": "/res/shaders/basic.vert"}, {"start": 851, "audio": 0, "end": 1043, "filename": "/res/shaders/basic.frag"}], "remote_package_size": 1043, "package_uuid": "380014be-ad6f-4497-8012-66f2b25124eb"});
 
 })();
 

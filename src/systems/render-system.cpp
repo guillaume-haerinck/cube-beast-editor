@@ -41,7 +41,7 @@ void RenderSystem::update() {
     view.each([&](met::entity entity, comp::Material& material, comp::Transform& transform) {
         nbInstances++;
         m_tempTranslations.push_back(transform.position);
-        m_tempEntityIds.push_back((float) entity);
+        m_tempEntityIds.push_back(((entity & 0x000000FF) >> 0) / 255.0f);
 
         if (nbInstances >= view.size()) {
             // Update instance buffers
