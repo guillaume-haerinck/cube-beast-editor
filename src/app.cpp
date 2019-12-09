@@ -192,6 +192,13 @@ void App::initImgui() const {
 }
 
 void App::initSingletonComponents() {
+	const std::string uberShaderVS = 
+	    #include "graphics/uber-shader.vert"
+	;
+    const std::string uberShaderFS =
+        #include "graphics/uber-shader.frag"
+    ;
+
 	// Init Constant Buffers
 	{
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_FRAME, sizeof(cb::perFrame));
