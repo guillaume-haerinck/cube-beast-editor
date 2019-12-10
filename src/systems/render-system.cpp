@@ -1,18 +1,10 @@
 #include "render-system.h"
 
-#ifdef __EMSCRIPTEN__
-    #include <GLES3/gl3.h>
-#else
-    #include <glad/gles2.h>
-#endif
-
-#include <spdlog/spdlog.h>
-#include "graphics/gl-exception.h"
-
 #include "graphics/constant-buffer.h"
 #include "components/graphics/material.h"
+#include "components/physics/transform.h"
 
-RenderSystem::RenderSystem(Context& context, SingletonComponents& scomps) : m_ctx(context), m_scomps(scomps), lastSelect(0) {
+RenderSystem::RenderSystem(Context& context, SingletonComponents& scomps) : m_ctx(context), m_scomps(scomps) {
     m_tempTranslations.reserve(15);
     m_tempEntityIds.reserve(15);
 }
@@ -67,22 +59,13 @@ void RenderSystem::update() {
             m_ctx.rcommand.bindIndexBuffer(m_scomps.cubeMesh.ib);
 
             // Picking pass
-            m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_PICKING));
+            m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY));
             m_ctx.rcommand.clear();
             m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GEOMETRY));
             m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
-
-            // Temp
-            int pixel = 0;
-            glReadBuffer(GL_COLOR_ATTACHMENT0);
-            GLCall(glReadPixels(m_scomps.inputs.mousePos.x, 500 - m_scomps.inputs.mousePos.y, 1, 1, GL_RED, GL_UNSIGNED_BYTE, &pixel));
-            if (pixel != lastSelect) {
-                spdlog::info("Entity selected is: {}", pixel);
-                lastSelect = pixel;
-            }
             
             // Basic pass
-            // TODO use picking pass and apply its texture on a quad to prevent multiple pass. Must use an ubershader
+            // TODO use picking pass and apply its texture on a quad to prevent multiple drawIndexedInstances
             m_ctx.rcommand.unbindRenderTargets();
             m_ctx.rcommand.clear();
             m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING));

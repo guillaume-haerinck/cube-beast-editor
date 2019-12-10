@@ -2,7 +2,7 @@
 
 namespace scomp {
     enum RenderTargetsIndex {
-        RTT_PICKING = 0,
+        RTT_GEOMETRY = 0,
         _RTT_MAX
     };
 

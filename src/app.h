@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 
 #include "context.h"
-#include "layers/i-layer.h"
+#include "gui/i-gui.h"
 #include "systems/i-system.h"
 
 /**
@@ -34,6 +34,6 @@ private:
     
     Context m_ctx;
     SingletonComponents m_scomps;
-    std::vector<ILayer*> m_layers;
+    std::vector<IGui*> m_guis;
     std::vector<ISystem*> m_systems;
 };

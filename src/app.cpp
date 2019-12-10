@@ -13,7 +13,8 @@
 
 #include "systems/render-system.h"
 #include "systems/camera-system.h"
-#include "layers/viewport-layer.h"
+#include "systems/selection-system.h"
+#include "gui/viewport-gui.h"
 #include "graphics/primitive-data.h"
 #include "graphics/constant-buffer.h"
 #include "scomponents/graphics/render-targets.h"
@@ -35,18 +36,19 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 	// Order system updates
 	m_systems = {
 		new RenderSystem(m_ctx, m_scomps),
+		new SelectionSystem(m_ctx, m_scomps),
 		new CameraSystem(m_scomps)
 	};
 
     // Order GUIs
-    m_layers = {
-        new ViewportLayer(m_ctx)
+    m_guis = {
+        new ViewportGui(m_ctx)
     };
 }
 
 App::~App() {
-    for (ILayer* layer : m_layers) {
-        delete layer;
+    for (IGui* gui : m_guis) {
+        delete gui;
     }
 	for (ISystem* system : m_systems) {
 		delete system;
@@ -78,8 +80,8 @@ void App::update() {
 	
 	// Update imgui
     m_ctx.rcommand.unbindVertexBuffer();
-	for (ILayer* layer : m_layers) {
-		layer->update();
+	for (IGui* gui : m_guis) {
+		gui->update();
 	}
 	
 	// Render imgui
@@ -224,7 +226,7 @@ void App::initSingletonComponents() {
             { RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetChannels::R, "EntityIdToColor" },
 			{ RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetChannels::R, "Depth" }
         };
-        m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_PICKING, outputDescription);
+        m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_GEOMETRY, outputDescription);
     }
 
 	// Init CubeMesh

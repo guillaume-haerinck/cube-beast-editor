@@ -3,8 +3,8 @@
 /**
  * @brief Graphical user interfaces
  */
-class ILayer {
+class IGui {
 public:
-    virtual ~ILayer() {}
+    virtual ~IGui() {}
     virtual void update() = 0;
 };
