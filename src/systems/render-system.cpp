@@ -69,7 +69,7 @@ void RenderSystem::update() {
             // Picking pass
             m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_PICKING));
             m_ctx.rcommand.clear();
-            m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_PICKING));
+            m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GEOMETRY));
             m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
 
             // Temp
@@ -85,7 +85,7 @@ void RenderSystem::update() {
             // TODO use picking pass and apply its texture on a quad to prevent multiple pass. Must use an ubershader
             m_ctx.rcommand.unbindRenderTargets();
             m_ctx.rcommand.clear();
-            m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_BASIC));
+            m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING));
             m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
         }
     });

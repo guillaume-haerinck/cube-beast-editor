@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Setup Wasm build
 if (EMSCRIPTEN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2 -s USE_WEBGL2=1 --preload-file ../res -std=c++17")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2 -s USE_WEBGL2=1")
 endif()
 
 # /////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,6 @@ endif()
 if (NOT EMSCRIPTEN)
     add_library(GLAD STATIC "lib/glad/src/gles2.c")
 endif()
-add_library(STB_IMAGE STATIC "lib/stb_image/stb_image.cpp")
 file(GLOB_RECURSE IMGUI_SOURCES lib/imgui/*)
 add_library(IMGUI STATIC ${IMGUI_SOURCES})
 
@@ -67,7 +66,6 @@ set(EXECUTABLE_OUTPUT_PATH bin/${CMAKE_BUILD_TYPE})
 add_executable(${PROJECT_NAME} ${MY_SOURCES})
 target_link_libraries(
     ${PROJECT_NAME}
-    STB_IMAGE
     IMGUI
 )
 

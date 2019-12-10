@@ -1,3 +1,4 @@
+R"(
 #version 300 es
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
@@ -9,9 +10,8 @@ layout (std140) uniform perFrame {
 	lowp vec3 cameraPos;
 };
 
-out float id;
-
 void main() {
-	id = entityId;
 	gl_Position = matViewProj * (vec4(position, 1.0) + vec4(translation, 1.0));
 }
+
+)"

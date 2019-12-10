@@ -20,6 +20,7 @@ struct SingletonComponents {
 	std::array<scomp::ConstantBuffer, scomp::ConstantBufferIndex::_CONST_BUFFER_MAX> constantBuffers;
     std::array<scomp::RenderTargets, scomp::RenderTargetsIndex::_RTT_MAX> renderTargets;
 	scomp::Mesh cubeMesh;
+	scomp::Mesh planeMesh;
 	scomp::Camera camera;
 	scomp::Inputs inputs;
 };

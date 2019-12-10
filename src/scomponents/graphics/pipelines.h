@@ -21,8 +21,9 @@ namespace scomp {
 	};
 
     enum PipelineIndex {
-        PIP_BASIC = 0,
-        PIP_PICKING,
+		PIP_GEOMETRY = 0,
+        PIP_LIGHTING,
+		PIP_GUI,
         _PIP_MAX
     };
 

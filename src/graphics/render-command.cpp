@@ -2,9 +2,6 @@
 
 #include <spdlog/spdlog.h>
 #include <debug_break/debug_break.h>
-#include <sstream>
-#include <fstream>
-#include <stb_image/stb_image.h>
 
 #include "graphics/gl-exception.h"
 #include "graphics/constant-buffer.h"
@@ -155,28 +152,22 @@ void RenderCommand::createConstantBuffer(scomp::ConstantBufferIndex index, unsig
 	m_scomps.constantBuffers.at(index) = cb;
 }
 
-void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* VSfilePath, const char* FSfilePath, scomp::ConstantBufferIndex* cbIndices, unsigned int cbCount) const {
+void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* vsSrc, const char* fsSrc, scomp::ConstantBufferIndex* cbIndices, unsigned int cbCount) const {
 	// Compile vertex shader
-	std::string shader = readTextFile(VSfilePath);
-	const char* src = shader.c_str();
 	unsigned int vsId = glCreateShader(GL_VERTEX_SHADER);
-	GLCall(glShaderSource(vsId, 1, &src, nullptr));
+	GLCall(glShaderSource(vsId, 1, &vsSrc, nullptr));
 	GLCall(glCompileShader(vsId));
 	if (!hasShaderCompiled(vsId, GL_VERTEX_SHADER)) {
-		spdlog::info("[Shader] {}", VSfilePath);
-		spdlog::info("\n{}", shader);
+		spdlog::info("{}", vsSrc);
 		debug_break();
 	}
 
 	// Compile fragment shader
-	shader = readTextFile(FSfilePath);
-	src = shader.c_str();
 	unsigned int fsId = glCreateShader(GL_FRAGMENT_SHADER);
-	GLCall(glShaderSource(fsId, 1, &src, nullptr));
+	GLCall(glShaderSource(fsId, 1, &fsSrc, nullptr));
 	GLCall(glCompileShader(fsId));
 	if (!hasShaderCompiled(fsId, GL_FRAGMENT_SHADER)) {
-		spdlog::info("[Shader] {}", FSfilePath);
-		spdlog::info("\n{}", shader);
+		spdlog::info("\n{}", fsSrc);
 		debug_break();
 	}
 
@@ -193,7 +184,7 @@ void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* VSfil
 	unsigned int isLinked = 0;
 	GLCall(glGetProgramiv(programId, GL_LINK_STATUS, (int*)&isLinked));
 	if (isLinked == GL_FALSE) {
-        spdlog::error("[createPipeline] Cannot link shaders '{}' and '{}'", VSfilePath, FSfilePath);
+        spdlog::error("[createPipeline] Cannot link shaders");
 
         int length;
         glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &length);
@@ -202,7 +193,9 @@ void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* VSfil
             glGetProgramInfoLog(programId, length, &length, &message[0]);
             std::string e(message.begin(), message.end());
             spdlog::error("{}", e);
-        }
+        } else {
+			spdlog::info("'{} /n /n {}'", vsSrc, fsSrc);
+		}
 
         glDeleteProgram(programId);
 		debug_break();
@@ -462,16 +455,3 @@ GLenum RenderCommand::renderTargetChannelsToOpenGLBaseFormat(RenderTargetChannel
 	return 0;
 }
 
-std::string RenderCommand::readTextFile(const char* filePath) const {
-	std::ifstream fileStream(filePath);
-	if (!fileStream) {
-		spdlog::error("[readTextFile] Cannot load file : {}", filePath);
-		debug_break();
-		assert(false);
-	}
-
-	std::stringstream shaderStream;
-	shaderStream << fileStream.rdbuf();
-	fileStream.close();
-	return shaderStream.str();
-}

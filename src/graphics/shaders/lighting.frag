@@ -1,3 +1,4 @@
+R"(
 #version 300 es
 layout(location = 0) out lowp vec4 color;
 
@@ -9,3 +10,5 @@ layout (std140) uniform perFrame {
 void main() {
 	color = vec4(cameraPos, 1);
 }
+
+)"

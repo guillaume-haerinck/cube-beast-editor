@@ -192,13 +192,6 @@ void App::initImgui() const {
 }
 
 void App::initSingletonComponents() {
-	const std::string uberShaderVS = 
-	    #include "graphics/uber-shader.vert"
-	;
-    const std::string uberShaderFS =
-        #include "graphics/uber-shader.frag"
-    ;
-
 	// Init Constant Buffers
 	{
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_FRAME, sizeof(cb::perFrame));
@@ -206,11 +199,23 @@ void App::initSingletonComponents() {
 
     // Init pipelines
     {
+		const char* VSLighting = 
+			#include "graphics/shaders/lighting.vert"
+		;
+		const char* FSLighting =
+			#include "graphics/shaders/lighting.frag"
+		;
+		const char* VSGeo = 
+			#include "graphics/shaders/geometry.vert"
+		;
+		const char* FSGeo =
+			#include "graphics/shaders/geometry.frag"
+		;
         scomp::ConstantBufferIndex cbIndices[] = {
             scomp::ConstantBufferIndex::PER_FRAME
         };
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_BASIC, "res/shaders/basic.vert", "res/shaders/basic.frag", cbIndices, std::size(cbIndices));
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_PICKING, "res/shaders/picking.vert", "res/shaders/picking.frag", cbIndices, std::size(cbIndices));
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_LIGHTING, VSLighting, FSLighting, cbIndices, std::size(cbIndices));
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GEOMETRY, VSGeo, FSGeo, cbIndices, std::size(cbIndices));
     }
 
     // Init Render Targets
@@ -227,9 +232,9 @@ void App::initSingletonComponents() {
 		// Attributes
 		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
 		scomp::AttributeBuffer normalBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
-		std::array<comp::Transform, 15> translations; // TODO set to scene size
+		std::array<glm::vec3, 15> translations; // TODO set to scene size
 		scomp::AttributeBuffer translationInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(translations.data(), static_cast<unsigned int>(translations.size()), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_TRANSLATION);
-		std::array<met::entity, 15> entityIds;
+		std::array<float, 15> entityIds;
 		scomp::AttributeBuffer entityInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(entityIds.data(), static_cast<unsigned int>(entityIds.size()), sizeof(met::entity), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_ENTITY_ID);
 
 		// Vertex & Index buffers
