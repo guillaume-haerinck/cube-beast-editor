@@ -48,18 +48,18 @@ namespace cubeData {
         glm::vec3(0, 0,-1), glm::vec3(0, 0,-1), glm::vec3(0, 0,-1), glm::vec3(0, 0,-1)      // back
     };
 
-    // 0;0 ----- 1;0
-    //  |         |
-    //  |         |
-    //  |         |
     // 0;1 ----- 1;1
+    //  |         |
+    //  |         |
+    //  |         |
+    // 0;0 ----- 1;0
     const glm::vec2 texCoords[] = {
-        glm::vec2(1, 0), glm::vec2(0, 0), glm::vec2(0, 1), glm::vec2(1, 1), // front
-        glm::vec2(0, 0), glm::vec2(0, 1), glm::vec2(1, 1), glm::vec2(1, 0), // right
-        glm::vec2(1, 1), glm::vec2(1, 0), glm::vec2(0, 0), glm::vec2(0, 1), // top
-        glm::vec2(1, 0), glm::vec2(0, 0), glm::vec2(0, 1), glm::vec2(1, 1), // left
-        glm::vec2(0, 1), glm::vec2(1, 1), glm::vec2(1, 0), glm::vec2(0, 0), // bottom
-        glm::vec2(0, 1), glm::vec2(1, 1), glm::vec2(1, 0), glm::vec2(0, 0)  // back
+        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0),
+        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0),
+        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0),
+        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0),
+        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0),
+        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0)
     };
 
     const unsigned char indices[] = {
@@ -106,13 +106,13 @@ namespace squareData {
         glm::vec3(0, 0, 1), glm::vec3(0, 0, 1), glm::vec3(0, 0, 1), glm::vec3(0, 0, 1)
     };
 
-    // 0;0 ----- 1;0
-    //  |         |
-    //  |         |
-    //  |         |
     // 0;1 ----- 1;1
+    //  |         |
+    //  |         |
+    //  |         |
+    // 0;0 ----- 1;0
     const glm::vec2 texCoords[] = {
-        glm::vec2(1, 0), glm::vec2(0, 0), glm::vec2(0, 1), glm::vec2(1, 1)
+        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0)
     };
 
     const unsigned char indices[] = {
