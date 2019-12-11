@@ -31,6 +31,8 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 	initSDL();
     initImgui();
 	initSingletonComponents();
+
+	// Init opengl static states
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
@@ -223,19 +225,20 @@ void App::initSingletonComponents() {
 		;
         m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GEOMETRY, VSGeo, FSGeo, cbIndices);
 
-		// Gui
-		const char* VSGui = 
-			#include "graphics/shaders/gui.vert"
+		// Grid
+		const char* VSGrid = 
+			#include "graphics/shaders/grid.vert"
 		;
-		const char* FSGui =
-			#include "graphics/shaders/gui.frag"
+		const char* FSGrid =
+			#include "graphics/shaders/grid.frag"
 		;
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GUI, VSGui, FSGui, cbIndices);
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GRID, VSGrid, FSGrid, cbIndices);
     }
 
     // Init Render Targets
     {
         PipelineOutputDescription outputDescription = {
+			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetChannels::RGB, "Albedo" },
             { RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetChannels::RGB, "EntityIdToColor" },
 			{ RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetChannels::R, "Depth" }
         };

@@ -28,4 +28,6 @@ void SelectionSystem::update() {
         spdlog::info("Entity selected is: {}", selectId);
         m_lastSelect = selectId;
     }
+
+    // TODO raycast on grid if no cube selected
 }

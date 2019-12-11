@@ -5,6 +5,13 @@
 #include "components/physics/transform.h"
 #include "maths/casting.h"
 
+// Temp
+#ifdef __EMSCRIPTEN__
+	#include <GLES3/gl3.h>
+#else
+	#include <glad/gles2.h>
+#endif
+
 RenderSystem::RenderSystem(Context& context, SingletonComponents& scomps) : m_ctx(context), m_scomps(scomps) {
     m_tempTranslations.reserve(15);
     m_tempEntityIds.reserve(15);
@@ -69,21 +76,23 @@ void RenderSystem::update() {
     
     // Lighting pass
     {
-        // Lighting pass
-        // TODO use picking pass and apply its texture on a quad to prevent multiple drawIndexedInstances
+        m_ctx.rcommand.bindVertexBuffer(m_scomps.planeMesh.vb);
+        m_ctx.rcommand.bindIndexBuffer(m_scomps.planeMesh.ib);
         m_ctx.rcommand.unbindRenderTargets();
         m_ctx.rcommand.clear();
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING));
-        m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds.at(0));
+
+        m_ctx.rcommand.drawIndexed(m_scomps.planeMesh.ib.count, m_scomps.planeMesh.ib.type);
     }
 
-    // TODO loop through plane tag to update their instanced Modelmat buffers
-
-    // Gui pass
+    // Grid pass
     {
         m_ctx.rcommand.bindVertexBuffer(m_scomps.invertCubeMesh.vb);
         m_ctx.rcommand.bindIndexBuffer(m_scomps.invertCubeMesh.ib);
-        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GUI));
+        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GRID));
         m_ctx.rcommand.drawIndexed(m_scomps.invertCubeMesh.ib.count, m_scomps.invertCubeMesh.ib.type);
     }
 }

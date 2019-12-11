@@ -229,6 +229,7 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, fb));
 
     unsigned int slot = 0;
+	scomp::RenderTargets rts;
     for (const auto& target : description) {
         unsigned int rbo;
         unsigned int textureId;
@@ -239,11 +240,13 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
             GLCall(glBindTexture(GL_TEXTURE_2D, textureId));
             GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
             GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+			rts.textureIds.push_back(textureId);
             break;
 
         case RenderTargetType::RenderBuffer:
             GLCall(glGenRenderbuffers(1, &rbo));
             GLCall(glBindRenderbuffer(GL_RENDERBUFFER, rbo));
+			rts.renderBufferIds.push_back(rbo);
             break;
 
         default:
@@ -306,7 +309,6 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 
     // Assign to singleton components
-	scomp::RenderTargets rts;
 	rts.frameBufferId = fb;
     m_scomps.renderTargets.at(index) = rts;
 }

@@ -6,8 +6,11 @@ layout (std140) uniform perFrame {
 	lowp vec3 cameraPos;
 };
 
+uniform sampler2D g_albedo;
+in lowp vec2 v_texCoord;
+
 void main() {
-	color = vec4(cameraPos, 1);
+	color = texture(g_albedo, v_texCoord);
 }
 
 )"

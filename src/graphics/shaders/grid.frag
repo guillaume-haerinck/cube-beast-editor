@@ -8,7 +8,7 @@ precision highp float;
 uniform lowp sampler2D texture;
 
 // The interpolated texture coordinate for this fragment
-varying highp vec2 v_texCoord;
+in lowp vec2 v_texCoord;
 
 void main() {
     lowp vec4 col = texture2D(texture, v_texCoord);
