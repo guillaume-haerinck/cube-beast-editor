@@ -3,8 +3,7 @@
 #include <glm/glm.hpp>
 
 namespace voxmt {
-    glm::vec2 uintBitsToFloat2(unsigned int value);
+    glm::vec3 intToNormColor(int value);
 
-    unsigned int float2BitsToUInt(const glm::vec2& value);
-
+    int colorToInt(unsigned char r, unsigned char g, unsigned char b);
 }

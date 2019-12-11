@@ -93,5 +93,6 @@ endif()
 
 if (NOT EMSCRIPTEN)
     file(GLOB_RECURSE MY_TESTS test/*)
-    add_executable(${PROJECT_NAME}-tests ${MY_TESTS})
+	file(GLOB_RECURSE MY_MATHS src/maths/*)
+    add_executable(${PROJECT_NAME}-tests ${MY_TESTS} ${MY_MATHS})
 endif()
