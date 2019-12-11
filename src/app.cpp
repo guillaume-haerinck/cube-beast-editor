@@ -201,23 +201,35 @@ void App::initSingletonComponents() {
 
     // Init pipelines
     {
+		// Lighting
 		const char* VSLighting = 
 			#include "graphics/shaders/lighting.vert"
 		;
 		const char* FSLighting =
 			#include "graphics/shaders/lighting.frag"
 		;
+        std::vector<scomp::ConstantBufferIndex> cbIndices = {
+            scomp::ConstantBufferIndex::PER_FRAME
+        };
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_LIGHTING, VSLighting, FSLighting, cbIndices);
+
+		// Geometry
 		const char* VSGeo = 
 			#include "graphics/shaders/geometry.vert"
 		;
 		const char* FSGeo =
 			#include "graphics/shaders/geometry.frag"
 		;
-        std::vector<scomp::ConstantBufferIndex> cbIndices = {
-            scomp::ConstantBufferIndex::PER_FRAME
-        };
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_LIGHTING, VSLighting, FSLighting, cbIndices);
         m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GEOMETRY, VSGeo, FSGeo, cbIndices);
+
+		// Gui
+		const char* VSGui = 
+			#include "graphics/shaders/gui.vert"
+		;
+		const char* FSGui =
+			#include "graphics/shaders/gui.frag"
+		;
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GUI, VSGui, FSGui, cbIndices);
     }
 
     // Init Render Targets
@@ -235,7 +247,7 @@ void App::initSingletonComponents() {
 		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&squareData::positions, static_cast<unsigned int>(std::size(squareData::positions)), sizeof(glm::vec3));
 		scomp::AttributeBuffer texCoordBuffer = m_ctx.rcommand.createAttributeBuffer(&squareData::texCoords, static_cast<unsigned int>(std::size(squareData::texCoords)), sizeof(glm::vec2));
 		std::array<glm::mat4, 4> modelMats; // TODO set to max plane meshs
-		modelMats.fill(glm::mat4(1));
+		modelMats.fill(glm::scale(glm::mat4(1), glm::vec3(1, 2, 1)));
 		scomp::AttributeBuffer modelMatsBuffer = m_ctx.rcommand.createAttributeBuffer(modelMats.data(), static_cast<unsigned int>(modelMats.size()), sizeof(glm::mat4), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_MODEL_MAT);
 
 		// Vertex & Index buffers

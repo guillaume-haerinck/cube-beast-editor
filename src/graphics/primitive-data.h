@@ -83,7 +83,7 @@ namespace squareData {
     //  v2-------v3
     const glm::vec3 positions[] = {
         // v0,v1,v2,v3
-        glm::vec3(0.5, 0.5, 0.5), glm::vec3(-0.5, 0.5, 0.5), glm::vec3(-0.5, -0.5, 0.5), glm::vec3(0.5, -0.5, 0.5)
+        glm::vec3(0.5, 0.5, 0), glm::vec3(-0.5, 0.5, 0), glm::vec3(-0.5, -0.5, 0), glm::vec3(0.5, -0.5, 0)
     };
 
     //   X---------X
