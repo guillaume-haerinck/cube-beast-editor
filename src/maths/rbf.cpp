@@ -24,7 +24,7 @@ namespace voxmt {
 		return exp(-(eps*x)*(eps*x));
 	}
 
-/*
+
 	VectorXd VectorWi( const VectorXd &weight, const Point3D &listepoints, const std::string &RBF, const float eps) {
 		
 		MatrixXd D(listepoints.size(), listepoints.size());
@@ -58,10 +58,10 @@ namespace voxmt {
 		VectorXd W = D.colPivHouseholderQr().solve(weight);
 		return W ;
 	}
+/*
+	glm::ivec3 interpolation(const glm::ivec3 &values, const Point3D &listepoints, const std::string &RBF, const float eps, const VectorXd W){
 
-	VectorXd interpolation(const VectorXd &values, const Point3D &listepoints, const std::string &RBF, const float eps, const VectorXd W){
-
-		VectorXd FunctionValues (values);
+		glm::ivec3 FunctionValues (values);
 		int sum=0;
 		int phi ;
 		for (int l=0 ; l<values.size(); l++){
