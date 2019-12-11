@@ -3,14 +3,14 @@ R"(
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec3 translation;
-layout(location = 3) in float entityId;
+layout(location = 3) in vec3 entityId;
 
 layout (std140) uniform perFrame {
     lowp mat4 matViewProj;
 	lowp vec3 cameraPos;
 };
 
-out float id;
+out vec3 id;
 
 void main() {
 	id = entityId;

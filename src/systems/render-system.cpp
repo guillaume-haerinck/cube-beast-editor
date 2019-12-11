@@ -3,6 +3,7 @@
 #include "graphics/constant-buffer.h"
 #include "components/graphics/material.h"
 #include "components/physics/transform.h"
+#include "maths/casting.h"
 
 RenderSystem::RenderSystem(Context& context, SingletonComponents& scomps) : m_ctx(context), m_scomps(scomps) {
     m_tempTranslations.reserve(15);
@@ -33,9 +34,7 @@ void RenderSystem::update() {
     view.each([&](met::entity entity, comp::Material& material, comp::Transform& transform) {
         nbInstances++;
         m_tempTranslations.push_back(transform.position);
-        // Up to 256 different entites because 1 color channel
-        // http://www.mbsoftworks.sk/tutorials/opengl3/18-3d-picking-pt1/
-        m_tempEntityIds.push_back((entity & 0xFF) / 255.0f);
+        m_tempEntityIds.push_back(voxmt::intToNormColor(entity));
 
         if (nbInstances >= view.size()) {
             // Update instance buffers
@@ -47,7 +46,7 @@ void RenderSystem::update() {
                     break;
 
                 case scomp::AttributeBufferType::PER_INSTANCE_ENTITY_ID:
-                    m_ctx.rcommand.updateAttributeBuffer(buffer, m_tempEntityIds.data(), sizeof(float) * nbInstances);
+                    m_ctx.rcommand.updateAttributeBuffer(buffer, m_tempEntityIds.data(), sizeof(glm::vec3) * nbInstances);
                     m_tempEntityIds.clear();
                     break;
 

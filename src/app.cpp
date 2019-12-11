@@ -223,7 +223,7 @@ void App::initSingletonComponents() {
     // Init Render Targets
     {
         PipelineOutputDescription outputDescription = {
-            { RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetChannels::R, "EntityIdToColor" },
+            { RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetChannels::RGB, "EntityIdToColor" },
 			{ RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetChannels::R, "Depth" }
         };
         m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_GEOMETRY, outputDescription);
@@ -236,15 +236,15 @@ void App::initSingletonComponents() {
 		scomp::AttributeBuffer normalBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
 		std::array<glm::vec3, 15> translations; // TODO set to scene size
 		scomp::AttributeBuffer translationInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(translations.data(), static_cast<unsigned int>(translations.size()), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_TRANSLATION);
-		std::array<float, 15> entityIds;
-		scomp::AttributeBuffer entityInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(entityIds.data(), static_cast<unsigned int>(entityIds.size()), sizeof(met::entity), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_ENTITY_ID);
+		std::array<glm::vec3, 15> entityIds;
+		scomp::AttributeBuffer entityInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(entityIds.data(), static_cast<unsigned int>(entityIds.size()), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_ENTITY_ID);
 
 		// Vertex & Index buffers
 		PipelineInputDescription inputDescription = {
 			{ ShaderDataType::Float3, "Position" },
 			{ ShaderDataType::Float3, "Normal" },
 			{ ShaderDataType::Float3, "Translation", BufferElementUsage::PerInstance },
-			{ ShaderDataType::Float, "EntityId", BufferElementUsage::PerInstance }
+			{ ShaderDataType::Float3, "EntityId", BufferElementUsage::PerInstance }
 		};
 		scomp::AttributeBuffer attributeBuffers[] = {
 			positionBuffer, normalBuffer, translationInstanceBuffer, entityInstanceBuffer

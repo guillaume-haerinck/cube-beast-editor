@@ -9,8 +9,9 @@
 
 #include <spdlog/spdlog.h>
 #include "graphics/gl-exception.h"
+#include "maths/casting.h"
 
-SelectionSystem::SelectionSystem(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx), m_scomps(scomps) {}
+SelectionSystem::SelectionSystem(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx), m_scomps(scomps), m_lastSelect(0) {}
 
 SelectionSystem::~SelectionSystem() {}
 
@@ -18,11 +19,12 @@ void SelectionSystem::update() {
     // TODO cleanup
     m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY));
 
-    int pixel = 0;
+    unsigned char pixel[] = { 0, 0, 0 };
     glReadBuffer(GL_COLOR_ATTACHMENT0);
-    GLCall(glReadPixels(m_scomps.inputs.mousePos.x, 500 - m_scomps.inputs.mousePos.y, 1, 1, GL_RED, GL_UNSIGNED_BYTE, &pixel));
-    if (pixel != lastSelect) {
-        spdlog::info("Entity selected is: {}", pixel);
-        lastSelect = pixel;
+    GLCall(glReadPixels(m_scomps.inputs.mousePos.x, 500 - m_scomps.inputs.mousePos.y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixel));
+    unsigned int selectId = voxmt::colorToInt(pixel[0], pixel[1], 0);
+    if (selectId != m_lastSelect) {
+        spdlog::info("Entity selected is: {}", selectId);
+        m_lastSelect = selectId;
     }
 }
