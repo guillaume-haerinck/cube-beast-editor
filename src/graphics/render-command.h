@@ -62,7 +62,7 @@ public:
 	/**
 	 * @brief Create a shader pipeline
 	 */
-	void createPipeline(scomp::PipelineIndex index, const char* VSfilePath, const char* FSfilePath, scomp::ConstantBufferIndex* cbIndices = nullptr, unsigned int cbCount = 0) const;
+	void createPipeline(scomp::PipelineIndex index, const char* VSfilePath, const char* FSfilePath, const std::vector<scomp::ConstantBufferIndex>& cbIndices) const;
 
 	/**
 	 * @brief Allow a fragment shader to render to texture(s).

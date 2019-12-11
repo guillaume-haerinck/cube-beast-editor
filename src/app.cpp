@@ -213,11 +213,11 @@ void App::initSingletonComponents() {
 		const char* FSGeo =
 			#include "graphics/shaders/geometry.frag"
 		;
-        scomp::ConstantBufferIndex cbIndices[] = {
+        std::vector<scomp::ConstantBufferIndex> cbIndices = {
             scomp::ConstantBufferIndex::PER_FRAME
         };
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_LIGHTING, VSLighting, FSLighting, cbIndices, std::size(cbIndices));
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GEOMETRY, VSGeo, FSGeo, cbIndices, std::size(cbIndices));
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_LIGHTING, VSLighting, FSLighting, cbIndices);
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GEOMETRY, VSGeo, FSGeo, cbIndices);
     }
 
     // Init Render Targets

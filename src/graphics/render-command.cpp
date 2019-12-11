@@ -152,7 +152,7 @@ void RenderCommand::createConstantBuffer(scomp::ConstantBufferIndex index, unsig
 	m_scomps.constantBuffers.at(index) = cb;
 }
 
-void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* vsSrc, const char* fsSrc, scomp::ConstantBufferIndex* cbIndices, unsigned int cbCount) const {
+void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* vsSrc, const char* fsSrc, const std::vector<scomp::ConstantBufferIndex>& cbIndices) const {
 	// Compile vertex shader
 	unsigned int vsId = glCreateShader(GL_VERTEX_SHADER);
 	GLCall(glShaderSource(vsId, 1, &vsSrc, nullptr));
@@ -204,12 +204,12 @@ void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* vsSrc
 
 	// Link constant buffers
 	scomp::Pipeline sPipeline = {};
-	for (unsigned int i = 0; i < cbCount; i++) {
-		scomp::ConstantBuffer& cb = m_scomps.constantBuffers.at(cbIndices[i]);
+	for (size_t i = 0; i < cbIndices.size(); i++) {
+		scomp::ConstantBuffer& cb = m_scomps.constantBuffers.at(cbIndices.at(i));
 		unsigned int blockIndex = glGetUniformBlockIndex(programId, cb.name.c_str());
 		GLCall(glUniformBlockBinding(programId, blockIndex, i));
 		GLCall(glBindBufferBase(GL_UNIFORM_BUFFER, i, cb.bufferId));
-		sPipeline.constantBufferIndices.push_back(cbIndices[i]);
+		sPipeline.constantBufferIndices.push_back(cbIndices.at(i));
 	}
 	
 	// Save to singleton components
