@@ -54,27 +54,35 @@ void RenderSystem::update() {
                 default: break;
                 }
             }
-
-            m_ctx.rcommand.bindVertexBuffer(m_scomps.cubeMesh.vb);
-            m_ctx.rcommand.bindIndexBuffer(m_scomps.cubeMesh.ib);
-
-            // Geometry pass
-            m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY));
-            m_ctx.rcommand.clear();
-            m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GEOMETRY));
-            m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
-            
-            // Lighting pass
-            // TODO use picking pass and apply its texture on a quad to prevent multiple drawIndexedInstances
-            m_ctx.rcommand.unbindRenderTargets();
-            m_ctx.rcommand.clear();
-            m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING));
-            m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
         }
     });
 
-    // TODO loop through plane tag
-    m_ctx.rcommand.bindVertexBuffer(m_scomps.planeMesh.vb);
-    m_ctx.rcommand.bindIndexBuffer(m_scomps.planeMesh.ib);
-    //m_ctx.rcommand.drawIndexedInstances(m_scomps.planeMesh.ib.count, m_scomps.planeMesh.ib.type, 1);
+    // Geometry pass
+    {
+        m_ctx.rcommand.bindVertexBuffer(m_scomps.cubeMesh.vb);
+        m_ctx.rcommand.bindIndexBuffer(m_scomps.cubeMesh.ib);
+        m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY));
+        m_ctx.rcommand.clear();
+        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GEOMETRY));
+        m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
+    }
+    
+    // Lighting pass
+    {
+        // Lighting pass
+        // TODO use picking pass and apply its texture on a quad to prevent multiple drawIndexedInstances
+        m_ctx.rcommand.unbindRenderTargets();
+        m_ctx.rcommand.clear();
+        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING));
+        m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
+    }
+
+    // TODO loop through plane tag to update their instanced Modelmat buffers
+
+    // Gui pass
+    {
+        m_ctx.rcommand.bindVertexBuffer(m_scomps.planeMesh.vb);
+        m_ctx.rcommand.bindIndexBuffer(m_scomps.planeMesh.ib);
+        //m_ctx.rcommand.drawIndexedInstances(m_scomps.planeMesh.ib.count, m_scomps.planeMesh.ib.type, 1);
+    }
 }
