@@ -1,5 +1,4 @@
-R"(
-#version 300 es
+R"(#version 300 es
 layout(location = 0) out lowp vec4 color;
 
 // Default precision qualifier
