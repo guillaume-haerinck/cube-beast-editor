@@ -83,6 +83,7 @@ void App::update() {
 	
 	// Update imgui
     m_ctx.rcommand.unbindVertexBuffer();
+	m_ctx.rcommand.unbindRenderTargets();
 	for (IGui* gui : m_guis) {
 		gui->update();
 	}
