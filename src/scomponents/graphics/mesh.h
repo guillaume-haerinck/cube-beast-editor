@@ -9,7 +9,8 @@ namespace scomp {
 	enum class AttributeBufferType {
 		PER_VERTEX_ANY = 0,
 		PER_INSTANCE_TRANSLATION,
-		PER_INSTANCE_ENTITY_ID
+		PER_INSTANCE_ENTITY_ID,
+		PER_INSTANCE_MODEL_MAT
 	};
 
 	enum class AttributeBufferUsage {

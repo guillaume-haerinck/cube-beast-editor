@@ -30,7 +30,8 @@ void RenderSystem::update() {
     auto view = m_ctx.registry.view<comp::Material, comp::Transform>();
     unsigned int nbInstances = 0;
 
-    // All entities are using the same mesh and shaders
+    // All cubes are using the same mesh and shaders
+    // TODO use tag to only grab cubes
     view.each([&](met::entity entity, comp::Material& material, comp::Transform& transform) {
         nbInstances++;
         m_tempTranslations.push_back(transform.position);
@@ -57,13 +58,13 @@ void RenderSystem::update() {
             m_ctx.rcommand.bindVertexBuffer(m_scomps.cubeMesh.vb);
             m_ctx.rcommand.bindIndexBuffer(m_scomps.cubeMesh.ib);
 
-            // Picking pass
+            // Geometry pass
             m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY));
             m_ctx.rcommand.clear();
             m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GEOMETRY));
             m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
             
-            // Basic pass
+            // Lighting pass
             // TODO use picking pass and apply its texture on a quad to prevent multiple drawIndexedInstances
             m_ctx.rcommand.unbindRenderTargets();
             m_ctx.rcommand.clear();
@@ -71,4 +72,9 @@ void RenderSystem::update() {
             m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
         }
     });
+
+    // TODO loop through plane tag
+    m_ctx.rcommand.bindVertexBuffer(m_scomps.planeMesh.vb);
+    m_ctx.rcommand.bindIndexBuffer(m_scomps.planeMesh.ib);
+    //m_ctx.rcommand.drawIndexedInstances(m_scomps.planeMesh.ib.count, m_scomps.planeMesh.ib.type, 1);
 }
