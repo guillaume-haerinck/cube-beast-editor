@@ -239,7 +239,7 @@ void App::initSingletonComponents() {
     // Init Render Targets
     {
         PipelineOutputDescription outputDescription = {
-			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetChannels::RGB, "Albedo" },
+			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetChannels::RGBA, "Albedo" },
             { RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetChannels::RGB, "EntityIdToColor" },
 			{ RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetChannels::R, "Depth" }
         };

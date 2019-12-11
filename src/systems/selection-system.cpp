@@ -20,8 +20,9 @@ void SelectionSystem::update() {
     m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY));
 
     // TODO use blue channel to say which face is selected
+    // FIXME do not seems to detect color 2 from render target
     unsigned char pixel[] = { 0, 0, 0 };
-    glReadBuffer(GL_COLOR_ATTACHMENT1);
+    GLCall(glReadBuffer(GL_COLOR_ATTACHMENT1));
     GLCall(glReadPixels(m_scomps.inputs.mousePos.x, 500 - m_scomps.inputs.mousePos.y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixel));
     unsigned int selectId = voxmt::colorToInt(pixel[0], pixel[1], 0);
     if (selectId != m_lastSelect) {
