@@ -296,10 +296,12 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
         }
     }
 
-	// TODO
-	// Temp
-	unsigned int attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-	glDrawBuffers(2, attachments);
+	// Attach color targets to framebuffer
+	std::vector<unsigned int> attachments(slot);
+	for (unsigned int i = 0; i < slot; i++) {
+		attachments.at(i) = GL_COLOR_ATTACHMENT0 +  i;
+	}
+	GLCall(glDrawBuffers(slot, attachments.data()));
 	
 	// Check for errors
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
