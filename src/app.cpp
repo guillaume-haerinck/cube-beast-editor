@@ -229,11 +229,35 @@ void App::initSingletonComponents() {
         m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_GEOMETRY, outputDescription);
     }
 
+	// Init Plane Mesh
+	{
+		// Attributes
+		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&squareData::positions, static_cast<unsigned int>(std::size(squareData::positions)), sizeof(glm::vec3));
+		scomp::AttributeBuffer texCoordBuffer = m_ctx.rcommand.createAttributeBuffer(&squareData::texCoords, static_cast<unsigned int>(std::size(squareData::texCoords)), sizeof(glm::vec2));
+
+		// Vertex & Index buffers
+		PipelineInputDescription inputDescription = {
+			{ ShaderDataType::Float3, "Position" },
+			{ ShaderDataType::Float2, "TexCoord" }
+		};
+		scomp::AttributeBuffer attributeBuffers[] = {
+			positionBuffer, texCoordBuffer
+		};
+		scomp::VertexBuffer vb = m_ctx.rcommand.createVertexBuffer(inputDescription, attributeBuffers);
+		scomp::IndexBuffer ib = m_ctx.rcommand.createIndexBuffer(squareData::indices, static_cast<unsigned int>(std::size(squareData::indices)), scomp::IndexBuffer::dataType::UNSIGNED_BYTE);
+
+		// Save data
+		scomp::Mesh mesh;
+		mesh.ib = ib;
+		mesh.vb = vb;
+		m_scomps.planeMesh = mesh;
+	}
+
 	// Init CubeMesh
 	{
 		// Attributes
 		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
-		scomp::AttributeBuffer normalBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
+		scomp::AttributeBuffer normalBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::normals, static_cast<unsigned int>(std::size(cubeData::normals)), sizeof(glm::vec3));
 		std::array<glm::vec3, 15> translations; // TODO set to scene size
 		scomp::AttributeBuffer translationInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(translations.data(), static_cast<unsigned int>(translations.size()), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_TRANSLATION);
 		std::array<glm::vec3, 15> entityIds;

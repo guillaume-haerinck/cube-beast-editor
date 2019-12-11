@@ -19,6 +19,7 @@ void SelectionSystem::update() {
     // TODO cleanup
     m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY));
 
+    // TODO use blue channel to say which face is selected
     unsigned char pixel[] = { 0, 0, 0 };
     glReadBuffer(GL_COLOR_ATTACHMENT0);
     GLCall(glReadPixels(m_scomps.inputs.mousePos.x, 500 - m_scomps.inputs.mousePos.y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixel));
