@@ -295,6 +295,11 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
             break;
         }
     }
+
+	// TODO
+	// Temp
+	unsigned int attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	glDrawBuffers(2, attachments);
 	
 	// Check for errors
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
