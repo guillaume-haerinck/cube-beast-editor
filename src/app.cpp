@@ -32,6 +32,7 @@ App::App() : m_running(true), m_ctx(m_scomps) {
     initImgui();
 	initSingletonComponents();
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 
 	// Order system updates
 	m_systems = {
