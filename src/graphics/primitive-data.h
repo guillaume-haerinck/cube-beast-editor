@@ -70,6 +70,16 @@ namespace cubeData {
         16,17,18,  18,19,16,      // bottom
         20,21,22,  22,23,20		  // back
     };
+
+    // Inside the cube is drawn
+    const unsigned char invertIndices[] = {
+        0, 2, 1,   2, 0, 3,       // front
+        4, 6, 5,   6, 4, 7,       // right
+        8, 10,9,   10,8, 11,      // top
+        12,14,13,  14,12,15,      // left
+        16,18,17,  18,16,19,      // bottom
+        20,22,21,  22,20,23		  // back
+    };
 }
 
 /**

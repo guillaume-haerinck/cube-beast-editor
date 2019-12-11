@@ -246,18 +246,14 @@ void App::initSingletonComponents() {
 		// Attributes
 		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&squareData::positions, static_cast<unsigned int>(std::size(squareData::positions)), sizeof(glm::vec3));
 		scomp::AttributeBuffer texCoordBuffer = m_ctx.rcommand.createAttributeBuffer(&squareData::texCoords, static_cast<unsigned int>(std::size(squareData::texCoords)), sizeof(glm::vec2));
-		std::array<glm::mat4, 4> modelMats; // TODO set to max plane meshs
-		modelMats.fill(glm::scale(glm::mat4(1), glm::vec3(1, 2, 1)));
-		scomp::AttributeBuffer modelMatsBuffer = m_ctx.rcommand.createAttributeBuffer(modelMats.data(), static_cast<unsigned int>(modelMats.size()), sizeof(glm::mat4), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_MODEL_MAT);
 
 		// Vertex & Index buffers
 		PipelineInputDescription inputDescription = {
 			{ ShaderDataType::Float3, "Position" },
-			{ ShaderDataType::Float2, "TexCoord" },
-			{ ShaderDataType::Mat4, "ModelMat", BufferElementUsage::PerInstance },
+			{ ShaderDataType::Float2, "TexCoord" }
 		};
 		scomp::AttributeBuffer attributeBuffers[] = {
-			positionBuffer, texCoordBuffer, modelMatsBuffer
+			positionBuffer, texCoordBuffer
 		};
 		scomp::VertexBuffer vb = m_ctx.rcommand.createVertexBuffer(inputDescription, attributeBuffers);
 		scomp::IndexBuffer ib = m_ctx.rcommand.createIndexBuffer(squareData::indices, static_cast<unsigned int>(std::size(squareData::indices)), scomp::IndexBuffer::dataType::UNSIGNED_BYTE);
@@ -297,6 +293,30 @@ void App::initSingletonComponents() {
 		mesh.ib = ib;
 		mesh.vb = vb;
 		m_scomps.cubeMesh = mesh;
+	}
+
+	// Init Inverted CubeMesh
+	{
+		// Attributes
+		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
+		scomp::AttributeBuffer texCoordBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::texCoords, static_cast<unsigned int>(std::size(cubeData::texCoords)), sizeof(glm::vec2));
+
+		// Vertex & Index buffers
+		PipelineInputDescription inputDescription = {
+			{ ShaderDataType::Float3, "Position" },
+			{ ShaderDataType::Float2, "TexCoord" }
+		};
+		scomp::AttributeBuffer attributeBuffers[] = {
+			positionBuffer, texCoordBuffer
+		};
+		scomp::VertexBuffer vb = m_ctx.rcommand.createVertexBuffer(inputDescription, attributeBuffers);
+		scomp::IndexBuffer ib = m_ctx.rcommand.createIndexBuffer(cubeData::invertIndices, static_cast<unsigned int>(std::size(cubeData::invertIndices)), scomp::IndexBuffer::dataType::UNSIGNED_BYTE);
+
+		// Save data
+		scomp::Mesh mesh;
+		mesh.ib = ib;
+		mesh.vb = vb;
+		m_scomps.invertCubeMesh = mesh;
 	}
 }
 

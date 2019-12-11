@@ -81,9 +81,9 @@ void RenderSystem::update() {
 
     // Gui pass
     {
+        m_ctx.rcommand.bindVertexBuffer(m_scomps.invertCubeMesh.vb);
+        m_ctx.rcommand.bindIndexBuffer(m_scomps.invertCubeMesh.ib);
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GUI));
-        m_ctx.rcommand.bindVertexBuffer(m_scomps.planeMesh.vb);
-        m_ctx.rcommand.bindIndexBuffer(m_scomps.planeMesh.ib);
-        m_ctx.rcommand.drawIndexedInstances(m_scomps.planeMesh.ib.count, m_scomps.planeMesh.ib.type, 1);
+        m_ctx.rcommand.drawIndexed(m_scomps.invertCubeMesh.ib.count, m_scomps.invertCubeMesh.ib.type);
     }
 }

@@ -21,6 +21,7 @@ struct SingletonComponents {
     std::array<scomp::RenderTargets, scomp::RenderTargetsIndex::_RTT_MAX> renderTargets;
 	scomp::Mesh cubeMesh;
 	scomp::Mesh planeMesh;
+	scomp::Mesh invertCubeMesh;
 	scomp::Camera camera;
 	scomp::Inputs inputs;
 };
