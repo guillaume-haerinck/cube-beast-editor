@@ -1,17 +1,14 @@
 R"(#version 300 es
 layout(location = 0) out lowp vec4 color;
 
-// Default precision qualifier
 precision highp float;
 
-// This represents the current texture on the mesh
-uniform lowp sampler2D texture;
+uniform lowp sampler2D u_texture;
 
-// The interpolated texture coordinate for this fragment
 in lowp vec2 v_texCoord;
 
 void main() {
-    lowp vec4 col = texture(texture, v_texCoord);
+    lowp vec4 col = texture(u_texture, v_texCoord);
 
     float x = fract(v_texCoord.x * 5.0);
     float y = fract(v_texCoord.y * 5.0);
