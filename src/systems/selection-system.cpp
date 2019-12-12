@@ -19,22 +19,30 @@ void SelectionSystem::update() {
     // TODO cleanup
     m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY));
 
-    // TODO get good color attachment from render target
+    // TODO abstract
     unsigned char pixel[] = { 0, 0, 0 };
     GLCall(glReadBuffer(GL_COLOR_ATTACHMENT3));
     GLCall(glReadPixels(m_scomps.inputs.mousePos.x, 500 - m_scomps.inputs.mousePos.y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixel));
-    unsigned int selectId = voxmt::colorToInt(pixel[0], pixel[1], 0);
 
-    if (selectId != m_lastEntitySelect) {
-        spdlog::info("Entity selected is: {}", selectId);
-        m_lastEntitySelect = selectId;
-        m_scomps.hoveredEntity = selectId;
-    }
-
-    if (pixel[2] != m_lastFaceSelect) {
-        spdlog::info("Face selected is: {}", pixel[2]);
-        m_lastFaceSelect = pixel[2];
-    }
+    m_scomps.hoveredCube.id = voxmt::colorToInt(pixel[0], pixel[1], 0);
+    m_scomps.hoveredCube.face = colorToFace(pixel[2]);
 
     // TODO raycast on grid if no cube selected
+}
+
+scomp::Face SelectionSystem::colorToFace(unsigned char color) const {
+    spdlog::info("{}", color);
+    switch (color) {
+        case 0: return scomp::Face::NONE;
+        case 1: return scomp::Face::BACK;
+        case 2: return scomp::Face::RIGHT;
+        case 3: return scomp::Face::TOP;
+        case 4: return scomp::Face::FRONT;
+        case 5: return scomp::Face::LEFT;
+        case 6: return scomp::Face::BOTTOM;
+        default:
+            debug_break();
+            assert(false && "Unknown face picked");
+            return scomp::Face::NONE;
+    }
 }

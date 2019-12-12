@@ -1,5 +1,7 @@
 #include "render-system.h"
 
+#include <debug_break/debug_break.h>
+
 #include "graphics/constant-buffer.h"
 #include "components/graphics/material.h"
 #include "components/physics/transform.h"
@@ -107,10 +109,55 @@ void RenderSystem::update() {
         {
             cb::perNiMesh cbData;
             scomp::ConstantBuffer& perNiMeshCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_NI_MESH);
-            if (m_scomps.hoveredEntity != met::null_entity)
-                cbData.matWorld = glm::translate(glm::mat4(1), glm::vec3(static_cast<float>(m_scomps.hoveredEntity) - 2.5f));
-            else
+
+            if (m_scomps.hoveredCube.id != met::null_entity) {
+                comp::Transform trans = m_ctx.registry.get<comp::Transform>(m_scomps.hoveredCube.id);
+                glm::vec3 pos = static_cast<glm::vec3>(trans.position);
+
+                switch (m_scomps.hoveredCube.face) {
+                    case scomp::Face::FRONT:
+                        pos.z -= 0.5f;
+                        cbData.matWorld = glm::translate(glm::mat4(1), pos); 
+                        break;
+
+                    case scomp::Face::BACK:
+                        pos.z += 0.5f;
+                        cbData.matWorld = glm::translate(glm::mat4(1), pos);
+                        cbData.matWorld = glm::rotate(cbData.matWorld, glm::pi<float>(), glm::vec3(0, 1, 0));
+                        break;
+
+                    case scomp::Face::RIGHT:
+                        pos.x += 0.5;
+                        cbData.matWorld = glm::translate(glm::mat4(1), pos);
+                        cbData.matWorld = glm::rotate(cbData.matWorld, -glm::half_pi<float>(), glm::vec3(0, 1, 0));
+                        break;
+
+                    case scomp::Face::LEFT:
+                        pos.x -= 0.5;
+                        cbData.matWorld = glm::translate(glm::mat4(1), pos);
+                        cbData.matWorld = glm::rotate(cbData.matWorld, glm::half_pi<float>(), glm::vec3(0, 1, 0));
+                        break;
+
+                    case scomp::Face::TOP:
+                        pos.y += 0.5;
+                        cbData.matWorld = glm::translate(glm::mat4(1), pos);
+                        cbData.matWorld = glm::rotate(cbData.matWorld, glm::half_pi<float>(), glm::vec3(1, 0, 0));
+                        break;
+                    
+                    case scomp::Face::BOTTOM:
+                        pos.y -= 0.5;
+                        cbData.matWorld = glm::translate(glm::mat4(1), pos);
+                        cbData.matWorld = glm::rotate(cbData.matWorld, -glm::half_pi<float>(), glm::vec3(1, 0, 0));
+                        break;
+                    
+                    default:
+                        debug_break();
+                        assert(false && "Unknown hovered face");
+                        cbData.matWorld = glm::mat4(1);
+                }
+            } else {
                 cbData.matWorld = glm::scale(glm::mat4(1), glm::vec3(0));
+            }
 
             m_ctx.rcommand.updateConstantBuffer(perNiMeshCB, &cbData);
         }
