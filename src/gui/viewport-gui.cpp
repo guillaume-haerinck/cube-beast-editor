@@ -22,5 +22,10 @@ ViewportGui::~ViewportGui() {}
 void ViewportGui::update() {
     ImGui::Begin("Main debug window");
     ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    if (ImGui::Button("Show wireframe")) {
+    }
+    if (ImGui::Button("Disable wireframe")) {
+
+    }
     ImGui::End();
 }

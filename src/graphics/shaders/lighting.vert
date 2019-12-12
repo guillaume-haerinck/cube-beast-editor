@@ -6,7 +6,7 @@ out lowp vec2 v_texCoord;
 
 void main() {
 	v_texCoord = texCoord;
-	gl_Position = vec4((position + vec3(-0.5, -0.5, 0)) * 2.0, 1.0);
+	gl_Position = vec4((position + vec3(-0.5, -0.5, 0)) * 2.0, 1.0); // TODO dirty, use a constant buffer with a model mat
 }
 
 )"

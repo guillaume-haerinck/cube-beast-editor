@@ -12,6 +12,13 @@
  */
 namespace cb {
 	/**
+	 * @brief Constant buffer updated once per non instanced mesh
+	 */
+	struct perNiMesh {
+		glm::mat4x4 matWorld;
+	};
+
+	/**
 	 * @brief Constant buffer updated once per frame
 	 */
 	struct perFrame {

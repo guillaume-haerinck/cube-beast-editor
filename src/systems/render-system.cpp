@@ -95,4 +95,21 @@ void RenderSystem::update() {
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GRID));
         m_ctx.rcommand.drawIndexed(m_scomps.invertCubeMesh.ib.count, m_scomps.invertCubeMesh.ib.type);
     }
+
+    // Gui pass
+    {
+        m_ctx.rcommand.bindVertexBuffer(m_scomps.planeMesh.vb);
+        m_ctx.rcommand.bindIndexBuffer(m_scomps.planeMesh.ib);
+        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GUI));
+
+        // Update per non-instanced mesh constant buffer
+        {
+            cb::perNiMesh cbData;
+            scomp::ConstantBuffer& perNiMeshCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_NI_MESH);
+            cbData.matWorld = glm::translate(glm::mat4(1), glm::vec3(1, 1, -1.5));
+            m_ctx.rcommand.updateConstantBuffer(perNiMeshCB, &cbData);
+        }
+
+        m_ctx.rcommand.drawIndexed(m_scomps.planeMesh.ib.count, m_scomps.planeMesh.ib.type);
+    }
 }

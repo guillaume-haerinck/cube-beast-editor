@@ -200,6 +200,7 @@ void App::initImgui() const {
 void App::initSingletonComponents() {
 	// Init Constant Buffers
 	{
+		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_NI_MESH, sizeof(cb::perNiMesh));
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_FRAME, sizeof(cb::perFrame));
 	}
 
@@ -234,6 +235,16 @@ void App::initSingletonComponents() {
 			#include "graphics/shaders/grid.frag"
 		;
         m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GRID, VSGrid, FSGrid, cbIndices);
+
+		// Gui
+		const char* VSGui = 
+			#include "graphics/shaders/gui.vert"
+		;
+		const char* FSGui =
+			#include "graphics/shaders/gui.frag"
+		;
+		cbIndices.push_back(scomp::ConstantBufferIndex::PER_NI_MESH);
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GUI, VSGui, FSGui, cbIndices);
     }
 
     // Init Render Targets
