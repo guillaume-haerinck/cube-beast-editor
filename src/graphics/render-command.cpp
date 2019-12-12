@@ -21,6 +21,11 @@ RenderCommand::~RenderCommand() {
         glDeleteBuffers(1, &buffer.bufferId);
 	}
 
+	glDeleteVertexArrays(1, &m_scomps.invertCubeMesh.vb.vertexArrayId);
+	for (auto buffer : m_scomps.invertCubeMesh.vb.buffers) {
+        glDeleteBuffers(1, &buffer.bufferId);
+	}
+
 	for (auto pipeline : m_scomps.pipelines) {
 		glDeleteProgram(pipeline.programIndex);
 	}
