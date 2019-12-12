@@ -1,12 +1,14 @@
 R"(#version 300 es
 layout(location = 0) out lowp vec4 g_albedo;
 layout(location = 1) out lowp vec3 g_normal;
-layout(location = 2) out lowp vec3 g_id;
+layout(location = 2) out lowp vec3 g_worldPosition;
+layout(location = 3) out lowp vec3 g_id;
 
 precision lowp float;
 
 in lowp vec3 v_id;
 in lowp vec3 v_normal;
+in lowp vec3 v_worldPosition;
 
 float getFaceNumber(vec3 normal) {
 	if (normal.z >= 0.9)
@@ -27,8 +29,9 @@ float getFaceNumber(vec3 normal) {
 
 void main() {
 	g_id = vec3(v_id.xy, getFaceNumber(v_normal));
-	g_normal = v_normal;
+	g_normal = v_normal; // Use abs ? Because negative values are lost
 	g_albedo = vec4(abs(v_normal), 1);
+	g_worldPosition = v_worldPosition;
 }
 
 )"

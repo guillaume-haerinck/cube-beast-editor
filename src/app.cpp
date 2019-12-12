@@ -240,7 +240,8 @@ void App::initSingletonComponents() {
     {
         PipelineOutputDescription outputDescription = {
 			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetChannels::RGBA, "Geometry_Albedo" },
-			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetChannels::RGB, "Geometry_Normals" },
+			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetChannels::RGB, "Geometry_Normal" },
+			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetChannels::RGB, "Geometry_WorldPosition" },
             { RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetChannels::RGB, "EntityIdToColor" },
 			{ RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetChannels::R, "Depth" }
         };

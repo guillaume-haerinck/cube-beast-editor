@@ -11,10 +11,12 @@ layout (std140) uniform perFrame {
 
 out vec3 v_id;
 out vec3 v_normal;
+out vec3 v_worldPosition;
 
 void main() {
 	v_id = entityId;
 	v_normal = normal;
+	v_worldPosition = position + translation;
 	gl_Position = matViewProj * vec4(position + translation, 1.0);
 }
 
