@@ -28,6 +28,7 @@ void SelectionSystem::update() {
     if (selectId != m_lastEntitySelect) {
         spdlog::info("Entity selected is: {}", selectId);
         m_lastEntitySelect = selectId;
+        m_scomps.hoveredEntity = selectId;
     }
 
     if (pixel[2] != m_lastFaceSelect) {

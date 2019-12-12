@@ -24,4 +24,5 @@ struct SingletonComponents {
 	scomp::Mesh invertCubeMesh;
 	scomp::Camera camera;
 	scomp::Inputs inputs;
+	met::entity hoveredEntity;
 };

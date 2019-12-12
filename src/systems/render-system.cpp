@@ -98,6 +98,7 @@ void RenderSystem::update() {
 
     // Gui pass
     {
+        glDisable(GL_DEPTH_TEST);
         m_ctx.rcommand.bindVertexBuffer(m_scomps.planeMesh.vb);
         m_ctx.rcommand.bindIndexBuffer(m_scomps.planeMesh.ib);
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GUI));
@@ -106,10 +107,15 @@ void RenderSystem::update() {
         {
             cb::perNiMesh cbData;
             scomp::ConstantBuffer& perNiMeshCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_NI_MESH);
-            cbData.matWorld = glm::translate(glm::mat4(1), glm::vec3(1, 1, -1.5));
+            if (m_scomps.hoveredEntity != met::null_entity)
+                cbData.matWorld = glm::translate(glm::mat4(1), glm::vec3(static_cast<float>(m_scomps.hoveredEntity) - 2.5f));
+            else
+                cbData.matWorld = glm::scale(glm::mat4(1), glm::vec3(0));
+
             m_ctx.rcommand.updateConstantBuffer(perNiMeshCB, &cbData);
         }
 
         m_ctx.rcommand.drawIndexed(m_scomps.planeMesh.ib.count, m_scomps.planeMesh.ib.type);
+        glEnable(GL_DEPTH_TEST);
     }
 }
