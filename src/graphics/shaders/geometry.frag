@@ -9,7 +9,7 @@ in lowp vec3 v_normal;
 void main() {
 	g_id = v_id;
 	g_normal = v_normal;
-	g_albedo = vec4(v_normal, 1);
+	g_albedo = vec4(abs(v_normal), 1);
 }
 
 )"
