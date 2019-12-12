@@ -31,7 +31,6 @@ void SelectionSystem::update() {
 }
 
 scomp::Face SelectionSystem::colorToFace(unsigned char color) const {
-    spdlog::info("{}", color);
     switch (color) {
         case 0: return scomp::Face::NONE;
         case 1: return scomp::Face::BACK;
