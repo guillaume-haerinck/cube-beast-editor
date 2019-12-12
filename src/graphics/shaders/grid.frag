@@ -11,7 +11,7 @@ uniform lowp sampler2D texture;
 in lowp vec2 v_texCoord;
 
 void main() {
-    lowp vec4 col = texture2D(texture, v_texCoord);
+    lowp vec4 col = texture(texture, v_texCoord);
 
     float x = fract(v_texCoord.x * 5.0);
     float y = fract(v_texCoord.y * 5.0);
