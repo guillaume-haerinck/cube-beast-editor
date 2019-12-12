@@ -9,10 +9,12 @@ layout (std140) uniform perFrame {
 	lowp vec3 cameraPos;
 };
 
-out vec3 id;
+out vec3 v_id;
+out vec3 v_normal;
 
 void main() {
-	id = entityId;
+	v_id = entityId;
+	v_normal = normal;
 	gl_Position = matViewProj * vec4(position + translation, 1.0);
 }
 
