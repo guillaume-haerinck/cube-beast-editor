@@ -21,12 +21,12 @@ void SelectionSystem::update() {
 
     // TODO abstract
     // FIXME glReadPixels does not work on some computers
-    unsigned char pixel[] = { 0, 0, 0 };
+    unsigned char pixel[] = { 0, 0, 0, 0 };
     GLCall(glReadBuffer(GL_COLOR_ATTACHMENT3));
     GLCall(glReadPixels(m_scomps.inputs.mousePos.x, 500 - m_scomps.inputs.mousePos.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel));
 
-    m_scomps.hoveredCube.id = voxmt::colorToInt(pixel[0], pixel[1], 0);
-    m_scomps.hoveredCube.face = colorToFace(pixel[2]);
+    m_scomps.hoveredCube.id = voxmt::colorToInt(pixel[0], pixel[1], pixel[2]);
+    m_scomps.hoveredCube.face = colorToFace(pixel[3]);
 
     // TODO raycast on grid if no cube selected
 }
