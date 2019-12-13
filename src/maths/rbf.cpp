@@ -1,5 +1,5 @@
 #include "rbf.h"
-
+#include <glm/glm.hpp>
 #include <algorithm>
 #include <math.h>
 
@@ -30,7 +30,7 @@ namespace voxmt {
 	}
 
 
-	VectorXd VectorWi( const VectorXd &weight, const glm::ivec3 &listepoints, const std::string &RBF, const float eps) {
+	Eigen::VectorXd VectorWi( const Eigen::VectorXd &weight, const glm::ivec3 &listepoints, const std::string &RBF, const float eps) {
 		
 		MatrixXd D(listepoints.size(), listepoints.size());
 
@@ -60,7 +60,7 @@ namespace voxmt {
 
 		}
 
-		VectorXd W = D.colPivHouseholderQr().solve(weight);
+		Eigen::VectorXd W = D.colPivHouseholderQr().solve(weight);
 		return W ;
 	}
 
