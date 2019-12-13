@@ -17,17 +17,17 @@ namespace cubeData {
     //  v2------v3
     const glm::vec3 positions[] = {
         // Front v0,v1,v2,v3
-        glm::vec3(0.5, 0.5, 0.5), glm::vec3(-0.5, 0.5, 0.5), glm::vec3(-0.5, -0.5, 0.5), glm::vec3(0.5, -0.5, 0.5),
+        glm::vec3(1, 1, 1), glm::vec3(0, 1, 1), glm::vec3(0, 0, 1), glm::vec3(1, 0, 1),
         // Right v0,v3,v4,v5
-        glm::vec3(0.5, 0.5, 0.5), glm::vec3(0.5, -0.5, 0.5), glm::vec3(0.5, -0.5, -0.5), glm::vec3(0.5, 0.5, -0.5),
+        glm::vec3(1, 1, 1), glm::vec3(1, 0, 1), glm::vec3(1, 0, 0), glm::vec3(1, 1, 0),
         // Top v0,v5,v6,v1	
-        glm::vec3(0.5, 0.5, 0.5), glm::vec3(0.5, 0.5, -0.5), glm::vec3(-0.5, 0.5, -0.5), glm::vec3(-0.5, 0.5, 0.5), 
+        glm::vec3(1, 1, 1), glm::vec3(1, 1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 1, 1), 
         // Left v1,v6,v7,v2	
-        glm::vec3(-0.5, 0.5, 0.5), glm::vec3(-0.5, 0.5, -0.5), glm::vec3(-0.5, -0.5, -0.5), glm::vec3(-0.5, -0.5, 0.5),  
+        glm::vec3(0, 1, 1), glm::vec3(0, 1, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1),  
         // Bottom v7,v4,v3,v2
-        glm::vec3(-0.5, -0.5, -0.5), glm::vec3(0.5, -0.5, -0.5), glm::vec3(0.5, -0.5, 0.5), glm::vec3(-0.5, -0.5, 0.5), 
+        glm::vec3(0, 0, 0), glm::vec3(1, 0, 0), glm::vec3(1, 0, 1), glm::vec3(0, 0, 1), 
         // Back v4,v7,v6,v5	
-        glm::vec3(0.5, -0.5, -0.5), glm::vec3(-0.5, -0.5, -0.5), glm::vec3(-0.5, 0.5, -0.5), glm::vec3(0.5, 0.5, -0.5)
+        glm::vec3(1, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), glm::vec3(1, 1, 0)
     };
 
     //      |/      |/
@@ -54,12 +54,12 @@ namespace cubeData {
     //  |         |
     // 0;0 ----- 1;0
     const glm::vec2 texCoords[] = {
-        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0),
-        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0),
-        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0),
-        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0),
-        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0),
-        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0)
+        glm::vec2(1, 0), glm::vec2(0, 0), glm::vec2(0, 1), glm::vec2(1, 1),
+		glm::vec2(0, 0), glm::vec2(0, 1), glm::vec2(1, 1), glm::vec2(1, 0),
+		glm::vec2(1, 1), glm::vec2(1, 0), glm::vec2(0, 0), glm::vec2(0, 1),
+		glm::vec2(1, 0), glm::vec2(0, 0), glm::vec2(0, 1), glm::vec2(1, 1),
+		glm::vec2(0, 1), glm::vec2(1, 1), glm::vec2(1, 0), glm::vec2(0, 0),
+		glm::vec2(0, 1), glm::vec2(1, 1), glm::vec2(1, 0), glm::vec2(0, 0)
     };
 
     const unsigned char indices[] = {
@@ -93,7 +93,7 @@ namespace squareData {
     //  v2-------v3
     const glm::vec3 positions[] = {
         // v0,v1,v2,v3
-        glm::vec3(0.5, 0.5, 0), glm::vec3(-0.5, 0.5, 0), glm::vec3(-0.5, -0.5, 0), glm::vec3(0.5, -0.5, 0)
+        glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0), glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0)
     };
 
     //   X---------X

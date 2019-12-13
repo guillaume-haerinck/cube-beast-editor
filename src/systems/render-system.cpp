@@ -117,36 +117,30 @@ void RenderSystem::update() {
 
                 switch (m_scomps.hoveredCube.face) {
                     case scomp::Face::FRONT:
-                        pos.z -= 0.5f;
                         cbData.matWorld = glm::translate(glm::mat4(1), pos); 
                         break;
 
                     case scomp::Face::BACK:
-                        pos.z += 0.5f;
                         cbData.matWorld = glm::translate(glm::mat4(1), pos);
                         cbData.matWorld = glm::rotate(cbData.matWorld, glm::pi<float>(), glm::vec3(0, 1, 0));
                         break;
 
                     case scomp::Face::RIGHT:
-                        pos.x += 0.5;
                         cbData.matWorld = glm::translate(glm::mat4(1), pos);
                         cbData.matWorld = glm::rotate(cbData.matWorld, -glm::half_pi<float>(), glm::vec3(0, 1, 0));
                         break;
 
                     case scomp::Face::LEFT:
-                        pos.x -= 0.5;
                         cbData.matWorld = glm::translate(glm::mat4(1), pos);
                         cbData.matWorld = glm::rotate(cbData.matWorld, glm::half_pi<float>(), glm::vec3(0, 1, 0));
                         break;
 
                     case scomp::Face::TOP:
-                        pos.y += 0.5;
                         cbData.matWorld = glm::translate(glm::mat4(1), pos);
                         cbData.matWorld = glm::rotate(cbData.matWorld, glm::half_pi<float>(), glm::vec3(1, 0, 0));
                         break;
                     
                     case scomp::Face::BOTTOM:
-                        pos.y -= 0.5;
                         cbData.matWorld = glm::translate(glm::mat4(1), pos);
                         cbData.matWorld = glm::rotate(cbData.matWorld, -glm::half_pi<float>(), glm::vec3(1, 0, 0));
                         break;
