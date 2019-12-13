@@ -64,7 +64,7 @@ namespace voxmt {
 		return W ;
 	}
 
-	glm::ivec3 interpolation(const glm::ivec3 &values, const Point3D &listepoints, const std::string &RBF, const float eps, const VectorXd W){
+	glm::ivec3 interpolation(const glm::ivec3 &values, const Point3D &listepoints, const std::string &RBF, const float eps, const Eigen::VectorXd W){
 
 		glm::ivec3 FunctionValues (values);
 		int sum=0;
