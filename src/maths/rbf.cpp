@@ -32,10 +32,10 @@ namespace voxmt {
 
 	Eigen::VectorXd VectorWi( const Eigen::VectorXd &weight, const glm::ivec3 &listepoints, const std::string &RBF, const float eps) {
 		
-		MatrixXd D(listepoints.size(), listepoints.size());
+		Eigen::MatrixXd D(glm::length(listepoints), glm::length(listepoints));
 
-		for (int i=0; i< listepoints.size(); i++){
-			for(int j=0; j<listepoints.size();j++){
+		for (int i=0; i< glm::length(listepoints); i++){
+			for(int j=0; j< glm::length(listepoints);j++){
 				switch (std::string RBF) {
 					case "linear" :
 						D[i][j] = distance(listepoints[i], listepoints[j]);
@@ -69,7 +69,7 @@ namespace voxmt {
 		glm::ivec3 FunctionValues (values);
 		int sum=0;
 		int phi ;
-		for (int l=0 ; l<values.size(); l++){
+		for (int l=0 ; l< glm::length(values); l++){
 			sum=0;
 			FunctionValues[l][1] = values[l][1];
 			FunctionValues[l][2] = values[l][2];
@@ -100,5 +100,5 @@ namespace voxmt {
 		return FunctionValues;
 
 	}
-	*/
+	
 }
