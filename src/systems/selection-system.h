@@ -18,6 +18,4 @@ private:
 private:
     Context& m_ctx;
     SingletonComponents& m_scomps;
-    met::entity m_lastEntitySelect;
-    unsigned int m_lastFaceSelect;
 };

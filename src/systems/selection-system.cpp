@@ -11,7 +11,7 @@
 #include "graphics/gl-exception.h"
 #include "maths/casting.h"
 
-SelectionSystem::SelectionSystem(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx), m_scomps(scomps), m_lastEntitySelect(0), m_lastFaceSelect(0) {}
+SelectionSystem::SelectionSystem(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx), m_scomps(scomps) {}
 
 SelectionSystem::~SelectionSystem() {}
 
@@ -20,6 +20,7 @@ void SelectionSystem::update() {
     m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY));
 
     // TODO abstract
+    // FIXME glReadPixels does not work on some computers
     unsigned char pixel[] = { 0, 0, 0 };
     GLCall(glReadBuffer(GL_COLOR_ATTACHMENT3));
     GLCall(glReadPixels(m_scomps.inputs.mousePos.x, 500 - m_scomps.inputs.mousePos.y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixel));

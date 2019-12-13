@@ -14,6 +14,7 @@
 #include "systems/render-system.h"
 #include "systems/camera-system.h"
 #include "systems/selection-system.h"
+#include "systems/brushes/voxel-brush-system.h"
 #include "gui/viewport-gui.h"
 #include "graphics/primitive-data.h"
 #include "graphics/constant-buffer.h"
@@ -40,7 +41,8 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 	m_systems = {
 		new RenderSystem(m_ctx, m_scomps),
 		new SelectionSystem(m_ctx, m_scomps),
-		new CameraSystem(m_scomps)
+		new CameraSystem(m_scomps),
+		new VoxelBrushSystem(m_ctx, m_scomps)
 	};
 
     // Order GUIs
@@ -104,6 +106,10 @@ void App::update() {
 /////////////////////////////////////////////////////////////////////////////
 
 void App::handleSDLEvents() {
+	// TEMP
+	// FIXME find a better way to handle both one-time event and other which have to last multiple frame until interuption
+	m_scomps.inputs.actionState.at(scomp::InputAction::BRUSH_VOX_ADD) = false;
+
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         ImGui_ImplSDL2_ProcessEvent(&e);
@@ -134,6 +140,7 @@ void App::handleSDLEvents() {
 
         case SDL_MOUSEBUTTONUP:
             m_scomps.inputs.actionState.at(scomp::InputAction::CAM_ORBIT) = false;
+			m_scomps.inputs.actionState.at(scomp::InputAction::BRUSH_VOX_ADD) = true;
             break;
 
         default:
