@@ -28,7 +28,16 @@ void SelectionSystem::update() {
     m_scomps.hoveredCube.id = voxmt::colorToInt(pixel[0], pixel[1], pixel[2]);
     m_scomps.hoveredCube.face = colorToFace(pixel[3]);
 
-    spdlog::info("{} {}", m_scomps.inputs.NDCMousePos.x, m_scomps.inputs.NDCMousePos.y );
+    
+    // TODO raycast on grid. Need camera target etc
+    // http://antongerdelan.net/opengl/raycasting.html
+    glm::vec4 ray_clip = glm::vec4(m_scomps.inputs.NDCMousePos, -1.0, 1.0);
+    glm::vec4 ray_eye = glm::inverse(m_scomps.camera.proj) * ray_clip;
+    ray_eye = glm::vec4(ray_eye.x, ray_eye.y, -1.0, 0.0);
+    glm::vec4 ray_world = (glm::inverse(m_scomps.camera.view) * ray_eye);
+    ray_world = glm::normalize(ray_world);
+
+    // Got ray in world coordinates, now time to check for collision
 }
 
 scomp::Face SelectionSystem::colorToFace(unsigned char color) const {
