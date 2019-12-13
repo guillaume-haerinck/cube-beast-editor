@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: deps
-      run: sudo apt-get install libsdl2-dev libglu1-mesa-dev mesa-common-dev
+      run: sudo apt-get install --fix-missing libsdl2-dev libglu1-mesa-dev mesa-common-dev
     - name: cmake
       run: cmake .
     - name: make
