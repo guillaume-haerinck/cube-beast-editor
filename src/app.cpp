@@ -124,15 +124,14 @@ void App::handleSDLEvents() {
             break;
 
         case SDL_MOUSEMOTION:
-        {
-            int newPosX = e.button.x;
-            int newPosY = e.button.y;
-            m_scomps.inputs.delta.x = m_scomps.inputs.mousePos.x - newPosX;
-            m_scomps.inputs.delta.y = m_scomps.inputs.mousePos.y - newPosY;
-            m_scomps.inputs.mousePos.x = static_cast<float>(newPosX);
-            m_scomps.inputs.mousePos.y = static_cast<float>(newPosY);
+            m_scomps.inputs.delta.x = m_scomps.inputs.mousePos.x - e.button.x;
+            m_scomps.inputs.delta.y = m_scomps.inputs.mousePos.y - e.button.y;
+            m_scomps.inputs.mousePos.x = static_cast<float>(e.button.x);
+            m_scomps.inputs.mousePos.y = static_cast<float>(e.button.y);
+			m_scomps.inputs.NDCMousePos.x = ((e.button.x / 500.0f) - 0.5f) * 2.0f; // TODO get screensize from scomp
+			m_scomps.inputs.NDCMousePos.y = ((e.button.y / 500.0f) - 0.5f) * 2.0f;
             break;
-        }
+        
 
         case SDL_MOUSEBUTTONDOWN:
 			if (e.button.button == SDL_BUTTON_RIGHT)

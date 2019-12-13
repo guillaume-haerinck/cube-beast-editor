@@ -28,7 +28,7 @@ void SelectionSystem::update() {
     m_scomps.hoveredCube.id = voxmt::colorToInt(pixel[0], pixel[1], pixel[2]);
     m_scomps.hoveredCube.face = colorToFace(pixel[3]);
 
-    // TODO raycast on grid if no cube selected
+    spdlog::info("{} {}", m_scomps.inputs.NDCMousePos.x, m_scomps.inputs.NDCMousePos.y );
 }
 
 scomp::Face SelectionSystem::colorToFace(unsigned char color) const {
