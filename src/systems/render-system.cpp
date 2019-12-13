@@ -154,6 +154,8 @@ void RenderSystem::update() {
                 cbData.matWorld = glm::scale(glm::mat4(1), glm::vec3(0));
             }
 
+            // TEMP
+            cbData.matWorld = glm::scale(glm::mat4(1), glm::vec3(0));
             m_ctx.rcommand.updateConstantBuffer(perNiMeshCB, &cbData);
         }
 

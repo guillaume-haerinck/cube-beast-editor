@@ -28,5 +28,7 @@ void VoxelBrushSystem::update() {
                 assert(false && "Unknown hovered face");
         }
         m_ctx.registry.assign<comp::Transform>(entity, trans);
+    } else if (m_scomps.hoveredCube.id != met::null_entity && m_scomps.inputs.actionState.at(scomp::InputAction::BRUSH_VOX_REMOVE)) {
+        m_ctx.registry.destroy(m_scomps.hoveredCube.id);
     }
 }
