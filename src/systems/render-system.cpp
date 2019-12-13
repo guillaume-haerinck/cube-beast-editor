@@ -68,6 +68,7 @@ void RenderSystem::update() {
 
     // Geometry pass
     {
+        m_ctx.rcommand.enableDepthTest();
         m_ctx.rcommand.bindVertexBuffer(m_scomps.cubeMesh.vb);
         m_ctx.rcommand.bindIndexBuffer(m_scomps.cubeMesh.ib);
         m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY));
@@ -100,7 +101,7 @@ void RenderSystem::update() {
 
     // Gui pass
     {
-        glDisable(GL_DEPTH_TEST);
+        m_ctx.rcommand.disableDepthTest();
         m_ctx.rcommand.bindVertexBuffer(m_scomps.planeMesh.vb);
         m_ctx.rcommand.bindIndexBuffer(m_scomps.planeMesh.ib);
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GUI));

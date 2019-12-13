@@ -34,7 +34,6 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 	initSingletonComponents();
 
 	// Init opengl static states
-	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
 	// Order system updates
