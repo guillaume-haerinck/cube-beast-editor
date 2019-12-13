@@ -17,7 +17,8 @@ namespace scomp {
 	 * @note The layouts are accessible on the graphics/ConstantBuffer.h file
 	 */
 	enum ConstantBufferIndex {
-		PER_FRAME = 0,
+		PER_NI_MESH = 0,
+		PER_FRAME,
 		//PER_LIGHT_CHANGE,
 		//PER_COOK_MAT_CHANGE,
 		//PER_PHONG_MAT_CHANGE,

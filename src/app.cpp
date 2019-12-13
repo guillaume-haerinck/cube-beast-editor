@@ -14,6 +14,7 @@
 #include "systems/render-system.h"
 #include "systems/camera-system.h"
 #include "systems/selection-system.h"
+#include "systems/brushes/voxel-brush-system.h"
 #include "gui/viewport-gui.h"
 #include "graphics/primitive-data.h"
 #include "graphics/constant-buffer.h"
@@ -31,13 +32,16 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 	initSDL();
     initImgui();
 	initSingletonComponents();
-	glEnable(GL_DEPTH_TEST);
+
+	// Init opengl static states
+	glEnable(GL_CULL_FACE);
 
 	// Order system updates
 	m_systems = {
 		new RenderSystem(m_ctx, m_scomps),
 		new SelectionSystem(m_ctx, m_scomps),
-		new CameraSystem(m_scomps)
+		new CameraSystem(m_scomps),
+		new VoxelBrushSystem(m_ctx, m_scomps)
 	};
 
     // Order GUIs
@@ -80,6 +84,7 @@ void App::update() {
 	
 	// Update imgui
     m_ctx.rcommand.unbindVertexBuffer();
+	m_ctx.rcommand.unbindRenderTargets();
 	for (IGui* gui : m_guis) {
 		gui->update();
 	}
@@ -100,6 +105,10 @@ void App::update() {
 /////////////////////////////////////////////////////////////////////////////
 
 void App::handleSDLEvents() {
+	// TEMP
+	// FIXME find a better way to handle both one-time event and other which have to last multiple frame until interuption
+	m_scomps.inputs.actionState.at(scomp::InputAction::BRUSH_VOX_ADD) = false;
+
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         ImGui_ImplSDL2_ProcessEvent(&e);
@@ -130,6 +139,7 @@ void App::handleSDLEvents() {
 
         case SDL_MOUSEBUTTONUP:
             m_scomps.inputs.actionState.at(scomp::InputAction::CAM_ORBIT) = false;
+			m_scomps.inputs.actionState.at(scomp::InputAction::BRUSH_VOX_ADD) = true;
             break;
 
         default:
@@ -196,6 +206,7 @@ void App::initImgui() const {
 void App::initSingletonComponents() {
 	// Init Constant Buffers
 	{
+		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_NI_MESH, sizeof(cb::perNiMesh));
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_FRAME, sizeof(cb::perFrame));
 	}
 
@@ -222,6 +233,15 @@ void App::initSingletonComponents() {
 		;
         m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GEOMETRY, VSGeo, FSGeo, cbIndices);
 
+		// Grid
+		const char* VSGrid = 
+			#include "graphics/shaders/grid.vert"
+		;
+		const char* FSGrid =
+			#include "graphics/shaders/grid.frag"
+		;
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GRID, VSGrid, FSGrid, cbIndices);
+
 		// Gui
 		const char* VSGui = 
 			#include "graphics/shaders/gui.vert"
@@ -229,12 +249,16 @@ void App::initSingletonComponents() {
 		const char* FSGui =
 			#include "graphics/shaders/gui.frag"
 		;
+		cbIndices.push_back(scomp::ConstantBufferIndex::PER_NI_MESH);
         m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GUI, VSGui, FSGui, cbIndices);
     }
 
     // Init Render Targets
     {
         PipelineOutputDescription outputDescription = {
+			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetChannels::RGBA, "Geometry_Albedo" },
+			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetChannels::RGB, "Geometry_Normal" },
+			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetChannels::RGB, "Geometry_WorldPosition" },
             { RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetChannels::RGB, "EntityIdToColor" },
 			{ RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetChannels::R, "Depth" }
         };
@@ -246,18 +270,14 @@ void App::initSingletonComponents() {
 		// Attributes
 		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&squareData::positions, static_cast<unsigned int>(std::size(squareData::positions)), sizeof(glm::vec3));
 		scomp::AttributeBuffer texCoordBuffer = m_ctx.rcommand.createAttributeBuffer(&squareData::texCoords, static_cast<unsigned int>(std::size(squareData::texCoords)), sizeof(glm::vec2));
-		std::array<glm::mat4, 4> modelMats; // TODO set to max plane meshs
-		modelMats.fill(glm::scale(glm::mat4(1), glm::vec3(1, 2, 1)));
-		scomp::AttributeBuffer modelMatsBuffer = m_ctx.rcommand.createAttributeBuffer(modelMats.data(), static_cast<unsigned int>(modelMats.size()), sizeof(glm::mat4), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_MODEL_MAT);
 
 		// Vertex & Index buffers
 		PipelineInputDescription inputDescription = {
 			{ ShaderDataType::Float3, "Position" },
-			{ ShaderDataType::Float2, "TexCoord" },
-			{ ShaderDataType::Mat4, "ModelMat", BufferElementUsage::PerInstance },
+			{ ShaderDataType::Float2, "TexCoord" }
 		};
 		scomp::AttributeBuffer attributeBuffers[] = {
-			positionBuffer, texCoordBuffer, modelMatsBuffer
+			positionBuffer, texCoordBuffer
 		};
 		scomp::VertexBuffer vb = m_ctx.rcommand.createVertexBuffer(inputDescription, attributeBuffers);
 		scomp::IndexBuffer ib = m_ctx.rcommand.createIndexBuffer(squareData::indices, static_cast<unsigned int>(std::size(squareData::indices)), scomp::IndexBuffer::dataType::UNSIGNED_BYTE);
@@ -297,6 +317,30 @@ void App::initSingletonComponents() {
 		mesh.ib = ib;
 		mesh.vb = vb;
 		m_scomps.cubeMesh = mesh;
+	}
+
+	// Init Inverted CubeMesh
+	{
+		// Attributes
+		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
+		scomp::AttributeBuffer texCoordBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::texCoords, static_cast<unsigned int>(std::size(cubeData::texCoords)), sizeof(glm::vec2));
+
+		// Vertex & Index buffers
+		PipelineInputDescription inputDescription = {
+			{ ShaderDataType::Float3, "Position" },
+			{ ShaderDataType::Float2, "TexCoord" }
+		};
+		scomp::AttributeBuffer attributeBuffers[] = {
+			positionBuffer, texCoordBuffer
+		};
+		scomp::VertexBuffer vb = m_ctx.rcommand.createVertexBuffer(inputDescription, attributeBuffers);
+		scomp::IndexBuffer ib = m_ctx.rcommand.createIndexBuffer(cubeData::invertIndices, static_cast<unsigned int>(std::size(cubeData::invertIndices)), scomp::IndexBuffer::dataType::UNSIGNED_BYTE);
+
+		// Save data
+		scomp::Mesh mesh;
+		mesh.ib = ib;
+		mesh.vb = vb;
+		m_scomps.invertCubeMesh = mesh;
 	}
 }
 

@@ -23,6 +23,7 @@ namespace scomp {
     enum PipelineIndex {
 		PIP_GEOMETRY = 0,
         PIP_LIGHTING,
+		PIP_GRID,
 		PIP_GUI,
         _PIP_MAX
     };

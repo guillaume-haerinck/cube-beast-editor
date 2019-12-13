@@ -11,6 +11,7 @@
 #include "scomponents/graphics/render-targets.h"
 #include "scomponents/io/inputs.h"
 #include "scomponents/io/history.h"
+#include "scomponents/io/selection.h"
 
 /**
  * @brief Global object used to store the state of the app. Is supposed to be read-only for vast-majority of systems.
@@ -21,6 +22,8 @@ struct SingletonComponents {
     std::array<scomp::RenderTargets, scomp::RenderTargetsIndex::_RTT_MAX> renderTargets;
 	scomp::Mesh cubeMesh;
 	scomp::Mesh planeMesh;
+	scomp::Mesh invertCubeMesh;
 	scomp::Camera camera;
 	scomp::Inputs inputs;
+	scomp::Hovered hoveredCube;
 };

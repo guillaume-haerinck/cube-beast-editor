@@ -9,6 +9,8 @@ namespace scomp {
 		CAM_PAN,
 		CAM_DOLLY,
 		CAM_RESET,
+		BRUSH_VOX_ADD,
+		BRUSH_VOX_REMOVE,
 		_ACTION_MAX
 	};
 

@@ -21,6 +21,11 @@ RenderCommand::~RenderCommand() {
         glDeleteBuffers(1, &buffer.bufferId);
 	}
 
+	glDeleteVertexArrays(1, &m_scomps.invertCubeMesh.vb.vertexArrayId);
+	for (auto buffer : m_scomps.invertCubeMesh.vb.buffers) {
+        glDeleteBuffers(1, &buffer.bufferId);
+	}
+
 	for (auto pipeline : m_scomps.pipelines) {
 		glDeleteProgram(pipeline.programIndex);
 	}
@@ -36,6 +41,14 @@ RenderCommand::~RenderCommand() {
 
 void RenderCommand::clear() const {
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+}
+
+void RenderCommand::enableDepthTest() const {
+	GLCall(glEnable(GL_DEPTH_TEST));
+}
+
+void RenderCommand::disableDepthTest() const {
+	GLCall(glDisable(GL_DEPTH_TEST));
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -131,6 +144,7 @@ void RenderCommand::createConstantBuffer(scomp::ConstantBufferIndex index, unsig
 
 	std::string name = "";
 	switch (index) {
+		case scomp::PER_NI_MESH: name = "perNiMesh"; break;
 		case scomp::PER_FRAME: name = "perFrame"; break;
 		//case scomp::PER_PHONG_MAT_CHANGE: name = "perPhongMatChange"; break;
 		//case scomp::PER_COOK_MAT_CHANGE: name = "perCookMatChange"; break;
@@ -229,6 +243,7 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, fb));
 
     unsigned int slot = 0;
+	scomp::RenderTargets rts;
     for (const auto& target : description) {
         unsigned int rbo;
         unsigned int textureId;
@@ -239,11 +254,13 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
             GLCall(glBindTexture(GL_TEXTURE_2D, textureId));
             GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
             GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+			rts.textureIds.push_back(textureId);
             break;
 
         case RenderTargetType::RenderBuffer:
             GLCall(glGenRenderbuffers(1, &rbo));
             GLCall(glBindRenderbuffer(GL_RENDERBUFFER, rbo));
+			rts.renderBufferIds.push_back(rbo);
             break;
 
         default:
@@ -292,6 +309,13 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
             break;
         }
     }
+
+	// Attach color targets to framebuffer
+	std::vector<unsigned int> attachments(slot);
+	for (unsigned int i = 0; i < slot; i++) {
+		attachments.at(i) = GL_COLOR_ATTACHMENT0 +  i;
+	}
+	GLCall(glDrawBuffers(slot, attachments.data()));
 	
 	// Check for errors
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -306,7 +330,6 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 
     // Assign to singleton components
-	scomp::RenderTargets rts;
 	rts.frameBufferId = fb;
     m_scomps.renderTargets.at(index) = rts;
 }

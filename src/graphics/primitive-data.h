@@ -48,21 +48,31 @@ namespace cubeData {
         glm::vec3(0, 0,-1), glm::vec3(0, 0,-1), glm::vec3(0, 0,-1), glm::vec3(0, 0,-1)      // back
     };
 
-    // 0;0 ----- 1;0
-    //  |         |
-    //  |         |
-    //  |         |
     // 0;1 ----- 1;1
+    //  |         |
+    //  |         |
+    //  |         |
+    // 0;0 ----- 1;0
     const glm::vec2 texCoords[] = {
-        glm::vec2(1, 0), glm::vec2(0, 0), glm::vec2(0, 1), glm::vec2(1, 1), // front
-        glm::vec2(0, 0), glm::vec2(0, 1), glm::vec2(1, 1), glm::vec2(1, 0), // right
-        glm::vec2(1, 1), glm::vec2(1, 0), glm::vec2(0, 0), glm::vec2(0, 1), // top
-        glm::vec2(1, 0), glm::vec2(0, 0), glm::vec2(0, 1), glm::vec2(1, 1), // left
-        glm::vec2(0, 1), glm::vec2(1, 1), glm::vec2(1, 0), glm::vec2(0, 0), // bottom
-        glm::vec2(0, 1), glm::vec2(1, 1), glm::vec2(1, 0), glm::vec2(0, 0)  // back
+        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0),
+        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0),
+        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0),
+        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0),
+        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0),
+        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0)
     };
 
     const unsigned char indices[] = {
+        0, 2, 1,   2, 0, 3,       // front
+        4, 6, 5,   6, 4, 7,       // right
+        8, 10,9,   10,8, 11,      // top
+        12,14,13,  14,12,15,      // left
+        16,18,17,  18,16,19,      // bottom
+        20,22,21,  22,20,23		  // back
+    };
+
+    // Inside the cube is drawn
+    const unsigned char invertIndices[] = {
         0, 1, 2,   2, 3, 0,       // front
         4, 5, 6,   6, 7, 4,       // right
         8, 9, 10,  10,11,8,       // top
@@ -73,7 +83,7 @@ namespace cubeData {
 }
 
 /**
- * @brief Geometry data for a square
+ * @brief Geometry data for a square. Center of geometry is at v2, at bottom left.
  */
 namespace squareData {
     //  v1-------v0
@@ -96,13 +106,13 @@ namespace squareData {
         glm::vec3(0, 0, 1), glm::vec3(0, 0, 1), glm::vec3(0, 0, 1), glm::vec3(0, 0, 1)
     };
 
-    // 0;0 ----- 1;0
-    //  |         |
-    //  |         |
-    //  |         |
     // 0;1 ----- 1;1
+    //  |         |
+    //  |         |
+    //  |         |
+    // 0;0 ----- 1;0
     const glm::vec2 texCoords[] = {
-        glm::vec2(1, 0), glm::vec2(0, 0), glm::vec2(0, 1), glm::vec2(1, 1)
+        glm::vec2(1, 1), glm::vec2(0, 1), glm::vec2(0, 0), glm::vec2(1, 0)
     };
 
     const unsigned char indices[] = {

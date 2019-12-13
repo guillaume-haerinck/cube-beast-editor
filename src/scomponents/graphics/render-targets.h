@@ -11,5 +11,7 @@ namespace scomp {
 	 */
 	struct RenderTargets {
 		unsigned int frameBufferId;
+		std::vector<unsigned int> textureIds;
+		std::vector<unsigned int> renderBufferIds;
 	};
 }

@@ -1,9 +1,18 @@
 #include "render-system.h"
 
+#include <debug_break/debug_break.h>
+
 #include "graphics/constant-buffer.h"
 #include "components/graphics/material.h"
 #include "components/physics/transform.h"
 #include "maths/casting.h"
+
+// Temp
+#ifdef __EMSCRIPTEN__
+	#include <GLES3/gl3.h>
+#else
+	#include <glad/gles2.h>
+#endif
 
 RenderSystem::RenderSystem(Context& context, SingletonComponents& scomps) : m_ctx(context), m_scomps(scomps) {
     m_tempTranslations.reserve(15);
@@ -59,6 +68,7 @@ void RenderSystem::update() {
 
     // Geometry pass
     {
+        m_ctx.rcommand.enableDepthTest();
         m_ctx.rcommand.bindVertexBuffer(m_scomps.cubeMesh.vb);
         m_ctx.rcommand.bindIndexBuffer(m_scomps.cubeMesh.ib);
         m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY));
@@ -69,21 +79,91 @@ void RenderSystem::update() {
     
     // Lighting pass
     {
-        // Lighting pass
-        // TODO use picking pass and apply its texture on a quad to prevent multiple drawIndexedInstances
+        m_ctx.rcommand.bindVertexBuffer(m_scomps.planeMesh.vb);
+        m_ctx.rcommand.bindIndexBuffer(m_scomps.planeMesh.ib);
         m_ctx.rcommand.unbindRenderTargets();
         m_ctx.rcommand.clear();
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING));
-        m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds.at(0));
+
+        m_ctx.rcommand.drawIndexed(m_scomps.planeMesh.ib.count, m_scomps.planeMesh.ib.type);
     }
 
-    // TODO loop through plane tag to update their instanced Modelmat buffers
+    // Grid pass
+    {
+        m_ctx.rcommand.bindVertexBuffer(m_scomps.invertCubeMesh.vb);
+        m_ctx.rcommand.bindIndexBuffer(m_scomps.invertCubeMesh.ib);
+        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GRID));
+        m_ctx.rcommand.drawIndexed(m_scomps.invertCubeMesh.ib.count, m_scomps.invertCubeMesh.ib.type);
+    }
 
     // Gui pass
     {
-        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GUI));
+        m_ctx.rcommand.disableDepthTest();
         m_ctx.rcommand.bindVertexBuffer(m_scomps.planeMesh.vb);
         m_ctx.rcommand.bindIndexBuffer(m_scomps.planeMesh.ib);
-        m_ctx.rcommand.drawIndexedInstances(m_scomps.planeMesh.ib.count, m_scomps.planeMesh.ib.type, 1);
+        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GUI));
+
+        // Update per non-instanced mesh constant buffer
+        {
+            cb::perNiMesh cbData;
+            scomp::ConstantBuffer& perNiMeshCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_NI_MESH);
+
+            if (m_scomps.hoveredCube.id != met::null_entity) {
+                comp::Transform trans = m_ctx.registry.get<comp::Transform>(m_scomps.hoveredCube.id);
+                glm::vec3 pos = static_cast<glm::vec3>(trans.position);
+
+                switch (m_scomps.hoveredCube.face) {
+                    case scomp::Face::FRONT:
+                        pos.z -= 0.5f;
+                        cbData.matWorld = glm::translate(glm::mat4(1), pos); 
+                        break;
+
+                    case scomp::Face::BACK:
+                        pos.z += 0.5f;
+                        cbData.matWorld = glm::translate(glm::mat4(1), pos);
+                        cbData.matWorld = glm::rotate(cbData.matWorld, glm::pi<float>(), glm::vec3(0, 1, 0));
+                        break;
+
+                    case scomp::Face::RIGHT:
+                        pos.x += 0.5;
+                        cbData.matWorld = glm::translate(glm::mat4(1), pos);
+                        cbData.matWorld = glm::rotate(cbData.matWorld, -glm::half_pi<float>(), glm::vec3(0, 1, 0));
+                        break;
+
+                    case scomp::Face::LEFT:
+                        pos.x -= 0.5;
+                        cbData.matWorld = glm::translate(glm::mat4(1), pos);
+                        cbData.matWorld = glm::rotate(cbData.matWorld, glm::half_pi<float>(), glm::vec3(0, 1, 0));
+                        break;
+
+                    case scomp::Face::TOP:
+                        pos.y += 0.5;
+                        cbData.matWorld = glm::translate(glm::mat4(1), pos);
+                        cbData.matWorld = glm::rotate(cbData.matWorld, glm::half_pi<float>(), glm::vec3(1, 0, 0));
+                        break;
+                    
+                    case scomp::Face::BOTTOM:
+                        pos.y -= 0.5;
+                        cbData.matWorld = glm::translate(glm::mat4(1), pos);
+                        cbData.matWorld = glm::rotate(cbData.matWorld, -glm::half_pi<float>(), glm::vec3(1, 0, 0));
+                        break;
+                    
+                    default:
+                        debug_break();
+                        assert(false && "Unknown hovered face");
+                        cbData.matWorld = glm::mat4(1);
+                }
+            } else {
+                cbData.matWorld = glm::scale(glm::mat4(1), glm::vec3(0));
+            }
+
+            m_ctx.rcommand.updateConstantBuffer(perNiMeshCB, &cbData);
+        }
+
+        m_ctx.rcommand.drawIndexed(m_scomps.planeMesh.ib.count, m_scomps.planeMesh.ib.type);
+        glEnable(GL_DEPTH_TEST);
     }
 }
