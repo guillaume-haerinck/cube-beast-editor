@@ -12,12 +12,12 @@ public:
     DebugDraw(RenderCommand& rcommand, SingletonComponents& scomps);
     ~DebugDraw();
 
-    void addLines(const std::vector<glm::vec3>& lines);
+    void addLine(const glm::vec3& lineStart, const glm::vec3& lineEnd);
     void updateBuffer();
     unsigned int getCount() const;
 
 private:
     RenderCommand& m_rcommand;
     SingletonComponents& m_scomps;
-    std::vector<float> m_positions;
+    std::vector<glm::vec3> m_positions;
 };

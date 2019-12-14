@@ -47,11 +47,9 @@ void SelectionSystem::update() {
     glm::vec3 n = glm::vec3(-1, 0, 0); // Left plane normal from camera start
     glm::vec3 p0 = glm::vec3(0, 0, 0);
 
-    std::vector<glm::vec3> lines = {
-        glm::vec3(0, 0, 0)
-    };
-
-    m_ctx.ddraw.addLines(lines);
+    if (m_scomps.inputs.actionState.at(scomp::InputAction::BRUSH_VOX_ADD)) {
+        m_ctx.ddraw.addLine(m_scomps.camera.position, -ray_world * 5.0f);
+    }
 
     float perp = glm::dot(ray_world, n);
     if (perp < 0) {

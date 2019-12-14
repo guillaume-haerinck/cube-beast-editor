@@ -11,12 +11,13 @@ DebugDraw::~DebugDraw()
 {
 }
 
-void DebugDraw::addLines(const std::vector<glm::vec3>& lines) {
-    // TODO
+void DebugDraw::addLine(const glm::vec3& lineStart, const glm::vec3& lineEnd) {
+    m_positions.push_back(lineStart);
+    m_positions.push_back(lineEnd);
 }
 
 void DebugDraw::updateBuffer() {
-    // TODO
+    m_rcommand.updateAttributeBuffer(m_scomps.ddrawVb.buffers.at(0), m_positions.data(), sizeof(glm::vec3) * getCount());
 }
 
 unsigned int DebugDraw::getCount() const {

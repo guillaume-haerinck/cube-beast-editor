@@ -282,7 +282,11 @@ void App::initSingletonComponents() {
 	{
 		// Attributes
 		glm::vec3 positions[] = {
-        	glm::vec3(10, 10, 10), glm::vec3(0, 0, 0)
+        	glm::vec3(10, 10, 10), glm::vec3(0, 0, 0),
+			glm::vec3(10, 10, 10), glm::vec3(0, 0, 0),
+			glm::vec3(10, 10, 10), glm::vec3(0, 0, 0),
+			glm::vec3(10, 10, 10), glm::vec3(0, 0, 0),
+			glm::vec3(10, 10, 10), glm::vec3(0, 0, 0)
 		};
 		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(positions, static_cast<unsigned int>(std::size(positions)), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_VERTEX_ANY);
 		

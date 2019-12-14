@@ -168,6 +168,6 @@ void RenderSystem::update() {
         m_ctx.ddraw.updateBuffer();
         m_ctx.rcommand.bindVertexBuffer(m_scomps.ddrawVb);
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_DDRAW));
-        m_ctx.rcommand.drawLines(2);
+        m_ctx.rcommand.drawLines(m_ctx.ddraw.getCount());
     }
 }
