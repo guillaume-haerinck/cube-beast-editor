@@ -246,6 +246,15 @@ void App::initSingletonComponents() {
 		;
         m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GRID, VSGrid, FSGrid, cbIndices);
 
+		// Debug draw
+		const char* VSDdraw = 
+			#include "graphics/shaders/ddraw.vert"
+		;
+		const char* FSDdraw =
+			#include "graphics/shaders/ddraw.frag"
+		;
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_DDRAW, VSDdraw, FSDdraw, cbIndices);
+
 		// Gui
 		const char* VSGui = 
 			#include "graphics/shaders/gui.vert"
@@ -255,15 +264,6 @@ void App::initSingletonComponents() {
 		;
 		cbIndices.push_back(scomp::ConstantBufferIndex::PER_NI_MESH);
         m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GUI, VSGui, FSGui, cbIndices);
-
-		// Debug draw
-		const char* VSDdraw = 
-			#include "graphics/shaders/ddraw.vert"
-		;
-		const char* FSDdraw =
-			#include "graphics/shaders/ddraw.frag"
-		;
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_DDRAW, VSDdraw, FSDdraw, cbIndices);
     }
 
     // Init Render Targets

@@ -162,4 +162,12 @@ void RenderSystem::update() {
         m_ctx.rcommand.drawIndexed(m_scomps.planeMesh.ib.count, m_scomps.planeMesh.ib.type);
         glEnable(GL_DEPTH_TEST);
     }
+
+    // Debug draw pass
+    {
+        m_ctx.ddraw.updateBuffer();
+        m_ctx.rcommand.bindVertexBuffer(m_scomps.ddrawVb);
+        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_DDRAW));
+        m_ctx.rcommand.drawLines(2);
+    }
 }

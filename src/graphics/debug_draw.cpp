@@ -11,20 +11,14 @@ DebugDraw::~DebugDraw()
 {
 }
 
-void DebugDraw::drawLines(const std::vector<glm::vec3>& lines) {
-    m_rcommand.disableDepthTest();
-    m_rcommand.unbindRenderTargets();
-    m_rcommand.bindVertexBuffer(m_scomps.ddrawVb);
-    m_rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_DDRAW));
+void DebugDraw::addLines(const std::vector<glm::vec3>& lines) {
+    // TODO
+}
 
-    // Update per non-instanced mesh constant buffer
-    // TODO handle render in render system ?
-    {
-        cb::perNiMesh cbData;
-        scomp::ConstantBuffer& perNiMeshCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_NI_MESH);
-        cbData.matWorld = glm::mat4(1);
-        m_rcommand.updateConstantBuffer(perNiMeshCB, &cbData);
-    }
+void DebugDraw::updateBuffer() {
+    // TODO
+}
 
-    m_rcommand.drawLines(2);
+unsigned int DebugDraw::getCount() const {
+    return static_cast<unsigned int>(m_positions.size());
 }

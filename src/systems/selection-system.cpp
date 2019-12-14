@@ -51,7 +51,7 @@ void SelectionSystem::update() {
         glm::vec3(0, 0, 0)
     };
 
-    m_ctx.ddraw.drawLines(lines);
+    m_ctx.ddraw.addLines(lines);
 
     float perp = glm::dot(ray_world, n);
     if (perp < 0) {
