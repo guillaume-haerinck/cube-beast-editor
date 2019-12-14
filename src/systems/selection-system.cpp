@@ -29,15 +29,31 @@ void SelectionSystem::update() {
     m_scomps.hoveredCube.face = colorToFace(pixel[3]);
 
     
-    // TODO raycast on grid. Need camera target etc
+    ///////////////// TODO raycast ////////////////
     // http://antongerdelan.net/opengl/raycasting.html
+
+    // Camera ray to different coordinate systems
     glm::vec4 ray_clip = glm::vec4(m_scomps.inputs.NDCMousePos, -1.0, 1.0);
     glm::vec4 ray_eye = glm::inverse(m_scomps.camera.proj) * ray_clip;
     ray_eye = glm::vec4(ray_eye.x, ray_eye.y, -1.0, 0.0);
-    glm::vec4 ray_world = (glm::inverse(m_scomps.camera.view) * ray_eye);
-    ray_world = glm::normalize(ray_world);
+    glm::vec4 ray_worldW = (glm::inverse(m_scomps.camera.view) * ray_eye);
+    ray_worldW = glm::normalize(ray_worldW);
+    glm::vec3 ray_world = glm::vec3(ray_worldW.x, ray_worldW.y, ray_worldW.z);
 
-    // Got ray in world coordinates, now time to check for collision
+    //spdlog::info("Ray in world coord : {} {} {}", ray_world.x, ray_world.y, ray_world.z);
+
+    // TODO ray_world against plane of size 1 at 1, 1, 1 intersection.
+    // https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection
+    glm::vec3 n = glm::vec3(-1, 0, 0); // Left plane normal from camera start
+    glm::vec3 p0 = glm::vec3(0, 0, 0);
+
+    float perp = glm::dot(ray_world, n);
+    if (perp < 0) {
+        spdlog::info("Facing");
+    } else {
+        spdlog::info("behind");
+    }
+
 }
 
 scomp::Face SelectionSystem::colorToFace(unsigned char color) const {
