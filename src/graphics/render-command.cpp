@@ -387,6 +387,10 @@ void RenderCommand::updateAttributeBuffer(const scomp::AttributeBuffer& buffer, 
 ///////////////////////////////// DRAWING /////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
+void RenderCommand::drawLines(unsigned int count) const {
+	GLCall(glDrawArrays(GL_LINES, 0, count));
+}
+
 void RenderCommand::drawIndexed(unsigned int count, scomp::IndexBuffer::dataType type) const {
 	GLCall(glDrawElements(GL_TRIANGLES, count, indexBufferDataTypeToOpenGLBaseType(type), (void*) 0));
 }

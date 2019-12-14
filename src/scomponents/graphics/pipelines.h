@@ -25,6 +25,7 @@ namespace scomp {
         PIP_LIGHTING,
 		PIP_GRID,
 		PIP_GUI,
+		PIP_DDRAW,
         _PIP_MAX
     };
 

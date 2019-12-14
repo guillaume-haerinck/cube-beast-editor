@@ -106,6 +106,8 @@ public:
 	///////////////////////////////// DRAWING /////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
+	void drawLines(unsigned int count) const;
+
 	void drawIndexed(unsigned int count, scomp::IndexBuffer::dataType type) const;
 	void drawIndexedInstances(unsigned int indexCount, scomp::IndexBuffer::dataType type, unsigned int drawCount) const;
 

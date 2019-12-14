@@ -23,6 +23,7 @@ struct SingletonComponents {
 	scomp::Mesh cubeMesh;
 	scomp::Mesh planeMesh;
 	scomp::Mesh invertCubeMesh;
+	scomp::VertexBuffer ddrawVb;
 	scomp::Camera camera;
 	scomp::Inputs inputs;
 	scomp::Hovered hoveredCube;

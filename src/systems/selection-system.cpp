@@ -47,6 +47,12 @@ void SelectionSystem::update() {
     glm::vec3 n = glm::vec3(-1, 0, 0); // Left plane normal from camera start
     glm::vec3 p0 = glm::vec3(0, 0, 0);
 
+    std::vector<glm::vec3> lines = {
+        glm::vec3(0, 0, 0)
+    };
+
+    m_ctx.ddraw.drawLines(lines);
+
     float perp = glm::dot(ray_world, n);
     if (perp < 0) {
         spdlog::info("Facing");
