@@ -31,33 +31,22 @@ void SelectionSystem::update() {
     
     ///////////////// TODO raycast ////////////////
     // http://antongerdelan.net/opengl/raycasting.html
+    // https://stackoverflow.com/questions/20140711/picking-in-3d-with-ray-tracing-using-ninevehgl-or-opengl-i-phone
+    glm::mat4 toWorld = glm::inverse((m_scomps.camera.proj * m_scomps.camera.view));
+    glm::vec4 from = toWorld * glm::vec4(m_scomps.inputs.NDCMousePos, -1.0f, 1.0f);
+    glm::vec4 to = toWorld * glm::vec4(m_scomps.inputs.NDCMousePos, 1.0f, 1.0f);
+    from /= from.w; // perspective divide ("normalize" homogeneous coordinates)
+    to /= to.w;
+    glm::vec3 direction = glm::vec3(to - from);
 
-    // Camera ray to different coordinate systems
-    glm::vec4 ray_clip = glm::vec4(m_scomps.inputs.NDCMousePos, -1.0, 1.0);
-    glm::vec4 ray_eye = glm::inverse(m_scomps.camera.proj) * ray_clip;
-    ray_eye = glm::vec4(ray_eye.x, ray_eye.y, -1.0, 0.0);
-    glm::vec4 ray_worldW = (glm::inverse(m_scomps.camera.view) * ray_eye);
-    ray_worldW = glm::normalize(ray_worldW);
-    glm::vec3 ray_world = glm::vec3(ray_worldW.x, ray_worldW.y, ray_worldW.z);
-
-    //spdlog::info("Ray in world coord : {} {} {}", ray_world.x, ray_world.y, ray_world.z);
+    if (m_scomps.inputs.actionState.at(scomp::InputAction::BRUSH_VOX_ADD)) {
+        m_ctx.ddraw.addLine(m_scomps.camera.position, m_scomps.camera.position + direction * 2.0f);
+    }
 
     // TODO ray_world against plane of size 1 at 1, 1, 1 intersection.
     // https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection
     glm::vec3 n = glm::vec3(-1, 0, 0); // Left plane normal from camera start
-    glm::vec3 p0 = glm::vec3(0, 0, 0);
 
-    // FIXME not correct when moving apart
-    if (m_scomps.inputs.actionState.at(scomp::InputAction::BRUSH_VOX_ADD)) {
-        m_ctx.ddraw.addLine(m_scomps.camera.position, -ray_world * 5.0f);
-    }
-
-    float perp = glm::dot(ray_world, n);
-    if (perp < 0) {
-        // spdlog::info("Facing");
-    } else {
-        // spdlog::info("behind");
-    }
 
 }
 
