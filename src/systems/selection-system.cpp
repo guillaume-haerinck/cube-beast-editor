@@ -27,27 +27,35 @@ void SelectionSystem::update() {
 
     m_scomps.hoveredCube.id = voxmt::colorToInt(pixel[0], pixel[1], pixel[2]);
     m_scomps.hoveredCube.face = colorToFace(pixel[3]);
-
     
-    ///////////////// TODO raycast ////////////////
+    ///////////////// raycast ////////////////
     // http://antongerdelan.net/opengl/raycasting.html
     // https://stackoverflow.com/questions/20140711/picking-in-3d-with-ray-tracing-using-ninevehgl-or-opengl-i-phone
+    // https://www.youtube.com/watch?v=fQOeEA_8-u
+
     glm::mat4 toWorld = glm::inverse((m_scomps.camera.proj * m_scomps.camera.view));
     glm::vec4 from = toWorld * glm::vec4(m_scomps.inputs.NDCMousePos, -1.0f, 1.0f);
     glm::vec4 to = toWorld * glm::vec4(m_scomps.inputs.NDCMousePos, 1.0f, 1.0f);
     from /= from.w; // perspective divide ("normalize" homogeneous coordinates)
     to /= to.w;
-    glm::vec3 direction = glm::vec3(to - from);
-
+    
     if (m_scomps.inputs.actionState.at(scomp::InputAction::BRUSH_VOX_ADD)) {
-        m_ctx.ddraw.addLine(m_scomps.camera.position, m_scomps.camera.position + direction * 2.0f);
+        m_ctx.ddraw.addLine(from, to);
     }
 
-    // TODO ray_world against plane of size 1 at 1, 1, 1 intersection.
+    ////////////// intersection ///////////////
     // https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection
-    glm::vec3 n = glm::vec3(-1, 0, 0); // Left plane normal from camera start
+    // https://www.youtube.com/watch?v=fIu_8b2n8ZM
+    // https://www.youtube.com/watch?v=_P829ncXFZY
+    glm::vec3 planeNormal = glm::vec3(-1, 0, 0); // Left plane normal from camera start
+    glm::vec3 planePosition = glm::vec3(0);
+    glm::vec3 rayDirection = glm::normalize(glm::vec3(to - from)); // Get a normal vector from the two points
+    
+    glm::vec3 w = planePosition - glm::vec3(from);
+    float k = glm::dot(w, planeNormal) / glm::dot(rayDirection, planeNormal);
+    glm::vec3 intersection = glm::vec3(from) + rayDirection * k;
 
-
+    spdlog::info("Intersection point is at : {} {} {}", intersection.x, intersection.y, intersection.z);
 }
 
 scomp::Face SelectionSystem::colorToFace(unsigned char color) const {
