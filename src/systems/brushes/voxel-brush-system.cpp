@@ -17,17 +17,19 @@ void VoxelBrushSystem::update() {
         met::entity entity = m_ctx.registry.create();
         m_ctx.registry.assign<comp::Material>(entity, material);
 
-        switch (m_scomps.hovered.face) {
-            case scomp::Face::FRONT: trans.position.z--; break;
-            case scomp::Face::BACK: trans.position.z++; break;
-            case scomp::Face::RIGHT: trans.position.x++; break;
-            case scomp::Face::LEFT: trans.position.x--; break;
-            case scomp::Face::TOP: trans.position.y++; break;
-            case scomp::Face::BOTTOM: trans.position.y--; break;
-            case scomp::Face::NONE: break;
-            default:
-                debug_break();
-                assert(false && "Unknown hovered face");
+        if (m_scomps.hovered.isCube) {
+            switch (m_scomps.hovered.face) {
+                case scomp::Face::FRONT: trans.position.z--; break;
+                case scomp::Face::BACK: trans.position.z++; break;
+                case scomp::Face::RIGHT: trans.position.x++; break;
+                case scomp::Face::LEFT: trans.position.x--; break;
+                case scomp::Face::TOP: trans.position.y++; break;
+                case scomp::Face::BOTTOM: trans.position.y--; break;
+                case scomp::Face::NONE: break;
+                default:
+                    debug_break();
+                    assert(false && "Unknown hovered face");
+            }
         }
 
         m_ctx.registry.assign<comp::Transform>(entity, trans);
