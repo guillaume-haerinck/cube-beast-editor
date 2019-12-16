@@ -273,10 +273,10 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
         switch (target.usage) {
         case RenderTargetUsage::Color:
             if (target.type == RenderTargetType::Texture) {
-                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, renderTargetChannelsToOpenGLInternalFormat(target.channels), 500, 500, 0, renderTargetChannelsToOpenGLBaseFormat(target.channels), GL_UNSIGNED_BYTE, 0)); // TODO get width and height of window from scomps
+                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, renderTargetChannelsToOpenGLInternalFormat(target.channels, target.dataType), 500, 500, 0, renderTargetChannelsToOpenGLBaseFormat(target.channels), renderTargetDataTypeToOpenGLBaseType(target.dataType), 0)); // TODO get width and height of window from scomps
                 GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, textureId, 0));
             } else if (target.type == RenderTargetType::RenderBuffer) {
-                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, renderTargetChannelsToOpenGLInternalFormat(target.channels), 500, 500)); // TODO get width and height of window from scomps
+                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, renderTargetChannelsToOpenGLInternalFormat(target.channels, target.dataType), 500, 500)); // TODO get width and height of window from scomps
                 GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_RENDERBUFFER, rbo));
             }
             slot++;
@@ -284,7 +284,7 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
    
         case RenderTargetUsage::Depth:
             if (target.type == RenderTargetType::Texture) {
-                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, 500, 500, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0)); // TODO get width and height of window from scomps
+                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, 500, 500, 0, GL_DEPTH_COMPONENT, renderTargetDataTypeToOpenGLBaseType(target.dataType), 0)); // TODO get width and height of window from scomps
                 GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureId, 0));
             } else if (target.type == RenderTargetType::RenderBuffer) {
                 GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 500, 500)); // TODO get width and height of window from scomps
@@ -461,13 +461,23 @@ GLenum RenderCommand::indexBufferDataTypeToOpenGLBaseType(scomp::IndexBuffer::da
 	return 0;
 }
 
-GLenum RenderCommand::renderTargetChannelsToOpenGLInternalFormat(RenderTargetChannels channels) const {
-	switch (channels) {
-	case RenderTargetChannels::R : 		return GL_R8;
-	case RenderTargetChannels::RG : 	return GL_RG8;
-	case RenderTargetChannels::RGB : 	return GL_RGB8;
-	case RenderTargetChannels::RGBA : 	return GL_RGBA8;
-	default:	break;
+GLenum RenderCommand::renderTargetChannelsToOpenGLInternalFormat(RenderTargetChannels channels, RenderTargetDataType dataType) const {
+	if (dataType == RenderTargetDataType::UCHAR) {
+		switch (channels) {
+		case RenderTargetChannels::R : 		return GL_R8;
+		case RenderTargetChannels::RG : 	return GL_RG8;
+		case RenderTargetChannels::RGB : 	return GL_RGB8;
+		case RenderTargetChannels::RGBA : 	return GL_RGBA8;
+		default:	break;
+		}
+	} else if (dataType == RenderTargetDataType::FLOAT) {
+		switch (channels) {
+		case RenderTargetChannels::R : 		return GL_R16F;
+		case RenderTargetChannels::RG : 	return GL_RG16F;
+		case RenderTargetChannels::RGB : 	return GL_RGB16F;
+		case RenderTargetChannels::RGBA : 	return GL_RGBA16F;
+		default:	break;
+		}
 	}
 
 	assert(false && "Unknown RenderTargetChannels type !");
@@ -483,7 +493,17 @@ GLenum RenderCommand::renderTargetChannelsToOpenGLBaseFormat(RenderTargetChannel
 	default:	break;
 	}
 
-	assert(false && "Unknown RenderTargetChannels type!");
+	assert(false && "Unknown RenderTargetChannels type !");
 	return 0;
 }
 
+GLenum RenderCommand::renderTargetDataTypeToOpenGLBaseType(RenderTargetDataType dataType) const {
+	switch (dataType) {
+		case RenderTargetDataType::UCHAR : return GL_UNSIGNED_BYTE;
+		case RenderTargetDataType::FLOAT : return GL_FLOAT;
+		default: break;
+	}
+
+	assert(false && "Unknown RenderTargetDataType !");
+	return 0;
+}

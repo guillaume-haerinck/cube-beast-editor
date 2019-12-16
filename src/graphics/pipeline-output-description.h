@@ -15,16 +15,21 @@ enum class RenderTargetChannels {
     R = 0, RG, RGB, RGBA
 };
 
+enum class RenderTargetDataType {
+    FLOAT = 0, UCHAR = 1
+};
+
 struct RenderTargetDescription {
     RenderTargetType type;
+    RenderTargetDataType dataType;
     RenderTargetUsage usage;
     RenderTargetChannels channels;
     std::string name;
 
     RenderTargetDescription() {}
 
-    RenderTargetDescription(RenderTargetUsage usage, RenderTargetType type, RenderTargetChannels channels, std::string name) 
-        : usage(usage), type(type), channels(channels), name(name)
+    RenderTargetDescription(RenderTargetUsage usage, RenderTargetType type, RenderTargetDataType dataType, RenderTargetChannels channels, std::string name) 
+        : usage(usage), type(type), dataType(dataType), channels(channels), name(name)
     {}
 };
 

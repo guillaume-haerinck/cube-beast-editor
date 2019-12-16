@@ -115,8 +115,9 @@ private:
 	bool hasShaderCompiled(unsigned int shaderId, unsigned int shaderType) const;
 	GLenum shaderDataTypeToOpenGLBaseType(ShaderDataType type) const;
 	GLenum indexBufferDataTypeToOpenGLBaseType(scomp::IndexBuffer::dataType) const;
-	GLenum renderTargetChannelsToOpenGLInternalFormat(RenderTargetChannels channels) const;
+	GLenum renderTargetChannelsToOpenGLInternalFormat(RenderTargetChannels channels, RenderTargetDataType dataType) const;
 	GLenum renderTargetChannelsToOpenGLBaseFormat(RenderTargetChannels channels) const;
+	GLenum renderTargetDataTypeToOpenGLBaseType(RenderTargetDataType dataType) const;
 
 private:
 	SingletonComponents& m_scomps;

@@ -269,11 +269,11 @@ void App::initSingletonComponents() {
     // Init Render Targets
     {
         PipelineOutputDescription outputDescription = {
-			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetChannels::RGBA, "Geometry_Albedo" },
-			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetChannels::RGB, "Geometry_Normal" },
-			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetChannels::RGB, "Geometry_WorldPosition" },
-            { RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetChannels::RGBA, "EntityIdToColor" },
-			{ RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetChannels::R, "Depth" }
+			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Albedo" },
+			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGB, "Geometry_Normal" },
+			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGB, "Geometry_WorldPosition" },
+            { RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetDataType::UCHAR, RenderTargetChannels::RGBA, "EntityIdToColor" },
+			{ RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetDataType::FLOAT, RenderTargetChannels::R, "Depth" }
         };
         m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_GEOMETRY, outputDescription);
     }
