@@ -29,9 +29,8 @@ namespace voxmt {
 
 	}
 
-
+    /*
 	Eigen::VectorXd VectorWi(const Eigen::VectorXd& weight, std::vector<glm::ivec3>& listepoints, RBFType RBF, const float eps) {
-
 		Eigen::MatrixXd D(listepoints.size(), listepoints.size());
 		for (int i = 0; i < listepoints.size(); i++) {
 			for (int j = 0; j < listepoints.size();j++) {
@@ -98,5 +97,5 @@ namespace voxmt {
 		return FunctionValues;
 
 	}
-
+    */
 }
