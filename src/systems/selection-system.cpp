@@ -100,5 +100,5 @@ scomp::Face SelectionSystem::colorToFace(unsigned char color) const {
 }
 
 scomp::Face SelectionSystem::normalToFace(const glm::vec3& normal) const {
-    return scomp::Face::FRONT;
+    return scomp::Face::NONE;
 }

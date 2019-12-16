@@ -16,7 +16,7 @@ namespace scomp {
 
     struct Hovered {
         glm::ivec3 position;
-        Face face;
+        Face face = Face::NONE;
         bool exist = false;
     };
 }

@@ -10,11 +10,9 @@
 ViewportGui::ViewportGui(Context& ctx) : m_ctx(ctx) {
     comp::Material material;
 
-    for (int i = 0; i < 3; i++) {
-        met::entity entity = m_ctx.registry.create();
-        m_ctx.registry.assign<comp::Material>(entity, material);
-        m_ctx.registry.assign<comp::Transform>(entity, glm::ivec3(i, 0, 0));
-    }
+    met::entity entity = m_ctx.registry.create();
+    m_ctx.registry.assign<comp::Material>(entity, material);
+    m_ctx.registry.assign<comp::Transform>(entity, glm::ivec3(1, 0, 0));
 }
 
 ViewportGui::~ViewportGui() {}

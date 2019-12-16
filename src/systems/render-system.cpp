@@ -151,6 +151,8 @@ void RenderSystem::update() {
                         cbData.matWorld = glm::translate(glm::mat4(1), pos);
                         cbData.matWorld = glm::rotate(cbData.matWorld, -glm::half_pi<float>(), glm::vec3(1, 0, 0));
                         break;
+
+                    case scomp::Face::NONE: break;
                     
                     default:
                         debug_break();

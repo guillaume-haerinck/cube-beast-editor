@@ -23,11 +23,13 @@ void VoxelBrushSystem::update() {
             case scomp::Face::RIGHT: trans.position.x++; break;
             case scomp::Face::LEFT: trans.position.x--; break;
             case scomp::Face::TOP: trans.position.y++; break;
-            case scomp::Face::BOTTOM: trans.position.y--; break;  
+            case scomp::Face::BOTTOM: trans.position.y--; break;
+            case scomp::Face::NONE: break;
             default:
                 debug_break();
                 assert(false && "Unknown hovered face");
         }
+
         m_ctx.registry.assign<comp::Transform>(entity, trans);
     }
 }
