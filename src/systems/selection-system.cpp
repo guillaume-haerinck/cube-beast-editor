@@ -20,20 +20,14 @@ SelectionSystem::SelectionSystem(Context& ctx, SingletonComponents& scomps)
     // TODO set 10 to max cube height or width
     m_planePositions = {
         glm::vec3(0),
-        //glm::vec3(0),
-        //glm::vec3(0, 10, 0),
-        //glm::vec3(0),
-        //glm::vec3(0),
-        //glm::vec3(0)
+        glm::vec3(0),
+        glm::vec3(0)
     };
 
     m_planeNormals = {
         glm::vec3(-1, 0, 0),      // right
-        //glm::vec3(1, 0, 0),     // 
-        //glm::vec3(0, 1, 0),     // 
-        //glm::vec3(-1, 0, 0),    // 
-        //glm::vec3(0,-1, 0),     // 
-        //glm::vec3(0, 0,-1)      // 
+        glm::vec3(0, -1, 0),      // bottom 
+        glm::vec3(0, 0, -1)       // left
     };
 
 }
