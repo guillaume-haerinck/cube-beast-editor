@@ -17,17 +17,23 @@
 SelectionSystem::SelectionSystem(Context& ctx, SingletonComponents& scomps) 
     : m_ctx(ctx), m_scomps(scomps)
 {
-    // TODO set 10 to max cube height or width
+    // TODO set 9.5 to max cube height or width
     m_planePositions = {
         glm::vec3(0),
         glm::vec3(0),
-        glm::vec3(0)
+        glm::vec3(0),
+        glm::vec3(9.5, 0, 0),
+        glm::vec3(0, 9.5, 0),
+        glm::vec3(0, 0, 9.5)
     };
 
     m_planeNormals = {
-        glm::vec3(-1, 0, 0),      // right
-        glm::vec3(0, -1, 0),      // bottom 
-        glm::vec3(0, 0, -1)       // left
+        glm::vec3(-1, 0, 0),     // front
+        glm::vec3(0, -1, 0),     // bottom 
+        glm::vec3(0, 0, -1),     // left
+        glm::vec3(1, 0, 0),      // back
+        glm::vec3(0, 1, 0),      // top
+        glm::vec3(0, 0, 1)       // right
     };
 
 }
