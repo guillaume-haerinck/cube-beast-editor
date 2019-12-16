@@ -28,12 +28,12 @@ SelectionSystem::SelectionSystem(Context& ctx, SingletonComponents& scomps)
     };
 
     m_planeNormals = {
-        glm::vec3(-1, 0, 0),     // front
-        glm::vec3(0, -1, 0),     // bottom 
-        glm::vec3(0, 0, -1),     // left
-        glm::vec3(1, 0, 0),      // back
-        glm::vec3(0, 1, 0),      // top
-        glm::vec3(0, 0, 1)       // right
+        glm::ivec3(-1, 0, 0),     // right
+        glm::ivec3(0, -1, 0),     // top 
+        glm::ivec3(0, 0, -1),     // back
+        glm::ivec3(1, 0, 0),      // left
+        glm::ivec3(0, 1, 0),      // bottom
+        glm::ivec3(0, 0, 1)       // front
     };
 
 }
@@ -54,6 +54,7 @@ void SelectionSystem::update() {
     // Check existing cubes with framebuffer
     if (hoveredCube != met::null_entity) {
         m_scomps.hovered.exist = true;
+        m_scomps.hovered.isCube = true;
         m_scomps.hovered.face = colorToFace(pixel[3]);
         const comp::Transform trans = m_ctx.registry.get<comp::Transform>(hoveredCube);
         m_scomps.hovered.position = trans.position;
@@ -74,6 +75,7 @@ void SelectionSystem::update() {
 
                 if (isInsideMin && isInsideMax) {
                     m_scomps.hovered.exist = true;
+                    m_scomps.hovered.isCube = false;
                     m_scomps.hovered.face = normalToFace(m_planeNormals.at(i));
                     m_scomps.hovered.position = voxmt::roundUpFloat3(intersectionPoint);
                     break;
@@ -99,6 +101,19 @@ scomp::Face SelectionSystem::colorToFace(unsigned char color) const {
     }
 }
 
-scomp::Face SelectionSystem::normalToFace(const glm::vec3& normal) const {
+scomp::Face SelectionSystem::normalToFace(const glm::ivec3& normal) const {
+    if (normal == m_planeNormals.at(0)) {
+        return scomp::Face::RIGHT;
+    } else if (normal == m_planeNormals.at(1)) {
+        return scomp::Face::TOP;
+    } else if (normal == m_planeNormals.at(2)) {
+        return scomp::Face::BACK;
+    } else if (normal == m_planeNormals.at(3)) {
+        return scomp::Face::LEFT;
+    } else if (normal == m_planeNormals.at(4)) {
+        return scomp::Face::BOTTOM;
+    } else if (normal == m_planeNormals.at(5)) {
+        return scomp::Face::FRONT;
+    }
     return scomp::Face::NONE;
 }

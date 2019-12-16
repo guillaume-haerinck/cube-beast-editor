@@ -125,46 +125,48 @@ void RenderSystem::update() {
 
                 switch (m_scomps.hovered.face) {
                     case scomp::Face::FRONT:
-                        pos.z -= 0.5f;
+                        (m_scomps.hovered.isCube) ? pos.z -= 0.5f : pos.z += 0.5f;
                         cbData.matWorld = glm::translate(glm::mat4(1), pos); 
                         break;
 
                     case scomp::Face::BACK:
-                        pos.z += 0.5f;
+                        (m_scomps.hovered.isCube) ? pos.z += 0.5f : pos.z -= 0.5f;
                         cbData.matWorld = glm::translate(glm::mat4(1), pos);
                         cbData.matWorld = glm::rotate(cbData.matWorld, glm::pi<float>(), glm::vec3(0, 1, 0));
                         break;
 
                     case scomp::Face::RIGHT:
-                        pos.x += 0.5f; 
+                        (m_scomps.hovered.isCube) ? pos.x += 0.5f : pos.x -= 0.5f; 
                         cbData.matWorld = glm::translate(glm::mat4(1), pos);
                         cbData.matWorld = glm::rotate(cbData.matWorld, -glm::half_pi<float>(), glm::vec3(0, 1, 0));
                         break;
 
                     case scomp::Face::LEFT:
-                        pos.x -= 0.5f; 
+                        (m_scomps.hovered.isCube) ? pos.x -= 0.5f : pos.x += 0.5f; 
                         cbData.matWorld = glm::translate(glm::mat4(1), pos);
                         cbData.matWorld = glm::rotate(cbData.matWorld, glm::half_pi<float>(), glm::vec3(0, 1, 0));
                         break;
 
                     case scomp::Face::TOP:
-                        pos.y += 0.5f; 
+                        (m_scomps.hovered.isCube) ? pos.y += 0.5f : pos.y -= 0.5f; 
                         cbData.matWorld = glm::translate(glm::mat4(1), pos);
                         cbData.matWorld = glm::rotate(cbData.matWorld, glm::half_pi<float>(), glm::vec3(1, 0, 0));
                         break;
                     
                     case scomp::Face::BOTTOM:
-                        pos.y -= 0.5f;
+                        (m_scomps.hovered.isCube) ? pos.y -= 0.5f : pos.y += 0.5f;
                         cbData.matWorld = glm::translate(glm::mat4(1), pos);
                         cbData.matWorld = glm::rotate(cbData.matWorld, -glm::half_pi<float>(), glm::vec3(1, 0, 0));
                         break;
 
-                    case scomp::Face::NONE: break;
+                    case scomp::Face::NONE:
+                        cbData.matWorld = glm::scale(glm::mat4(1), glm::vec3(0));
+                        break;
                     
                     default:
                         debug_break();
                         assert(false && "Unknown hovered face");
-                        cbData.matWorld = glm::mat4(1);
+                        cbData.matWorld = glm::scale(glm::mat4(1), glm::vec3(0));
                 }
             } else {
                 cbData.matWorld = glm::scale(glm::mat4(1), glm::vec3(0));

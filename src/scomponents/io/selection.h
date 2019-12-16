@@ -18,5 +18,6 @@ namespace scomp {
         glm::ivec3 position;
         Face face = Face::NONE;
         bool exist = false;
+        bool isCube = false;
     };
 }
