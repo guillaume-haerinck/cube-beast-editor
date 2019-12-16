@@ -17,7 +17,8 @@ void DebugDraw::addLine(const glm::vec3& lineStart, const glm::vec3& lineEnd) {
 }
 
 void DebugDraw::updateBuffer() {
-    m_rcommand.updateAttributeBuffer(m_scomps.ddrawVb.buffers.at(0), m_positions.data(), sizeof(glm::vec3) * getCount());
+    // FIXME buffer overflow
+    // m_rcommand.updateAttributeBuffer(m_scomps.ddrawVb.buffers.at(0), m_positions.data(), sizeof(glm::vec3) * getCount());
 }
 
 unsigned int DebugDraw::getCount() const {
