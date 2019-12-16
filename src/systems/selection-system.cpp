@@ -76,7 +76,7 @@ void SelectionSystem::update() {
                 if (isInsideMin && isInsideMax) {
                     m_scomps.hovered.exist = true;
                     m_scomps.hovered.isCube = false;
-                    m_scomps.hovered.face = normalToFace(m_planeNormals.at(i));
+                    m_scomps.hovered.face = normalToFace(i);
                     m_scomps.hovered.position = voxmt::roundUpFloat3(intersectionPoint);
                     break;
                 }
@@ -101,19 +101,17 @@ scomp::Face SelectionSystem::colorToFace(unsigned char color) const {
     }
 }
 
-scomp::Face SelectionSystem::normalToFace(const glm::ivec3& normal) const {
-    if (normal == m_planeNormals.at(0)) {
-        return scomp::Face::RIGHT;
-    } else if (normal == m_planeNormals.at(1)) {
-        return scomp::Face::TOP;
-    } else if (normal == m_planeNormals.at(2)) {
-        return scomp::Face::BACK;
-    } else if (normal == m_planeNormals.at(3)) {
-        return scomp::Face::LEFT;
-    } else if (normal == m_planeNormals.at(4)) {
-        return scomp::Face::BOTTOM;
-    } else if (normal == m_planeNormals.at(5)) {
-        return scomp::Face::FRONT;
+scomp::Face SelectionSystem::normalToFace(unsigned int normalIndex) const {
+    switch (normalIndex) {
+        case 0: return scomp::Face::RIGHT;
+        case 1: return scomp::Face::TOP;
+        case 2: return scomp::Face::BACK;
+        case 3: return scomp::Face::LEFT;
+        case 4: return scomp::Face::BOTTOM;
+        case 5: return scomp::Face::FRONT;
+        default:
+            debug_break();
+            assert(false && "Unknown face picked");
+            return scomp::Face::NONE;
     }
-    return scomp::Face::NONE;
 }

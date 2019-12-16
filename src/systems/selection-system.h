@@ -15,7 +15,7 @@ public:
 
 private:
     scomp::Face colorToFace(unsigned char color) const;
-    scomp::Face normalToFace(const glm::ivec3& normal) const;
+    scomp::Face normalToFace(unsigned int normalIndex) const;
 
 private:
     Context& m_ctx;
