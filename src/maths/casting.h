@@ -8,4 +8,6 @@ namespace voxmt {
     glm::vec3 intToNormColor(int value);
 
     int colorToInt(unsigned char r, unsigned char g, unsigned char b);
+
+    glm::ivec3 roundUpFloat3(const glm::vec3& values);
 }

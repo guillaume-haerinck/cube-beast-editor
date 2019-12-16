@@ -12,4 +12,8 @@ namespace voxmt {
     int colorToInt(unsigned char r, unsigned char g, unsigned char b) {
         return r | (g << 8) | (b << 16);
     }
+
+    glm::ivec3 roundUpFloat3(const glm::vec3& values) {
+        return { static_cast<int>(values.x), static_cast<int>(values.y), static_cast<int>(values.z)};
+    }
 }

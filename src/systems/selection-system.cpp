@@ -17,23 +17,25 @@
 SelectionSystem::SelectionSystem(Context& ctx, SingletonComponents& scomps) 
     : m_ctx(ctx), m_scomps(scomps)
 {
+    // TODO set 10 to max cube height or width
     m_planePositions = {
         glm::vec3(0),
-        glm::vec3(0),
-        glm::vec3(0),
-        glm::vec3(0),
-        glm::vec3(0),
-        glm::vec3(0)
+        //glm::vec3(0),
+        //glm::vec3(0, 10, 0),
+        //glm::vec3(0),
+        //glm::vec3(0),
+        //glm::vec3(0)
     };
 
     m_planeNormals = {
-        glm::vec3(-1, 0, 0),
-        glm::vec3(-1, 0, 0),
-        glm::vec3(-1, 0, 0),
-        glm::vec3(-1, 0, 0),
-        glm::vec3(-1, 0, 0),
-        glm::vec3(-1, 0, 0)
+        glm::vec3(-1, 0, 0),      // right
+        //glm::vec3(1, 0, 0),     // 
+        //glm::vec3(0, 1, 0),     // 
+        //glm::vec3(-1, 0, 0),    // 
+        //glm::vec3(0,-1, 0),     // 
+        //glm::vec3(0, 0,-1)      // 
     };
+
 }
 
 SelectionSystem::~SelectionSystem() {}
@@ -70,9 +72,10 @@ void SelectionSystem::update() {
                 if (intersectionPoint.x >= 0.0f && intersectionPoint.y >= 0.0f && intersectionPoint.z >= 0.0f) {
                     m_scomps.hovered.exist = true;
                     m_scomps.hovered.face = normalToFace(m_planeNormals.at(i));
-                    m_scomps.hovered.position = glm::ivec3(intersectionPoint);
+                    m_scomps.hovered.position = voxmt::roundUpFloat3(intersectionPoint);
 
-                    spdlog::info("Intersection is at : {} {} {}", intersectionPoint.x, intersectionPoint.y, intersectionPoint.z);
+                    auto test = voxmt::roundUpFloat3(intersectionPoint);
+                    spdlog::info("Intersection is at : {} {} {}", test.x, test.y, test.z);
                     break;
                 }
             }
