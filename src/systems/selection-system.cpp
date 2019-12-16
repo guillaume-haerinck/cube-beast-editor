@@ -69,13 +69,13 @@ void SelectionSystem::update() {
         glm::vec3 intersectionPoint;
         for (unsigned int i = 0; i < m_planeNormals.size(); i++) {
             if (voxmt::doesLineIntersectPlane(m_planeNormals.at(i), m_planePositions.at(i), from, to, intersectionPoint)) {
-                if (intersectionPoint.x >= 0.0f && intersectionPoint.y >= 0.0f && intersectionPoint.z >= 0.0f) {
+                const bool isInsideMin = intersectionPoint.x >= 0.0f && intersectionPoint.y >= 0.0f && intersectionPoint.z >= 0.0f;
+                const bool isInsideMax = intersectionPoint.x <= 10.0f && intersectionPoint.y <= 10.0f && intersectionPoint.z <= 10.0f;
+
+                if (isInsideMin && isInsideMax) {
                     m_scomps.hovered.exist = true;
                     m_scomps.hovered.face = normalToFace(m_planeNormals.at(i));
                     m_scomps.hovered.position = voxmt::roundUpFloat3(intersectionPoint);
-
-                    auto test = voxmt::roundUpFloat3(intersectionPoint);
-                    spdlog::info("Intersection is at : {} {} {}", test.x, test.y, test.z);
                     break;
                 }
             }
