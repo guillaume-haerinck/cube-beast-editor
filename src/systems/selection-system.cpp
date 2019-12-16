@@ -14,7 +14,27 @@
 #endif
 #include "graphics/gl-exception.h"
 
-SelectionSystem::SelectionSystem(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx), m_scomps(scomps) {}
+SelectionSystem::SelectionSystem(Context& ctx, SingletonComponents& scomps) 
+    : m_ctx(ctx), m_scomps(scomps)
+{
+    m_planePositions = {
+        glm::vec3(0),
+        glm::vec3(0),
+        glm::vec3(0),
+        glm::vec3(0),
+        glm::vec3(0),
+        glm::vec3(0)
+    };
+
+    m_planeNormals = {
+        glm::vec3(-1, 0, 0),
+        glm::vec3(-1, 0, 0),
+        glm::vec3(-1, 0, 0),
+        glm::vec3(-1, 0, 0),
+        glm::vec3(-1, 0, 0),
+        glm::vec3(-1, 0, 0)
+    };
+}
 
 SelectionSystem::~SelectionSystem() {}
 
@@ -26,27 +46,38 @@ void SelectionSystem::update() {
     GLCall(glReadBuffer(GL_COLOR_ATTACHMENT3));
     GLCall(glReadPixels(m_scomps.inputs.mousePos.x, 500 - m_scomps.inputs.mousePos.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel));
 
+    m_scomps.hovered.exist = false;
     const met::entity hoveredCube = voxmt::colorToInt(pixel[0], pixel[1], pixel[2]);
+    
+    // Check existing cubes with framebuffer
     if (hoveredCube != met::null_entity) {
+        m_scomps.hovered.exist = true;
         m_scomps.hovered.face = colorToFace(pixel[3]);
         const comp::Transform trans = m_ctx.registry.get<comp::Transform>(hoveredCube);
         m_scomps.hovered.position = trans.position;
-    } else {
+        
+    } else { 
+        // Check grid with raycast
         const glm::mat4 toWorld = glm::inverse((m_scomps.camera.proj * m_scomps.camera.view));
         glm::vec4 from = toWorld * glm::vec4(m_scomps.inputs.NDCMousePos, -1.0f, 1.0f);
         glm::vec4 to = toWorld * glm::vec4(m_scomps.inputs.NDCMousePos, 1.0f, 1.0f);
-        from /= from.w; // perspective divide ("normalize" homogeneous coordinates)
+        from /= from.w;
         to /= to.w;
 
-        // Check on the grid
         glm::vec3 intersectionPoint;
-        // TODO make a loop
+        for (unsigned int i = 0; i < m_planeNormals.size(); i++) {
+            if (voxmt::doesLineIntersectPlane(m_planeNormals.at(i), m_planePositions.at(i), from, to, intersectionPoint)) {
+                if (intersectionPoint.x >= 0.0f && intersectionPoint.y >= 0.0f && intersectionPoint.z >= 0.0f) {
+                    m_scomps.hovered.exist = true;
+                    m_scomps.hovered.face = normalToFace(m_planeNormals.at(i));
+                    m_scomps.hovered.position = glm::ivec3(intersectionPoint);
 
-        if (voxmt::doesLineIntersectPlane(glm::vec3(-1, 0, 0), glm::vec3(0), from, to, intersectionPoint)) {
-            spdlog::info("Intersection is at : {} {} {}", intersectionPoint.x, intersectionPoint.y, intersectionPoint.z);
+                    spdlog::info("Intersection is at : {} {} {}", intersectionPoint.x, intersectionPoint.y, intersectionPoint.z);
+                    break;
+                }
+            }
         }
     }
-    
 }
 
 scomp::Face SelectionSystem::colorToFace(unsigned char color) const {
@@ -63,4 +94,8 @@ scomp::Face SelectionSystem::colorToFace(unsigned char color) const {
             assert(false && "Unknown face picked");
             return scomp::Face::NONE;
     }
+}
+
+scomp::Face SelectionSystem::normalToFace(const glm::vec3& normal) const {
+    return scomp::Face::FRONT;
 }
