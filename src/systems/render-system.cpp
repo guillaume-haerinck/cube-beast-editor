@@ -119,11 +119,10 @@ void RenderSystem::update() {
             cb::perNiMesh cbData;
             scomp::ConstantBuffer& perNiMeshCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_NI_MESH);
 
-            if (m_scomps.hoveredCube.id != met::null_entity) {
-                comp::Transform trans = m_ctx.registry.get<comp::Transform>(m_scomps.hoveredCube.id);
-                glm::vec3 pos = static_cast<glm::vec3>(trans.position);
+            if (m_scomps.hovered.exist) {
+                glm::vec3 pos = m_scomps.hovered.position;
 
-                switch (m_scomps.hoveredCube.face) {
+                switch (m_scomps.hovered.face) {
                     case scomp::Face::FRONT:
                         cbData.matWorld = glm::translate(glm::mat4(1), pos); 
                         break;

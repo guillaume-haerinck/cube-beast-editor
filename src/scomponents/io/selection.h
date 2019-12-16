@@ -1,6 +1,7 @@
 #pragma once
 
 #include <met/met.hpp>
+#include <glm/glm.hpp>
 
 namespace scomp {
     enum class Face {
@@ -14,7 +15,8 @@ namespace scomp {
     };
 
     struct Hovered {
-        met::entity id = met::null_entity;
+        glm::ivec3 position;
         Face face;
+        bool exist = false;
     };
 }

@@ -26,5 +26,5 @@ struct SingletonComponents {
 	scomp::VertexBuffer ddrawVb;
 	scomp::Camera camera;
 	scomp::Inputs inputs;
-	scomp::Hovered hoveredCube;
+	scomp::Hovered hovered;
 };
