@@ -51,12 +51,12 @@ void RenderSystem::update() {
             for (auto buffer : m_scomps.cubeMesh.vb.buffers) {
                 switch (buffer.type) {
                 case scomp::AttributeBufferType::PER_INSTANCE_TRANSLATION:
-                    m_ctx.rcommand.updateAttributeBuffer(buffer, m_tempTranslations.data(), sizeof(glm::vec3) * nbInstances);
+                    m_ctx.rcommand.updateAttributeBufferAnySize(buffer, m_tempTranslations.data(), sizeof(glm::vec3) * nbInstances);
                     m_tempTranslations.clear();
                     break;
 
                 case scomp::AttributeBufferType::PER_INSTANCE_ENTITY_ID:
-                    m_ctx.rcommand.updateAttributeBuffer(buffer, m_tempEntityIds.data(), sizeof(glm::vec3) * nbInstances);
+                    m_ctx.rcommand.updateAttributeBufferAnySize(buffer, m_tempEntityIds.data(), sizeof(glm::vec3) * nbInstances);
                     m_tempEntityIds.clear();
                     break;
 

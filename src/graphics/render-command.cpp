@@ -59,17 +59,7 @@ scomp::AttributeBuffer RenderCommand::createAttributeBuffer(const void* vertices
 	unsigned int id;
 	GLCall(glGenBuffers(1, &id));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
-	GLenum glUsage;
-
-	switch (usage) {
-	case scomp::AttributeBufferUsage::STATIC_DRAW: glUsage = GL_STATIC_DRAW; break;
-	case scomp::AttributeBufferUsage::DYNAMIC_DRAW:  glUsage = GL_DYNAMIC_DRAW; break;
-	default:
-		debug_break();
-		assert(false && "[createAttributeBuffer] Unknow usage");
-	}
-
-	GLCall(glBufferData(GL_ARRAY_BUFFER, stride * count, vertices, glUsage));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, stride * count, vertices, attributeBufferUsageToOpenGLBaseType(usage)));
 
 	scomp::AttributeBuffer buffer = {};
 	buffer.bufferId = id;
@@ -383,6 +373,17 @@ void RenderCommand::updateAttributeBuffer(const scomp::AttributeBuffer& buffer, 
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
+void RenderCommand::updateAttributeBufferAnySize(scomp::AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const {
+	if (dataByteWidth > buffer.byteWidth) {
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer.bufferId));
+		GLCall(glBufferData(GL_ARRAY_BUFFER, dataByteWidth, data, attributeBufferUsageToOpenGLBaseType(buffer.usage)));
+		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+		buffer.byteWidth = dataByteWidth;
+	} else {
+		updateAttributeBuffer(buffer, data, dataByteWidth);
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// DRAWING /////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -507,3 +508,17 @@ GLenum RenderCommand::renderTargetDataTypeToOpenGLBaseType(RenderTargetDataType 
 	assert(false && "Unknown RenderTargetDataType !");
 	return 0;
 }
+
+GLenum RenderCommand::attributeBufferUsageToOpenGLBaseType(scomp::AttributeBufferUsage usage) const {
+	switch (usage) {
+	case scomp::AttributeBufferUsage::STATIC_DRAW: return GL_STATIC_DRAW;
+	case scomp::AttributeBufferUsage::DYNAMIC_DRAW:  return GL_DYNAMIC_DRAW;
+	default:
+		break;
+	}
+
+	assert(false && "[createAttributeBuffer] Unknow usage");
+	return 0;
+}
+
+

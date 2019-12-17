@@ -102,6 +102,8 @@ public:
 
 	void updateAttributeBuffer(const scomp::AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const;
 
+	void updateAttributeBufferAnySize(scomp::AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const;
+
     ///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////// DRAWING /////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
@@ -118,6 +120,7 @@ private:
 	GLenum renderTargetChannelsToOpenGLInternalFormat(RenderTargetChannels channels, RenderTargetDataType dataType) const;
 	GLenum renderTargetChannelsToOpenGLBaseFormat(RenderTargetChannels channels) const;
 	GLenum renderTargetDataTypeToOpenGLBaseType(RenderTargetDataType dataType) const;
+	GLenum attributeBufferUsageToOpenGLBaseType(scomp::AttributeBufferUsage usage) const;
 
 private:
 	SingletonComponents& m_scomps;
