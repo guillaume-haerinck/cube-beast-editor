@@ -87,18 +87,12 @@ void RenderSystem::update() {
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING));
 
         // TODO abstract
-        unsigned int texLocation = glGetUniformLocation(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING).programIndex, "g_albedo");
-        GLCall(glUniform1i(texLocation, 0));
         GLCall(glActiveTexture(GL_TEXTURE0));
         GLCall(glBindTexture(GL_TEXTURE_2D, m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds.at(0)));
 
-        texLocation = glGetUniformLocation(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING).programIndex, "g_normal");
-        GLCall(glUniform1i(texLocation, 1));
         GLCall(glActiveTexture(GL_TEXTURE0 + 1));
         GLCall(glBindTexture(GL_TEXTURE_2D, m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds.at(1)));
 
-        texLocation = glGetUniformLocation(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING).programIndex, "g_position");
-        GLCall(glUniform1i(texLocation, 2));
         GLCall(glActiveTexture(GL_TEXTURE0 + 2));
         GLCall(glBindTexture(GL_TEXTURE_2D, m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds.at(2)));
 

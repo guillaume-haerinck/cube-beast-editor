@@ -160,7 +160,7 @@ void RenderCommand::createConstantBuffer(scomp::ConstantBufferIndex index, unsig
 	m_scomps.constantBuffers.at(index) = cb;
 }
 
-void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* vsSrc, const char* fsSrc, const std::vector<scomp::ConstantBufferIndex>& cbIndices) const {
+void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* vsSrc, const char* fsSrc, const std::vector<scomp::ConstantBufferIndex>& cbIndices, const std::vector<std::string>& samplerNames) const {
 	// Compile vertex shader
 	unsigned int vsId = glCreateShader(GL_VERTEX_SHADER);
 	GLCall(glShaderSource(vsId, 1, &vsSrc, nullptr));
@@ -221,6 +221,22 @@ void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* vsSrc
 		GLCall(glBindBufferBase(GL_UNIFORM_BUFFER, i, cb.bufferId));
 		sPipeline.constantBufferIndices.push_back(cbIndices.at(i));
 	}
+
+	// Link samplers
+	GLCall(glUseProgram(programId));
+	for (size_t i = 0; i < samplerNames.size(); i++) {
+		int samplerLocation = glGetUniformLocation(programId, samplerNames.at(i).c_str());
+		if (samplerLocation != -1) {
+			GLCall(glUniform1i(samplerLocation, i));
+		} else {
+			spdlog::error("[createPipeline] Sampler '{}' doesn't exist, or is not used. It must affect the fragment shader output variable !", samplerNames.at(i));
+			debug_break();
+			assert(false && "Sampler name doesn't exist !");
+		}
+	}
+
+	// Unbind
+	GLCall(glUseProgram(0));
 	
 	// Save to singleton components
 	sPipeline.programIndex = programId;

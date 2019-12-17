@@ -14,7 +14,13 @@ uniform sampler2D g_position;
 in lowp vec2 v_texCoord;
 
 void main() {
-	color = texture(g_albedo, v_texCoord);
+	vec4 albedo = texture(g_albedo, v_texCoord);
+	vec4 fragPos = texture(g_position, v_texCoord);
+    vec4 normal = texture(g_normal, v_texCoord);
+    
+	color = albedo;
+	color += normal;
+	color += fragPos;
 
 	if (color.a < 0.1)
     	discard;

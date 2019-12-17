@@ -235,7 +235,7 @@ void App::initSingletonComponents() {
 		const char* FSLighting =
 			#include "graphics/shaders/lighting.frag"
 		;
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_LIGHTING, VSLighting, FSLighting, cbIndices);
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_LIGHTING, VSLighting, FSLighting, cbIndices, {"g_albedo", "g_normal", "g_position"});
 
 		// Geometry
 		cbIndices = {
