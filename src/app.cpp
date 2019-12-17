@@ -128,8 +128,8 @@ void App::handleSDLEvents() {
             m_scomps.inputs.delta.y = m_scomps.inputs.mousePos.y - e.button.y;
             m_scomps.inputs.mousePos.x = static_cast<float>(e.button.x);
             m_scomps.inputs.mousePos.y = static_cast<float>(e.button.y);
-			m_scomps.inputs.NDCMousePos.x = (e.button.x / 500.0f) * 2.0f - 1.0f; // TODO get screensize from scomp
-			m_scomps.inputs.NDCMousePos.y = -((e.button.y / 500.0f) * 2.0f - 1.0f);
+			m_scomps.inputs.NDCMousePos.x = ((float) e.button.x / m_scomps.windowSize.x) * 2.0f - 1.0f;
+			m_scomps.inputs.NDCMousePos.y = -(((float) e.button.y / m_scomps.windowSize.y) * 2.0f - 1.0f);
             break;
         
 
@@ -177,7 +177,7 @@ void App::initSDL() {
 	m_window = SDL_CreateWindow(
 		"Voxel Editor",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		500, 500,
+		m_scomps.windowSize.x, m_scomps.windowSize.y,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI
     );
 	if (m_window == nullptr) {

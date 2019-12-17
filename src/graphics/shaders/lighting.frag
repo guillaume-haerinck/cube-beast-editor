@@ -29,7 +29,7 @@ void main() {
 	float specularIntensity = 2.0;
     float specularAttenuation = 1.0;
 
-	vec3 l_direction = vec3(-1.0, -0.5, 0.0);
+	vec3 l_direction = vec3(-1.0, -0.5, -0.5);
 	vec3 l_color = vec3(1.0, 0.0, 0.0);
 	float l_intensity = 1.0;
 

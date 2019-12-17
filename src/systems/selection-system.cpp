@@ -46,7 +46,7 @@ void SelectionSystem::update() {
     // TODO abstract
     unsigned char pixel[] = { 0, 0, 0, 0 };
     GLCall(glReadBuffer(GL_COLOR_ATTACHMENT3));
-    GLCall(glReadPixels(m_scomps.inputs.mousePos.x, 500 - m_scomps.inputs.mousePos.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel));
+    GLCall(glReadPixels(m_scomps.inputs.mousePos.x, m_scomps.windowSize.y - m_scomps.inputs.mousePos.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel));
 
     m_scomps.hovered.exist = false;
     const met::entity hoveredCube = voxmt::colorToInt(pixel[0], pixel[1], pixel[2]);
@@ -66,6 +66,8 @@ void SelectionSystem::update() {
         glm::vec4 to = toWorld * glm::vec4(m_scomps.inputs.NDCMousePos, 1.0f, 1.0f);
         from /= from.w;
         to /= to.w;
+
+        spdlog::info("Intersection point is {} {}", m_scomps.inputs.NDCMousePos.x, m_scomps.inputs.NDCMousePos.y);
 
         glm::vec3 intersectionPoint;
         for (unsigned int i = 0; i < m_planeNormals.size(); i++) {
