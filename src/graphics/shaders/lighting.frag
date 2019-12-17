@@ -8,15 +8,16 @@ layout (std140) uniform perFrame {
 };
 
 uniform sampler2D g_albedo;
+uniform sampler2D g_normal;
+uniform sampler2D g_position;
+
 in lowp vec2 v_texCoord;
 
 void main() {
-	color = texture(g_albedo, v_texCoord);
+	color = texture(g_position, v_texCoord);
 
 	if (color.a < 0.1)
     	discard;
-	else
-		color = vec4(1, 1, 1, 1);
 }
 
 )"
