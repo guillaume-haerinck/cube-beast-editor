@@ -37,6 +37,11 @@ void CameraSystem::update() {
 
 	// Move along vertical plane
 	if (m_scomps.inputs.actionState.at(scomp::InputAction::CAM_PAN)) {
+		const glm::mat3 invView = glm::inverse(m_scomps.camera.view);
+		glm::vec3 dx = invView * glm::vec3(1.0f, 0.0f, 0.0f);
+		glm::vec3 dy = invView * glm::vec3(0.0f, 1.0f, 0.0f);
+		m_scomps.camera.target += (dy * m_scomps.inputs.delta.y - dx * m_scomps.inputs.delta.x);
+
 		m_scomps.camera.hasToBeUpdated = true;
 	}
 

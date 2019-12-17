@@ -136,14 +136,17 @@ void App::handleSDLEvents() {
         case SDL_MOUSEBUTTONDOWN:
 			if (e.button.button == SDL_BUTTON_RIGHT)
             	m_scomps.inputs.actionState.at(scomp::InputAction::CAM_ORBIT) = true;
+			else if (e.button.button == SDL_BUTTON_MIDDLE)
+				m_scomps.inputs.actionState.at(scomp::InputAction::CAM_PAN) = true;
             break;
 
         case SDL_MOUSEBUTTONUP:
-			if (e.button.button == SDL_BUTTON_RIGHT) {
+			if (e.button.button == SDL_BUTTON_RIGHT)
 				m_scomps.inputs.actionState.at(scomp::InputAction::CAM_ORBIT) = false;
-			} else if (e.button.button == SDL_BUTTON_LEFT) {
+			else if (e.button.button == SDL_BUTTON_LEFT)
 				m_scomps.inputs.actionState.at(scomp::InputAction::BRUSH_VOX_ADD) = true;
-			}
+			else if (e.button.button == SDL_BUTTON_MIDDLE)
+				m_scomps.inputs.actionState.at(scomp::InputAction::CAM_PAN) = false;
             break;
 
         default:
