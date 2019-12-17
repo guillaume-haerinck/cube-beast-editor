@@ -14,7 +14,7 @@ uniform sampler2D g_position;
 in lowp vec2 v_texCoord;
 
 void main() {
-	color = texture(g_position, v_texCoord);
+	color = texture(g_albedo, v_texCoord);
 
 	if (color.a < 0.1)
     	discard;

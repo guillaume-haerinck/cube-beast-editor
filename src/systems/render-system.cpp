@@ -13,6 +13,7 @@
 #else
 	#include <glad/gles2.h>
 #endif
+#include "graphics/gl-exception.h"
 
 RenderSystem::RenderSystem(Context& context, SingletonComponents& scomps) : m_ctx(context), m_scomps(scomps) {
     m_tempTranslations.reserve(15);
@@ -86,13 +87,20 @@ void RenderSystem::update() {
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING));
 
         // TODO abstract
-        // FIXME strange but albedo is used for every texture in shader
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds.at(0));
-        glActiveTexture(GL_TEXTURE0 + 1);
-        glBindTexture(GL_TEXTURE_2D, m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds.at(1));
-        glActiveTexture(GL_TEXTURE0 + 2);
-        glBindTexture(GL_TEXTURE_2D, m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds.at(2));
+        unsigned int texLocation = glGetUniformLocation(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING).programIndex, "g_albedo");
+        GLCall(glUniform1i(texLocation, 0));
+        GLCall(glActiveTexture(GL_TEXTURE0));
+        GLCall(glBindTexture(GL_TEXTURE_2D, m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds.at(0)));
+
+        texLocation = glGetUniformLocation(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING).programIndex, "g_normal");
+        GLCall(glUniform1i(texLocation, 1));
+        GLCall(glActiveTexture(GL_TEXTURE0 + 1));
+        GLCall(glBindTexture(GL_TEXTURE_2D, m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds.at(1)));
+
+        texLocation = glGetUniformLocation(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING).programIndex, "g_position");
+        GLCall(glUniform1i(texLocation, 2));
+        GLCall(glActiveTexture(GL_TEXTURE0 + 2));
+        GLCall(glBindTexture(GL_TEXTURE_2D, m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds.at(2)));
 
         m_ctx.rcommand.drawIndexed(m_scomps.planeMesh.ib.count, m_scomps.planeMesh.ib.type);
     }
