@@ -22,7 +22,7 @@ void main() {
 	color += normal;
 	color += fragPos;
 
-	if (color.a < 0.1)
+	if (albedo.a < 0.1)
     	discard;
 }
 
