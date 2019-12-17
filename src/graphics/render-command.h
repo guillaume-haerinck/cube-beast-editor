@@ -78,6 +78,7 @@ public:
 
     void bindVertexBuffer(const scomp::VertexBuffer& vb) const;
 	void bindIndexBuffer(const scomp::IndexBuffer& ib) const;
+	void bindTextures(const std::vector<unsigned int>& textureIds) const;
 
 	/**
 	 * @brief Will bind all the shaders of the said pipeline

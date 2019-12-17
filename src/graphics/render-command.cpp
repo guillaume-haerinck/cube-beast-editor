@@ -213,6 +213,7 @@ void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* vsSrc
 	// Link constant buffers
 	// FIXME problems when assigning multiple pipelines next to each other
 	// the associated cb are not correct
+	GLCall(glUseProgram(programId));
 	scomp::Pipeline sPipeline = {};
 	for (size_t i = 0; i < cbIndices.size(); i++) {
 		scomp::ConstantBuffer& cb = m_scomps.constantBuffers.at(cbIndices.at(i));
@@ -222,8 +223,7 @@ void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* vsSrc
 		sPipeline.constantBufferIndices.push_back(cbIndices.at(i));
 	}
 
-	// Link samplers
-	GLCall(glUseProgram(programId));
+	// Set samplers texture units to the order they were declared
 	for (size_t i = 0; i < samplerNames.size(); i++) {
 		int samplerLocation = glGetUniformLocation(programId, samplerNames.at(i).c_str());
 		if (samplerLocation != -1) {
@@ -351,6 +351,13 @@ void RenderCommand::bindVertexBuffer(const scomp::VertexBuffer& vb) const {
 
 void RenderCommand::bindIndexBuffer(const scomp::IndexBuffer& ib) const {
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib.bufferId));
+}
+
+void RenderCommand::bindTextures(const std::vector<unsigned int>& textureIds) const {
+	for (size_t i = 0; i < textureIds.size(); i++) {
+		GLCall(glActiveTexture(GL_TEXTURE0 + i));
+        GLCall(glBindTexture(GL_TEXTURE_2D, textureIds.at(i)));
+	}
 }
 
 void RenderCommand::bindPipeline(const scomp::Pipeline& pipeline) const {

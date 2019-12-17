@@ -85,17 +85,7 @@ void RenderSystem::update() {
         m_ctx.rcommand.unbindRenderTargets();
         m_ctx.rcommand.clear();
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING));
-
-        // TODO abstract
-        GLCall(glActiveTexture(GL_TEXTURE0));
-        GLCall(glBindTexture(GL_TEXTURE_2D, m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds.at(0)));
-
-        GLCall(glActiveTexture(GL_TEXTURE0 + 1));
-        GLCall(glBindTexture(GL_TEXTURE_2D, m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds.at(1)));
-
-        GLCall(glActiveTexture(GL_TEXTURE0 + 2));
-        GLCall(glBindTexture(GL_TEXTURE_2D, m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds.at(2)));
-
+        m_ctx.rcommand.bindTextures(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds);
         m_ctx.rcommand.drawIndexed(m_scomps.planeMesh.ib.count, m_scomps.planeMesh.ib.type);
     }
 
