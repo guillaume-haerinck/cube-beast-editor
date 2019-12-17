@@ -118,6 +118,8 @@ void App::handleSDLEvents() {
 				case SDL_WINDOWEVENT_RESIZED:
 					spdlog::info("window resized {} {} !", e.window.data1, e.window.data2);
 					m_scomps.windowSize = glm::ivec2(e.window.data1, e.window.data2);
+					glViewport(0, 0, m_scomps.windowSize.x, m_scomps.windowSize.y);
+					m_scomps.camera.proj = glm::perspectiveFovLH(glm::quarter_pi<float>(), (float) m_scomps.windowSize.x, (float) m_scomps.windowSize.y, 0.1f, 100.0f);
 					break;
 	
 				default: break;
