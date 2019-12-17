@@ -211,6 +211,8 @@ void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* vsSrc
 	}
 
 	// Link constant buffers
+	// FIXME problems when assigning multiple pipelines next to each other
+	// the associated cb are not correct
 	scomp::Pipeline sPipeline = {};
 	for (size_t i = 0; i < cbIndices.size(); i++) {
 		scomp::ConstantBuffer& cb = m_scomps.constantBuffers.at(cbIndices.at(i));

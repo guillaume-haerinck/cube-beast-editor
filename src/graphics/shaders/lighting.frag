@@ -7,15 +7,6 @@ layout (std140) uniform perFrame {
 	vec3 cameraPos;
 };
 
-layout (std140) uniform perLightChange {
-    vec3 l_color;
-	float l_intensity;
-	vec3 l_position;
-	float l_spotAngle;
-	vec3 l_direction;
-	float l_attenuationRadius;
-};
-
 uniform sampler2D g_albedo;
 in lowp vec2 v_texCoord;
 
@@ -25,7 +16,7 @@ void main() {
 	if (color.a < 0.1)
     	discard;
 	else
-		color = vec4(l_color, 1);
+		color = vec4(1, 1, 1, 1);
 }
 
 )"

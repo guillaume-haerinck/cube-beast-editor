@@ -223,11 +223,24 @@ void App::initSingletonComponents() {
 
     // Init pipelines
     {
-		std::vector<scomp::ConstantBufferIndex> cbIndices = {
-            scomp::ConstantBufferIndex::PER_FRAME
-        };
+		std::vector<scomp::ConstantBufferIndex> cbIndices;
+	
+		// Lighting
+		cbIndices = {
+			scomp::ConstantBufferIndex::PER_FRAME
+		};
+		const char* VSLighting = 
+			#include "graphics/shaders/lighting.vert"
+		;
+		const char* FSLighting =
+			#include "graphics/shaders/lighting.frag"
+		;
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_LIGHTING, VSLighting, FSLighting, cbIndices);
 
 		// Geometry
+		cbIndices = {
+            scomp::ConstantBufferIndex::PER_FRAME
+        };
 		const char* VSGeo = 
 			#include "graphics/shaders/geometry.vert"
 		;
@@ -237,6 +250,9 @@ void App::initSingletonComponents() {
         m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GEOMETRY, VSGeo, FSGeo, cbIndices);
 
 		// Grid
+		cbIndices = {
+            scomp::ConstantBufferIndex::PER_FRAME
+        };
 		const char* VSGrid = 
 			#include "graphics/shaders/grid.vert"
 		;
@@ -246,6 +262,9 @@ void App::initSingletonComponents() {
         m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GRID, VSGrid, FSGrid, cbIndices);
 
 		// Debug draw
+		cbIndices = {
+            scomp::ConstantBufferIndex::PER_FRAME
+        };
 		const char* VSDdraw = 
 			#include "graphics/shaders/ddraw.vert"
 		;
@@ -253,19 +272,6 @@ void App::initSingletonComponents() {
 			#include "graphics/shaders/ddraw.frag"
 		;
         m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_DDRAW, VSDdraw, FSDdraw, cbIndices);
-
-		// Lighting
-		cbIndices = {
-			scomp::ConstantBufferIndex::PER_FRAME,
-			scomp::ConstantBufferIndex::PER_LIGHT_CHANGE
-		};
-		const char* VSLighting = 
-			#include "graphics/shaders/lighting.vert"
-		;
-		const char* FSLighting =
-			#include "graphics/shaders/lighting.frag"
-		;
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_LIGHTING, VSLighting, FSLighting, cbIndices);
 
 		// Gui
 		cbIndices = {
@@ -285,7 +291,7 @@ void App::initSingletonComponents() {
 	{
 		scomp::ConstantBuffer& perLightChangeCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_LIGHT_CHANGE);
 		cb::perLightChange cbData;
-		cbData.color = glm::vec3(1, 0, 0);
+		cbData.color = glm::vec3(0.5, 0.5, 0.5);
 
 		m_ctx.rcommand.updateConstantBuffer(perLightChangeCB, &cbData);
 	}
