@@ -48,7 +48,7 @@ void RenderSystem::update() {
 
         if (nbInstances >= view.size()) {
             // Update instance buffers
-            for (auto buffer : m_scomps.cubeMesh.vb.buffers) {
+            for (auto& buffer : m_scomps.cubeMesh.vb.buffers) {
                 switch (buffer.type) {
                 case scomp::AttributeBufferType::PER_INSTANCE_TRANSLATION:
                     m_ctx.rcommand.updateAttributeBufferAnySize(buffer, m_tempTranslations.data(), sizeof(glm::vec3) * nbInstances);

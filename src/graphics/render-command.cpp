@@ -367,21 +367,20 @@ void RenderCommand::updateConstantBuffer(const scomp::ConstantBuffer& cb, void* 
 }
 
 void RenderCommand::updateAttributeBuffer(const scomp::AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const {
-	assert(dataByteWidth <= buffer.byteWidth && "New attribute buffer data exceed the size of the allocated buffer");
+	assert(dataByteWidth < buffer.byteWidth && "New attribute buffer data exceed the size of the allocated buffer");
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer.bufferId));
 	GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, dataByteWidth, data));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
 void RenderCommand::updateAttributeBufferAnySize(scomp::AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const {
-	if (dataByteWidth > buffer.byteWidth) {
+	if (dataByteWidth >= buffer.byteWidth) {
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer.bufferId));
-		GLCall(glBufferData(GL_ARRAY_BUFFER, dataByteWidth, data, attributeBufferUsageToOpenGLBaseType(buffer.usage)));
-		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-		buffer.byteWidth = dataByteWidth;
-	} else {
-		updateAttributeBuffer(buffer, data, dataByteWidth);
+		GLCall(glBufferData(GL_ARRAY_BUFFER, dataByteWidth * 2, 0, attributeBufferUsageToOpenGLBaseType(buffer.usage)));
+		buffer.byteWidth = dataByteWidth * 2;
 	}
+	
+	updateAttributeBuffer(buffer, data, dataByteWidth);
 }
 
 ///////////////////////////////////////////////////////////////////////////
