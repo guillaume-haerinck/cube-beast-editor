@@ -4,7 +4,6 @@
 #include <deque>
 #include <unordered_map>
 #include <typeinfo>
-#include <string>
 #include <cassert>
 
 #include "../config/config.hpp"
@@ -17,8 +16,9 @@ namespace met {
      */
     class Registry {
     public:
-        Registry() : m_lastMaxEntityId(0), m_tempMatchCount(0) {
+        Registry() : m_lastMaxEntityId(0) {
             m_componentCollections.reserve(MIN_COMPONENT_TYPES);
+            m_tempMatchingEntities.reserve(MIN_ENTITIES);
         }
 
         ~Registry() {
@@ -36,7 +36,6 @@ namespace met {
                 m_unusedEntityIndices.pop_front();
                 return id;
             } else {
-                assert(m_lastMaxEntityId < MAX_ENTITIES && "You reached MAX_ENTITIES");
                 return ++m_lastMaxEntityId;
             }
         }
@@ -102,7 +101,7 @@ namespace met {
             m_unusedEntityIndices.push_back(id);
             for (IComponentCollection* collection : m_componentCollections) {
                 if (collection->has(id)) {
-                    collection->removeWithGap(id);
+                    collection->remove(id);
                 }
             }
         }
@@ -113,7 +112,7 @@ namespace met {
         void reset(entity id) {
             for (IComponentCollection* collection : m_componentCollections) {
                 if (collection->has(id)) {
-                    collection->removeWithGap(id);
+                    collection->remove(id);
                 }
             }
         }
@@ -135,9 +134,10 @@ namespace met {
          */
         template<typename Comp, typename... Comps>
         View<Comp, Comps...> view() {
+            m_tempMatchingEntities.clear();
             fillMatchingEntities<Comp>();
             (removeUnmatchingEntities<Comps>(), ...);
-            View<Comp, Comps...> view(m_tempMatchCount, m_tempMatchingEntities.data(), getCollection<Comp>(), getCollection<Comps>()...);
+            View<Comp, Comps...> view(m_tempMatchingEntities.size(), m_tempMatchingEntities.data(), getCollection<Comp>(), getCollection<Comps>()...);
             return view;
         }
 
@@ -157,12 +157,9 @@ namespace met {
         template<typename Comp>
         void fillMatchingEntities() {
             const ComponentCollection<Comp>* collection = getCollection<Comp>();
-            m_tempMatchCount = 0;
-
             for (entity id = 1; id <= collection->size(); ++id) {
                 if (collection->has(id)) {
-                    m_tempMatchingEntities.at(m_tempMatchCount) = id;
-                    m_tempMatchCount++;
+                    m_tempMatchingEntities.push_back(id);
                 }
             }
         }
@@ -173,14 +170,10 @@ namespace met {
         template<typename Comp>
         void removeUnmatchingEntities() {
             const ComponentCollection<Comp>* collection = getCollection<Comp>();
-
-            for (size_t i = 0; i < m_tempMatchCount; ++i) {
+            for (size_t i = 0; i < m_tempMatchingEntities.size(); ++i) {
                 const entity id = m_tempMatchingEntities.at(i);
-
                 if (!collection->has(id)) {
-                    m_tempMatchingEntities.at(i) = m_tempMatchingEntities.at(i + 1);
-                    m_tempMatchCount--;
-                    i--;
+                    m_tempMatchingEntities.erase(m_tempMatchingEntities.begin() + i);
                 }
             }
         }
@@ -211,10 +204,6 @@ namespace met {
         std::deque<entity> m_unusedEntityIndices;
         std::vector<IComponentCollection*> m_componentCollections;
         std::unordered_map<std::string, unsigned int> m_componentCollectionIndices;
-
-        // TODO Allow for multi-threading with std::async when matching entities with components to create views
-        // Have multiple independant compile-time arrays. 6 might be enough because 6 processor cores to work with is already a lot
-        std::array<entity, MAX_ENTITIES> m_tempMatchingEntities;
-        unsigned int m_tempMatchCount;
+        std::vector<entity> m_tempMatchingEntities;
     };
 }

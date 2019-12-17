@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef MAX_ENTITIES
-    #define MAX_ENTITIES 32 // TODO use dynamic array instead
+#ifndef MIN_ENTITIES
+    #define MIN_ENTITIES 32
 #endif
 
 #ifndef MIN_COMPONENT_TYPES
@@ -11,4 +11,5 @@
 namespace met {
     using entity = unsigned int;
     const static entity null_entity = 0;
+    const static unsigned int null_component = 0;
 }
