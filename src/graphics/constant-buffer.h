@@ -71,6 +71,7 @@ namespace cb {
 	 * @brief Constant buffer updated once per window resize
 	 */
 	struct perWindowChange {
-		glm::mat4x4 matWorld;
+		float scale;
+		char padding[12];
 	};
 }

@@ -116,18 +116,17 @@ void App::handleSDLEvents() {
 		if (e.type == SDL_WINDOWEVENT) {
 			switch (e.window.event) {
 				case SDL_WINDOWEVENT_RESIZED:
-					m_scomps.windowSize = glm::ivec2(e.window.data1, e.window.data2);
-					glViewport(0, 0, m_scomps.windowSize.x, m_scomps.windowSize.y);
-					m_scomps.camera.proj = glm::perspectiveFovLH(glm::quarter_pi<float>(), (float) m_scomps.windowSize.x, (float) m_scomps.windowSize.y, 0.1f, 100.0f);
 					// Update perWindowChangeCb
 					{
 						cb::perWindowChange cbData;
             			scomp::ConstantBuffer& perWinChangeCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_WINDOW_CHANGE);
-
-						cbData.matWorld = glm::scale(glm::mat4(1), glm::vec3(2));
-
+						glm::vec2 change = glm::vec2(e.window.data1, e.window.data2) / glm::vec2(m_scomps.windowSize);
+						cbData.scale = change.x;
 						m_ctx.rcommand.updateConstantBuffer(perWinChangeCB, &cbData);
 					}
+					m_scomps.windowSize = glm::ivec2(e.window.data1, e.window.data2);
+					glViewport(0, 0, m_scomps.windowSize.x, m_scomps.windowSize.y);
+					m_scomps.camera.proj = glm::perspectiveFovLH(glm::quarter_pi<float>(), (float) m_scomps.windowSize.x, (float) m_scomps.windowSize.y, 0.1f, 100.0f);
 					break;
 	
 				default: break;
@@ -324,7 +323,7 @@ void App::initSingletonComponents() {
 	{
 		scomp::ConstantBuffer& perWindowChangeCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_WINDOW_CHANGE);
 		cb::perWindowChange cbData;
-		cbData.matWorld = glm::mat4(1);
+		cbData.scale = 1.0f;
 
 		m_ctx.rcommand.updateConstantBuffer(perWindowChangeCB, &cbData);
 	}
