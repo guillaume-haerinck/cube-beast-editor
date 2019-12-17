@@ -67,8 +67,6 @@ void SelectionSystem::update() {
         from /= from.w;
         to /= to.w;
 
-        spdlog::info("Intersection point is {} {}", m_scomps.inputs.NDCMousePos.x, m_scomps.inputs.NDCMousePos.y);
-
         glm::vec3 intersectionPoint;
         for (unsigned int i = 0; i < m_planeNormals.size(); i++) {
             if (voxmt::doesLineIntersectPlane(m_planeNormals.at(i), m_planePositions.at(i), from, to, intersectionPoint)) {

@@ -113,6 +113,18 @@ void App::handleSDLEvents() {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         ImGui_ImplSDL2_ProcessEvent(&e);
+		if (e.type == SDL_WINDOWEVENT) {
+			switch (e.window.event) {
+				case SDL_WINDOWEVENT_RESIZED:
+					spdlog::info("window resized {} {} !", e.window.data1, e.window.data2);
+					m_scomps.windowSize = glm::ivec2(e.window.data1, e.window.data2);
+					break;
+	
+				default: break;
+			}
+			continue;	
+		}
+
         switch (e.type) {
         case SDL_QUIT:
             exit();
@@ -149,8 +161,7 @@ void App::handleSDLEvents() {
 				m_scomps.inputs.actionState.at(scomp::InputAction::CAM_PAN) = false;
             break;
 
-        default:
-            break;
+        default: break;
         }
     }
 
@@ -178,7 +189,7 @@ void App::initSDL() {
 		"Voxel Editor",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		m_scomps.windowSize.x, m_scomps.windowSize.y,
-		SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI
+		SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE
     );
 	if (m_window == nullptr) {
         spdlog::critical("[SDL2] Window is null: {}", SDL_GetError());
