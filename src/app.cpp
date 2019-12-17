@@ -217,7 +217,7 @@ void App::initSingletonComponents() {
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_FRAME, sizeof(cb::perFrame));
 
 		// TODO use arrays
-		// m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_MATERIAL_CHANGE, sizeof(cb::perMaterialChange));
+		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_MATERIAL_CHANGE, sizeof(cb::perMaterialChange));
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_LIGHT_CHANGE, sizeof(cb::perLightChange));
 	}
 
@@ -280,6 +280,15 @@ void App::initSingletonComponents() {
 		;
         m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GUI, VSGui, FSGui, cbIndices);
     }
+
+	// Update light constant buffer
+	{
+		scomp::ConstantBuffer& perLightChangeCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_LIGHT_CHANGE);
+		cb::perLightChange cbData;
+		cbData.color = glm::vec3(1, 0, 0);
+
+		m_ctx.rcommand.updateConstantBuffer(perLightChangeCB, &cbData);
+	}
 
     // Init Render Targets
     {

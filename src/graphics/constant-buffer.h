@@ -32,6 +32,8 @@ namespace cb {
 	 * @note Is sent as an array.
 	 */
 	struct perMaterialChange {
+		char padding[16];
+		/*
 		glm::vec3 meshAutoColor;
 
 		uint32_t baseColorIndex;
@@ -49,6 +51,7 @@ namespace cb {
 
 		uint32_t emissiveIndex;
 		glm::vec3 emissiveFactor;
+		*/
 	};
 
 	/**

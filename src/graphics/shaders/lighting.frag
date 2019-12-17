@@ -24,6 +24,8 @@ void main() {
 
 	if (color.a < 0.1)
     	discard;
+	else
+		color = vec4(l_color, 1);
 }
 
 )"
