@@ -1,13 +1,14 @@
 R"(#version 300 es
+precision lowp float;
 layout(location = 0) in vec3 position;
 
 layout (std140) uniform perNiMesh {
-    lowp mat4 matWorld;
+    mat4 matWorld;
 };
 
 layout (std140) uniform perFrame {
-    lowp mat4 matViewProj;
-	lowp vec3 cameraPos;
+    mat4 matViewProj;
+	vec3 cameraPos;
 };
 
 void main() {

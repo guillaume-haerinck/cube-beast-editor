@@ -31,7 +31,7 @@ namespace cb {
 	 * @brief Constant buffer updated when a PBR material is changed
 	 * @note Is sent as an array.
 	 */
-	struct perCookTorranceMaterialChange {
+	struct perMaterialChange {
 		glm::vec3 meshAutoColor;
 
 		uint32_t baseColorIndex;
@@ -49,22 +49,6 @@ namespace cb {
 
 		uint32_t emissiveIndex;
 		glm::vec3 emissiveFactor;
-	};
-
-	/**
-	 * @brief Constant buffer updated when a Phong material is changed
-	 * @note Is sent as an array.
-	 */
-	struct perPhongMaterialChange {
-		glm::vec3 ambientFactor;
-
-		glm::vec3 diffuseFactor;
-		uint32_t diffuseIndex;
-
-		glm::vec3 specularFactor;
-		uint32_t specularIndex;
-
-		float shininess;
 	};
 
 	/**

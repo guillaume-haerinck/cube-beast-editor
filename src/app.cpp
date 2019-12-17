@@ -215,21 +215,17 @@ void App::initSingletonComponents() {
 	{
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_NI_MESH, sizeof(cb::perNiMesh));
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_FRAME, sizeof(cb::perFrame));
+
+		// TODO use arrays
+		// m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_MATERIAL_CHANGE, sizeof(cb::perMaterialChange));
+		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_LIGHT_CHANGE, sizeof(cb::perLightChange));
 	}
 
     // Init pipelines
     {
-		// Lighting
-		const char* VSLighting = 
-			#include "graphics/shaders/lighting.vert"
-		;
-		const char* FSLighting =
-			#include "graphics/shaders/lighting.frag"
-		;
-        std::vector<scomp::ConstantBufferIndex> cbIndices = {
+		std::vector<scomp::ConstantBufferIndex> cbIndices = {
             scomp::ConstantBufferIndex::PER_FRAME
         };
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_LIGHTING, VSLighting, FSLighting, cbIndices);
 
 		// Geometry
 		const char* VSGeo = 
@@ -258,14 +254,30 @@ void App::initSingletonComponents() {
 		;
         m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_DDRAW, VSDdraw, FSDdraw, cbIndices);
 
+		// Lighting
+		cbIndices = {
+			scomp::ConstantBufferIndex::PER_FRAME,
+			scomp::ConstantBufferIndex::PER_LIGHT_CHANGE
+		};
+		const char* VSLighting = 
+			#include "graphics/shaders/lighting.vert"
+		;
+		const char* FSLighting =
+			#include "graphics/shaders/lighting.frag"
+		;
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_LIGHTING, VSLighting, FSLighting, cbIndices);
+
 		// Gui
+		cbIndices = {
+			 scomp::ConstantBufferIndex::PER_FRAME,
+			 scomp::ConstantBufferIndex::PER_NI_MESH
+		};
 		const char* VSGui = 
 			#include "graphics/shaders/gui.vert"
 		;
 		const char* FSGui =
 			#include "graphics/shaders/gui.frag"
 		;
-		cbIndices.push_back(scomp::ConstantBufferIndex::PER_NI_MESH);
         m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GUI, VSGui, FSGui, cbIndices);
     }
 
