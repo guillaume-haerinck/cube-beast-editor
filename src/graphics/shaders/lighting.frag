@@ -23,23 +23,37 @@ void main() {
 
 	vec3 diffuse = vec3(0.0, 0.0, 0.0);
 	vec3 specular = vec3(0.0, 0.0, 0.0);
+
 	float ambientIntensity = 1.0;
     float diffuseIntensity = 1.0;
+	float specularIntensity = 2.0;
+    float specularAttenuation = 1.0;
 
 	vec3 l_direction = vec3(-1.0, -0.5, 0.0);
 	vec3 l_color = vec3(1.0, 0.0, 0.0);
+	float l_intensity = 1.0;
 
 	// Ambient
-	float ambientStrength = 0.1f;
+	float ambientStrength = 0.1;
     vec3 ambient = l_color * ambientStrength * ambientIntensity;
 
     // Diffuse
     float diffuseFactor = dot(normalize(normal), -l_direction);
 	if (diffuseFactor > 0.0) {
         diffuse = l_color * diffuseFactor * diffuseIntensity;
+
+		// Specular
+		vec3 vertexToCamera = normalize(cameraPos - worldPos);
+		vec3 lightReflect = normalize(reflect(l_direction, normal));
+		float specularFactor = dot(vertexToCamera, lightReflect);
+
+		if (specularFactor > 0.0) {
+			specularFactor = pow(specularFactor, specularAttenuation);
+            specular = l_color * specularFactor * specularIntensity;
+        }
 	}
 
-	color = vec4(ambient + diffuse, 1.0f);
+	color = vec4(ambient + diffuse + specular, 1.0f) * l_intensity;
 }
 
 )"
