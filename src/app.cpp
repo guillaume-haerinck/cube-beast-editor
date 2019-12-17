@@ -283,10 +283,11 @@ void App::initSingletonComponents() {
 
     // Init Render Targets
     {
+		// FIMXE on linux second color render target cannot be float or framebuffer incomplete
         PipelineOutputDescription outputDescription = {
 			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Albedo" },
-			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGB, "Geometry_Normal" },
-			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGB, "Geometry_WorldPosition" },
+			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::UCHAR, RenderTargetChannels::RGB, "Geometry_Normal" },
+			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::UCHAR, RenderTargetChannels::RGB, "Geometry_WorldPosition" },
             { RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetDataType::UCHAR, RenderTargetChannels::RGBA, "EntityIdToColor" },
 			{ RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetDataType::FLOAT, RenderTargetChannels::R, "Depth" }
         };
