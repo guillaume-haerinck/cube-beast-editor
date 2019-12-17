@@ -138,6 +138,7 @@ void RenderCommand::createConstantBuffer(scomp::ConstantBufferIndex index, unsig
 		case scomp::PER_FRAME: name = "perFrame"; break;
 		case scomp::PER_MATERIAL_CHANGE: name = "perMaterialChange"; break;
 		case scomp::PER_LIGHT_CHANGE: name = "perLightChange"; break;
+		case scomp::PER_WINDOW_CHANGE: name = "perWindowChange"; break;
 		default:
 			spdlog::error("[createConstantBuffer] unknown index {}", index);
             debug_break();

@@ -116,10 +116,18 @@ void App::handleSDLEvents() {
 		if (e.type == SDL_WINDOWEVENT) {
 			switch (e.window.event) {
 				case SDL_WINDOWEVENT_RESIZED:
-					spdlog::info("window resized {} {} !", e.window.data1, e.window.data2);
 					m_scomps.windowSize = glm::ivec2(e.window.data1, e.window.data2);
 					glViewport(0, 0, m_scomps.windowSize.x, m_scomps.windowSize.y);
 					m_scomps.camera.proj = glm::perspectiveFovLH(glm::quarter_pi<float>(), (float) m_scomps.windowSize.x, (float) m_scomps.windowSize.y, 0.1f, 100.0f);
+					// Update perWindowChangeCb
+					{
+						cb::perWindowChange cbData;
+            			scomp::ConstantBuffer& perWinChangeCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_WINDOW_CHANGE);
+
+						cbData.matWorld = glm::scale(glm::mat4(1), glm::vec3(2));
+
+						m_ctx.rcommand.updateConstantBuffer(perWinChangeCB, &cbData);
+					}
 					break;
 	
 				default: break;
@@ -228,6 +236,7 @@ void App::initSingletonComponents() {
 	{
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_NI_MESH, sizeof(cb::perNiMesh));
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_FRAME, sizeof(cb::perFrame));
+		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_WINDOW_CHANGE, sizeof(cb::perWindowChange));
 
 		// TODO use arrays
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_MATERIAL_CHANGE, sizeof(cb::perMaterialChange));
@@ -238,18 +247,6 @@ void App::initSingletonComponents() {
     {
 		std::vector<scomp::ConstantBufferIndex> cbIndices;
 	
-		// Lighting
-		cbIndices = {
-			scomp::ConstantBufferIndex::PER_FRAME
-		};
-		const char* VSLighting = 
-			#include "graphics/shaders/lighting.vert"
-		;
-		const char* FSLighting =
-			#include "graphics/shaders/lighting.frag"
-		;
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_LIGHTING, VSLighting, FSLighting, cbIndices, {"g_albedo", "g_normal", "g_worldPosition"});
-
 		// Geometry
 		cbIndices = {
             scomp::ConstantBufferIndex::PER_FRAME
@@ -297,7 +294,21 @@ void App::initSingletonComponents() {
 		const char* FSGui =
 			#include "graphics/shaders/gui.frag"
 		;
+		// FIXME perNIMesh overrided by PerWindowChange
         m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GUI, VSGui, FSGui, cbIndices);
+
+		// Lighting
+		cbIndices = {
+			scomp::ConstantBufferIndex::PER_FRAME,
+			scomp::ConstantBufferIndex::PER_WINDOW_CHANGE
+		};
+		const char* VSLighting = 
+			#include "graphics/shaders/lighting.vert"
+		;
+		const char* FSLighting =
+			#include "graphics/shaders/lighting.frag"
+		;
+        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_LIGHTING, VSLighting, FSLighting, cbIndices, {"g_albedo", "g_normal", "g_worldPosition"});
     }
 
 	// Update light constant buffer
@@ -307,6 +318,15 @@ void App::initSingletonComponents() {
 		cbData.color = glm::vec3(0.5, 0.5, 0.5);
 
 		m_ctx.rcommand.updateConstantBuffer(perLightChangeCB, &cbData);
+	}
+
+	// Update per window change constant buffer
+	{
+		scomp::ConstantBuffer& perWindowChangeCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_WINDOW_CHANGE);
+		cb::perWindowChange cbData;
+		cbData.matWorld = glm::mat4(1);
+
+		m_ctx.rcommand.updateConstantBuffer(perWindowChangeCB, &cbData);
 	}
 
     // Init Render Targets
