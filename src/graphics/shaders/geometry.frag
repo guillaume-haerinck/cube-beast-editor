@@ -1,8 +1,8 @@
 R"(#version 300 es
 precision lowp float;
 layout(location = 0) out vec4 g_albedo;
-layout(location = 1) out vec3 g_normal;
-layout(location = 2) out vec3 g_worldPosition;
+layout(location = 1) out vec4 g_normal;
+layout(location = 2) out vec4 g_worldPosition;
 layout(location = 3) out vec4 g_id;
 
 in vec3 v_id;
@@ -28,9 +28,9 @@ float getFaceNumber(vec3 normal) {
 
 void main() {
 	g_id = vec4(v_id, getFaceNumber(v_normal));
-	g_normal = v_normal;
+	g_normal = vec4(v_normal, 1.0);
 	g_albedo = vec4(0.5, 0.5, 0.5, 1.0);
-	g_worldPosition = v_worldPosition;
+	g_worldPosition = vec4(v_worldPosition, 0.0);
 }
 
 )"

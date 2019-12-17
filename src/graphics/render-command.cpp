@@ -291,10 +291,10 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
    
         case RenderTargetUsage::Depth:
             if (target.type == RenderTargetType::Texture) {
-                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, 500, 500, 0, GL_DEPTH_COMPONENT, renderTargetDataTypeToOpenGLBaseType(target.dataType), 0)); // TODO get width and height of window from scomps
+                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, 500, 500, 0, GL_DEPTH_COMPONENT, renderTargetDataTypeToOpenGLBaseType(target.dataType), 0)); // TODO get width and height of window from scomps
                 GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureId, 0));
             } else if (target.type == RenderTargetType::RenderBuffer) {
-                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 500, 500)); // TODO get width and height of window from scomps
+                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 500, 500)); // TODO get width and height of window from scomps
                 GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo));
             }
             break;
@@ -325,8 +325,20 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
 	GLCall(glDrawBuffers(slot, attachments.data()));
 	
 	// Check for errors
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		spdlog::error("[createRenderTarget] FrameBuffer is not complete !");
+	auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (status!= GL_FRAMEBUFFER_COMPLETE) {
+		std::string detail = "";
+		switch (status) {
+		case GL_FRAMEBUFFER_UNDEFINED: detail = "undefined"; break;
+		case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: detail = "Incomplete attachment"; break;
+		case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: detail = "Incomplete missing attachment"; break;
+		case GL_FRAMEBUFFER_UNSUPPORTED: detail = "unsupported"; break;
+		case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE: detail = "Incomplete multisample"; break;
+		default:
+			break;
+		}
+
+		spdlog::error("[createRenderTarget] FrameBuffer is not complete : {}", detail);
 		debug_break();
 		assert(false);
 	}
