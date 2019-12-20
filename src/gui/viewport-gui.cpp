@@ -18,7 +18,13 @@ ViewportGui::ViewportGui(Context& ctx) : m_ctx(ctx) {
 ViewportGui::~ViewportGui() {}
 
 void ViewportGui::update() {
+    ImGui::ShowDemoWindow();
+
     ImGui::Begin("Main debug window");
-    ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    ImGui::End();
+
+    ImGui::Begin("Other window");
+        ImGui::Text("hello");
     ImGui::End();
 }

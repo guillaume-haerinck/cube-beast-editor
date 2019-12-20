@@ -232,6 +232,8 @@ void App::initImgui() const {
     ImGui_ImplSDL2_InitForOpenGL(m_window, m_glContext);
 	ImGui_ImplOpenGL3_Init("#version 300 es");
 	ImGui::StyleColorsDark();
+	ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 }
 
 void App::initSingletonComponents() {
