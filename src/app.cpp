@@ -117,11 +117,11 @@ void App::handleSDLEvents() {
 			switch (e.window.event) {
 				case SDL_WINDOWEVENT_RESIZED:
 					// Update perWindowChangeCb
+					// FIXME
 					{
 						cb::perWindowChange cbData;
             			scomp::ConstantBuffer& perWinChangeCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_WINDOW_CHANGE);
-						glm::vec2 change = glm::vec2(e.window.data1, e.window.data2) / glm::vec2(m_scomps.windowSize);
-						cbData.scale = change.x;
+						cbData.scale = (float) e.window.data2 / (float) e.window.data1;
 						m_ctx.rcommand.updateConstantBuffer(perWinChangeCB, &cbData);
 					}
 					m_scomps.windowSize = glm::ivec2(e.window.data1, e.window.data2);

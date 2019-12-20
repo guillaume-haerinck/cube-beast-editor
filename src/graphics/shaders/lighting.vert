@@ -11,7 +11,7 @@ out vec2 v_texCoord;
 
 void main() {
 	v_texCoord = texCoord;
-	gl_Position = vec4(position.x * scale * 2.0, position.y * scale * 2.0, position.z, 1.0);
+	gl_Position = vec4(position.x * scale * 2.0, position.y * 2.0, position.z, 1.0);
 }
 
 )"
