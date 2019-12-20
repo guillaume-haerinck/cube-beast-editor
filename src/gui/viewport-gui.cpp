@@ -7,7 +7,7 @@
 #include "components/graphics/material.h"
 #include "components/physics/transform.h"
 
-ViewportGui::ViewportGui(Context& ctx) : m_ctx(ctx) {
+ViewportGui::ViewportGui(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx), m_scomps(scomps) {
     comp::Material material;
 
     met::entity entity = m_ctx.registry.create();
@@ -53,6 +53,16 @@ void ViewportGui::update() {
 
         ImGui::Begin("Other window");
             ImGui::Text("hello");
+        ImGui::End();
+
+        ImGui::Begin("Game rendering");
+        {
+            ImGui::GetWindowDrawList()->AddImage(
+                (void*) m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds.at(0),
+                ImVec2(0, m_scomps.windowSize.y),
+                ImVec2(m_scomps.windowSize.y, 0)
+            );
+        }
         ImGui::End();
 
     ImGui::End();

@@ -46,7 +46,7 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 
     // Order GUIs
     m_guis = {
-        new ViewportGui(m_ctx)
+        new ViewportGui(m_ctx, m_scomps)
     };
 }
 
