@@ -177,10 +177,6 @@ void App::handleSDLEvents() {
         default: break;
         }
     }
-
-    if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
-        m_scomps.inputs.actionState.fill(false);
-    }
 }
 
 void App::initSDL() {
