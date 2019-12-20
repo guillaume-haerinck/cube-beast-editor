@@ -66,12 +66,4 @@ namespace cb {
 		glm::vec3 direction;
 		float attenuationRadius;
 	};
-
-	/**
-	 * @brief Constant buffer updated once per window resize
-	 */
-	struct perWindowChange {
-		float scale;
-		char padding[12];
-	};
 }

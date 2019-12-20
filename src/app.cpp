@@ -116,17 +116,21 @@ void App::handleSDLEvents() {
 		if (e.type == SDL_WINDOWEVENT) {
 			switch (e.window.event) {
 				case SDL_WINDOWEVENT_RESIZED:
-					// Update perWindowChangeCb
-					// FIXME
-					{
-						cb::perWindowChange cbData;
-            			scomp::ConstantBuffer& perWinChangeCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_WINDOW_CHANGE);
-						cbData.scale = (float) e.window.data2 / (float) e.window.data1;
-						m_ctx.rcommand.updateConstantBuffer(perWinChangeCB, &cbData);
-					}
 					m_scomps.windowSize = glm::ivec2(e.window.data1, e.window.data2);
 					glViewport(0, 0, m_scomps.windowSize.x, m_scomps.windowSize.y);
 					m_scomps.camera.proj = glm::perspectiveFovLH(glm::quarter_pi<float>(), (float) m_scomps.windowSize.x, (float) m_scomps.windowSize.y, 0.1f, 100.0f);
+					// RemakeFramebuffer
+					{
+						glDeleteFramebuffers(1, &m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).frameBufferId);
+						PipelineOutputDescription outputDescription = {
+							{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Albedo" },
+							{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Normal" },
+							{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_WorldPosition" },
+							{ RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetDataType::UCHAR, RenderTargetChannels::RGBA, "EntityIdToColor" },
+							{ RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetDataType::FLOAT, RenderTargetChannels::R, "Depth" }
+						};
+						m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_GEOMETRY, outputDescription);
+					}
 					break;
 	
 				default: break;
@@ -235,7 +239,6 @@ void App::initSingletonComponents() {
 	{
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_NI_MESH, sizeof(cb::perNiMesh));
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_FRAME, sizeof(cb::perFrame));
-		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_WINDOW_CHANGE, sizeof(cb::perWindowChange));
 
 		// TODO use arrays
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_MATERIAL_CHANGE, sizeof(cb::perMaterialChange));
@@ -298,8 +301,7 @@ void App::initSingletonComponents() {
 
 		// Lighting
 		cbIndices = {
-			scomp::ConstantBufferIndex::PER_FRAME,
-			scomp::ConstantBufferIndex::PER_WINDOW_CHANGE
+			scomp::ConstantBufferIndex::PER_FRAME
 		};
 		const char* VSLighting = 
 			#include "graphics/shaders/lighting.vert"
@@ -317,15 +319,6 @@ void App::initSingletonComponents() {
 		cbData.color = glm::vec3(0.5, 0.5, 0.5);
 
 		m_ctx.rcommand.updateConstantBuffer(perLightChangeCB, &cbData);
-	}
-
-	// Update per window change constant buffer
-	{
-		scomp::ConstantBuffer& perWindowChangeCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_WINDOW_CHANGE);
-		cb::perWindowChange cbData;
-		cbData.scale = 1.0f;
-
-		m_ctx.rcommand.updateConstantBuffer(perWindowChangeCB, &cbData);
 	}
 
     // Init Render Targets
