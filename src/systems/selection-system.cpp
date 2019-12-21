@@ -46,7 +46,7 @@ void SelectionSystem::update() {
     // TODO abstract
     unsigned char pixel[] = { 0, 0, 0, 0 };
     GLCall(glReadBuffer(GL_COLOR_ATTACHMENT3));
-    GLCall(glReadPixels(m_scomps.inputs.mousePos.x, m_scomps.windowSize.y - m_scomps.inputs.mousePos.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel));
+    GLCall(glReadPixels(m_scomps.inputs.mousePos.x, m_scomps.viewportSize.y - m_scomps.inputs.mousePos.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel));
 
     m_scomps.hovered.exist = false;
     const met::entity hoveredCube = voxmt::colorToInt(pixel[0], pixel[1], pixel[2]);
