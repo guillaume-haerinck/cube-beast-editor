@@ -10,9 +10,12 @@ public:
     virtual ~ViewportGui();
 
     virtual void update() override;
+    virtual void onEvent(GuiEvent e) override;
+
+private:
+    void initGraphicsSingletonComponents();
 
 private:
     Context& m_ctx;
     SingletonComponents& m_scomps;
 };
-

@@ -17,6 +17,7 @@
  * @brief Global object used to store the state of the app. Is supposed to be read-only for vast-majority of systems.
  */
 struct SingletonComponents {
+	// Graphics
 	std::array<scomp::Pipeline, scomp::PipelineIndex::_PIP_MAX> pipelines;
 	std::array<scomp::ConstantBuffer, scomp::ConstantBufferIndex::_CONST_BUFFER_MAX> constantBuffers;
     std::array<scomp::RenderTargets, scomp::RenderTargetsIndex::_RTT_MAX> renderTargets;
@@ -25,8 +26,10 @@ struct SingletonComponents {
 	scomp::Mesh invertCubeMesh;
 	scomp::VertexBuffer ddrawVb;
 	scomp::Camera camera;
-	scomp::Inputs inputs;
-	scomp::Hovered hovered;
+	
+	// IO
 	glm::ivec2 viewportSize = { 600, 600 };
 	glm::ivec2 viewportPosTopLeft = { 0, 0 };
+	scomp::Inputs inputs;
+	scomp::Hovered hovered;
 };

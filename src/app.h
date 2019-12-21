@@ -22,8 +22,6 @@ public:
 private:
     void initSDL();
     void initImgui() const;
-    void initSingletonComponents();
-
     void handleSDLEvents();
 
 private:
