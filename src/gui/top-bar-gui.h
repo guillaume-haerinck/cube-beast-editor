@@ -4,16 +4,13 @@
 #include "context.h"
 #include "scomponents/singleton-components.h"
 
-class ViewportGui : public IGui {
+class TopBarGui : public IGui {
 public:
-    ViewportGui(Context& ctx, SingletonComponents& scomps);
-    virtual ~ViewportGui();
+    TopBarGui(Context& ctx, SingletonComponents& scomps);
+    virtual ~TopBarGui();
 
     virtual void update() override;
     virtual void onEvent(GuiEvent e) override;
-
-private:
-    void initGraphicsSingletonComponents();
 
 private:
     Context& m_ctx;
