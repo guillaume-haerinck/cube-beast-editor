@@ -15,4 +15,5 @@ public:
 private:
     Context& m_ctx;
     SingletonComponents& m_scomps;
+    bool first;
 };
