@@ -27,5 +27,6 @@ struct SingletonComponents {
 	scomp::Camera camera;
 	scomp::Inputs inputs;
 	scomp::Hovered hovered;
-	glm::ivec2 windowSize = { 600, 600 };
+	glm::ivec2 viewportSize = { 600, 600 };
+	glm::ivec2 viewportPosTopLeft = { 0, 0 };
 };

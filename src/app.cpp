@@ -46,7 +46,7 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 
     // Order GUIs
     m_guis = {
-        new ViewportGui(m_ctx)
+        new ViewportGui(m_ctx, m_scomps)
     };
 }
 
@@ -116,21 +116,6 @@ void App::handleSDLEvents() {
 		if (e.type == SDL_WINDOWEVENT) {
 			switch (e.window.event) {
 				case SDL_WINDOWEVENT_RESIZED:
-					m_scomps.windowSize = glm::ivec2(e.window.data1, e.window.data2);
-					glViewport(0, 0, m_scomps.windowSize.x, m_scomps.windowSize.y);
-					m_scomps.camera.proj = glm::perspectiveFovLH(glm::quarter_pi<float>(), (float) m_scomps.windowSize.x, (float) m_scomps.windowSize.y, 0.1f, 100.0f);
-					// RemakeFramebuffer
-					{
-						glDeleteFramebuffers(1, &m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).frameBufferId);
-						PipelineOutputDescription outputDescription = {
-							{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Albedo" },
-							{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Normal" },
-							{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_WorldPosition" },
-							{ RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetDataType::UCHAR, RenderTargetChannels::RGBA, "EntityIdToColor" },
-							{ RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetDataType::FLOAT, RenderTargetChannels::R, "Depth" }
-						};
-						m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_GEOMETRY, outputDescription);
-					}
 					break;
 	
 				default: break;
@@ -149,12 +134,12 @@ void App::handleSDLEvents() {
             break;
 
         case SDL_MOUSEMOTION:
-            m_scomps.inputs.delta.x = m_scomps.inputs.mousePos.x - e.button.x;
-            m_scomps.inputs.delta.y = m_scomps.inputs.mousePos.y - e.button.y;
-            m_scomps.inputs.mousePos.x = static_cast<float>(e.button.x);
-            m_scomps.inputs.mousePos.y = static_cast<float>(e.button.y);
-			m_scomps.inputs.NDCMousePos.x = ((float) e.button.x / m_scomps.windowSize.x) * 2.0f - 1.0f;
-			m_scomps.inputs.NDCMousePos.y = -(((float) e.button.y / m_scomps.windowSize.y) * 2.0f - 1.0f);
+            m_scomps.inputs.delta.x = m_scomps.inputs.mousePos.x - e.button.x + m_scomps.viewportPosTopLeft.x;
+            m_scomps.inputs.delta.y = m_scomps.inputs.mousePos.y - e.button.y + m_scomps.viewportPosTopLeft.y;
+            m_scomps.inputs.mousePos.x = static_cast<float>(e.button.x - m_scomps.viewportPosTopLeft.x);
+            m_scomps.inputs.mousePos.y = static_cast<float>(e.button.y - m_scomps.viewportPosTopLeft.y);
+			m_scomps.inputs.NDCMousePos.x = ((float) m_scomps.inputs.mousePos.x / m_scomps.viewportSize.x) * 2.0f - 1.0f;
+			m_scomps.inputs.NDCMousePos.y = -(((float) m_scomps.inputs.mousePos.y / m_scomps.viewportSize.y) * 2.0f - 1.0f);
             break;
         
 
@@ -177,10 +162,6 @@ void App::handleSDLEvents() {
         default: break;
         }
     }
-
-    if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
-        m_scomps.inputs.actionState.fill(false);
-    }
 }
 
 void App::initSDL() {
@@ -201,7 +182,7 @@ void App::initSDL() {
 	m_window = SDL_CreateWindow(
 		"Voxel Editor",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		m_scomps.windowSize.x, m_scomps.windowSize.y,
+		m_scomps.viewportSize.x, m_scomps.viewportSize.y,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE
     );
 	if (m_window == nullptr) {
@@ -333,6 +314,12 @@ void App::initSingletonComponents() {
 			{ RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetDataType::FLOAT, RenderTargetChannels::R, "Depth" }
         };
         m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_GEOMETRY, outputDescription);
+
+        outputDescription = {
+            { RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Color" },
+            { RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetDataType::FLOAT, RenderTargetChannels::R, "Depth" }
+        };
+        m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_FINAL, outputDescription);
     }
 
 	// Init dynamic debug draw vertex buffer
