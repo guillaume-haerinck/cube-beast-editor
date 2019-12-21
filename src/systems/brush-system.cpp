@@ -1,21 +1,17 @@
-#include "voxel-brush-system.h"
-
-#include <debug_break/debug_break.h>
+#include "brush-system.h"
 
 #include "components/physics/transform.h"
 #include "components/graphics/material.h"
 
-VoxelBrushSystem::VoxelBrushSystem(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx), m_scomps(scomps) {}
+BrushSystem::BrushSystem(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx), m_scomps(scomps) {}
 
-VoxelBrushSystem::~VoxelBrushSystem() {}
+BrushSystem::~BrushSystem() {}
 
-void VoxelBrushSystem::update() {
-    if (m_scomps.hovered.exist && m_scomps.inputs.actionState.at(scomp::InputAction::BRUSH_VOX_ADD)) {
+void BrushSystem::update() {
+    if (m_scomps.hovered.exist && m_scomps.isBrushStarted) {
         comp::Transform trans;
         comp::Material material;
         trans.position = m_scomps.hovered.position;
-        met::entity entity = m_ctx.registry.create();
-        m_ctx.registry.assign<comp::Material>(entity, material);
 
         if (m_scomps.hovered.isCube) {
             switch (m_scomps.hovered.face) {
@@ -27,11 +23,15 @@ void VoxelBrushSystem::update() {
                 case scomp::Face::BOTTOM: trans.position.y--; break;
                 case scomp::Face::NONE: break;
                 default:
-                    debug_break();
                     assert(false && "Unknown hovered face");
             }
         }
 
+        met::entity entity = m_ctx.registry.create();
+        m_ctx.registry.assign<comp::Material>(entity, material);
         m_ctx.registry.assign<comp::Transform>(entity, trans);
+
+        // temp
+        m_scomps.isBrushStarted = false;
     }
 }

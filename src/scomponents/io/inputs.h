@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <array>
+#include <vector>
 
 namespace scomp {
 	enum InputAction {
@@ -9,13 +10,11 @@ namespace scomp {
 		CAM_PAN,
 		CAM_DOLLY,
 		CAM_RESET,
-		BRUSH_VOX_ADD,
-		BRUSH_VOX_REMOVE,
 		_ACTION_MAX
 	};
 
     /**
-	 * @brief Store inputs state for current frame
+	 * @brief Store inputs state for current frame. Not undoable or re-doable.
 	 */
 	struct Inputs {
 		Inputs() {

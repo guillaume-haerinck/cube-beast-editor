@@ -1,12 +1,14 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include "systems/i-system.h"
 #include "context.h"
 
-class VoxelBrushSystem : public ISystem {
+class BrushSystem : public ISystem {
 public:
-    VoxelBrushSystem(Context& ctx, SingletonComponents& scomps);
-    virtual ~VoxelBrushSystem();
+    BrushSystem(Context& ctx, SingletonComponents& scomps);
+    virtual ~BrushSystem();
 
 	void update() override;
 

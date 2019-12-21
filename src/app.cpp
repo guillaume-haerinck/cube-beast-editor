@@ -9,7 +9,7 @@
 #include "systems/render-system.h"
 #include "systems/camera-system.h"
 #include "systems/selection-system.h"
-#include "systems/brushes/voxel-brush-system.h"
+#include "systems/brush-system.h"
 #include "gui/viewport-gui.h"
 #include "gui/top-bar-gui.h"
 
@@ -44,7 +44,7 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 		new RenderSystem(m_ctx, m_scomps),
 		new SelectionSystem(m_ctx, m_scomps),
 		new CameraSystem(m_scomps),
-		new VoxelBrushSystem(m_ctx, m_scomps)
+		new BrushSystem(m_ctx, m_scomps)
 	};
 }
 
@@ -103,11 +103,6 @@ void App::update() {
 /////////////////////////////////////////////////////////////////////////////
 
 void App::handleSDLEvents() {
-	// TEMP
-	// FIXME find a better way to handle both one-time event and other which have to last multiple frame until interuption
-	m_scomps.inputs.actionState.at(scomp::InputAction::BRUSH_VOX_ADD) = false;
-	m_scomps.inputs.actionState.at(scomp::InputAction::BRUSH_VOX_REMOVE) = false;
-
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         ImGui_ImplSDL2_ProcessEvent(&e);
@@ -134,13 +129,15 @@ void App::handleSDLEvents() {
             	m_scomps.inputs.actionState.at(scomp::InputAction::CAM_ORBIT) = true;
 			else if (e.button.button == SDL_BUTTON_MIDDLE)
 				m_scomps.inputs.actionState.at(scomp::InputAction::CAM_PAN) = true;
+			else if (e.button.button == SDL_BUTTON_LEFT)
+				m_scomps.isBrushStarted = true;
             break;
 
         case SDL_MOUSEBUTTONUP:
 			if (e.button.button == SDL_BUTTON_RIGHT)
 				m_scomps.inputs.actionState.at(scomp::InputAction::CAM_ORBIT) = false;
 			else if (e.button.button == SDL_BUTTON_LEFT)
-				m_scomps.inputs.actionState.at(scomp::InputAction::BRUSH_VOX_ADD) = true;
+				m_scomps.isBrushStarted = false;
 			else if (e.button.button == SDL_BUTTON_MIDDLE)
 				m_scomps.inputs.actionState.at(scomp::InputAction::CAM_PAN) = false;
             break;
