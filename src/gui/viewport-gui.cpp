@@ -104,9 +104,7 @@ void ViewportGui::update() {
             // Handle mouseNDC
             {
                 ImVec2 viewportPosTopLeft = ImGui::GetCursorScreenPos();
-                spdlog::info("{} {}", viewportPosTopLeft.x, viewportPosTopLeft.y);
-
-            
+                m_scomps.viewportPosTopLeft = glm::ivec2(viewportPosTopLeft.x, viewportPosTopLeft.y);
             }
 
             ImGui::PopStyleVar(3);

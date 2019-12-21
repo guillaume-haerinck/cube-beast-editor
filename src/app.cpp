@@ -134,12 +134,12 @@ void App::handleSDLEvents() {
             break;
 
         case SDL_MOUSEMOTION:
-            m_scomps.inputs.delta.x = m_scomps.inputs.mousePos.x - e.button.x;
-            m_scomps.inputs.delta.y = m_scomps.inputs.mousePos.y - e.button.y;
-            m_scomps.inputs.mousePos.x = static_cast<float>(e.button.x);
-            m_scomps.inputs.mousePos.y = static_cast<float>(e.button.y);
-			m_scomps.inputs.NDCMousePos.x = ((float) e.button.x / m_scomps.viewportSize.x) * 2.0f - 1.0f;
-			m_scomps.inputs.NDCMousePos.y = -(((float) e.button.y / m_scomps.viewportSize.y) * 2.0f - 1.0f);
+            m_scomps.inputs.delta.x = m_scomps.inputs.mousePos.x - e.button.x + m_scomps.viewportPosTopLeft.x;
+            m_scomps.inputs.delta.y = m_scomps.inputs.mousePos.y - e.button.y + m_scomps.viewportPosTopLeft.y;
+            m_scomps.inputs.mousePos.x = static_cast<float>(e.button.x - m_scomps.viewportPosTopLeft.x);
+            m_scomps.inputs.mousePos.y = static_cast<float>(e.button.y - m_scomps.viewportPosTopLeft.y);
+			m_scomps.inputs.NDCMousePos.x = ((float) m_scomps.inputs.mousePos.x / m_scomps.viewportSize.x) * 2.0f - 1.0f;
+			m_scomps.inputs.NDCMousePos.y = -(((float) m_scomps.inputs.mousePos.y / m_scomps.viewportSize.y) * 2.0f - 1.0f);
             break;
         
 
