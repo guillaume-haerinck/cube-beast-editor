@@ -82,7 +82,7 @@ void RenderSystem::update() {
     {
         m_ctx.rcommand.bindVertexBuffer(m_scomps.planeMesh.vb);
         m_ctx.rcommand.bindIndexBuffer(m_scomps.planeMesh.ib);
-        m_ctx.rcommand.unbindRenderTargets();
+        m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_FINAL));
         m_ctx.rcommand.clear();
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING));
         m_ctx.rcommand.bindTextures(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds);

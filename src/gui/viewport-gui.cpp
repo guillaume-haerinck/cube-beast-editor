@@ -67,7 +67,7 @@ void ViewportGui::update() {
         {
             ImGui::PopStyleVar(3);
             ImGui::GetWindowDrawList()->AddImage(
-                (void*) m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds.at(0),
+                (void*) m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_FINAL).textureIds.at(0),
                 ImVec2(0, m_scomps.windowSize.y),
                 ImVec2(m_scomps.windowSize.y, 0)
             );
