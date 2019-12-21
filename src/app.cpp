@@ -111,20 +111,8 @@ void App::handleSDLEvents() {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         ImGui_ImplSDL2_ProcessEvent(&e);
-		if (e.type == SDL_WINDOWEVENT) {
-			switch (e.window.event) {
-				case SDL_WINDOWEVENT_RESIZED:
-					break;
-	
-				default: break;
-			}
-			continue;	
-		}
-
         switch (e.type) {
-        case SDL_QUIT:
-            exit();
-            break;
+        case SDL_QUIT: exit(); break;
 
         case SDL_MOUSEWHEEL:
             m_scomps.inputs.wheelDelta = e.wheel.y;
@@ -159,6 +147,9 @@ void App::handleSDLEvents() {
 
         default: break;
         }
+
+		if (!m_scomps.isViewportHovered)
+			m_scomps.inputs.actionState.fill(false);
     }
 }
 

@@ -39,6 +39,12 @@ void ViewportGui::update() {
     {
 		ImGui::PopStyleVar(3);
 
+		if (ImGui::IsWindowHovered()) {
+			m_scomps.isViewportHovered = true;
+		} else {
+			m_scomps.isViewportHovered = false;
+		}
+
         // Handle framebuffer
         ImVec2 viewportSize = ImGui::GetWindowSize();
         if (viewportSize.x != m_scomps.viewportSize.x || viewportSize.y != m_scomps.viewportSize.y) {

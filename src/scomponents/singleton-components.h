@@ -32,4 +32,5 @@ struct SingletonComponents {
 	glm::ivec2 viewportPosTopLeft = { 0, 0 };
 	scomp::Inputs inputs;
 	scomp::Hovered hovered;
+	bool isViewportHovered = false;
 };
