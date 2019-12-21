@@ -1,9 +1,9 @@
 #include "top-bar-gui.h"
 
-#include <imgui.h>
 #include <imgui/imgui_internal.h>
 
-TopBarGui::TopBarGui(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx), m_scomps(scomps), first(true) {}
+TopBarGui::TopBarGui(Context& ctx, SingletonComponents& scomps) 
+    : m_ctx(ctx), m_scomps(scomps), m_setDefaultLayout(true) {}
 
 TopBarGui::~TopBarGui() {}
 
@@ -22,12 +22,12 @@ void TopBarGui::update() {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-    ImGuiID dockspace_id = ImGui::GetID("DockSpace");
-
     ImGui::Begin("TopBar", &open, window_flags);
     {
         ImGui::PopStyleVar(3);
-        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f));
+
+        m_dockspaceId = ImGui::GetID("DockSpace");
+        ImGui::DockSpace(m_dockspaceId, ImVec2(0.0f, 0.0f));
 
         if (ImGui::BeginMenuBar()) {
             if (ImGui::BeginMenu("File")) {
@@ -39,26 +39,29 @@ void TopBarGui::update() {
     }
     ImGui::End();
 
-    // Temp create default layout
-    ImGui::Begin("Log");
-        ImGui::Text("oh im outside");
-    ImGui::End();
-
-    if (first) {
-        first = false;
-        ImGui::DockBuilderRemoveNode(dockspace_id); // Clear out existing layout
-        ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace); // Add empty node
-        ImGui::DockBuilderSetNodeSize(dockspace_id, ImVec2(200, 200));
-
-        ImGuiID dock_main_id = dockspace_id; // This variable will track the document node, however we are not using it here as we aren't docking anything into it.
-        ImGuiID dock_id_prop = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.20f, NULL, &dock_main_id);
-        ImGuiID dock_id_bottom = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.20f, NULL, &dock_main_id);
-
-        ImGui::DockBuilderDockWindow("Log", dock_id_bottom);
-        ImGui::DockBuilderFinish(dockspace_id);
+    if (m_setDefaultLayout) {
+        m_setDefaultLayout = false;
+        setDefaultLayout();
     }
 }
 
 void TopBarGui::onEvent(GuiEvent e) {
+    switch (e) {
+        case GuiEvent::APP_LAUNCHED: break;
+    }
+}
 
+void TopBarGui::setDefaultLayout() {
+    ImGui::DockBuilderRemoveNode(m_dockspaceId); // Clear out existing layout
+    ImGui::DockBuilderAddNode(m_dockspaceId, ImGuiDockNodeFlags_DockSpace); // Add empty node
+    ImGui::DockBuilderSetNodeSize(m_dockspaceId, ImVec2(200, 800)); // TODO use window size
+
+    ImGuiID dock_main_id = m_dockspaceId; // This variable will track the document node, however we are not using it here as we aren't docking anything into it.
+    ImGuiID dock_id_prop = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.20f, NULL, &dock_main_id);
+    ImGuiID dock_id_bottom = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.20f, NULL, &dock_main_id);
+
+    // Place GUIs
+    ImGui::DockBuilderDockWindow("Viewport", dock_id_bottom);
+
+    ImGui::DockBuilderFinish(m_dockspaceId);
 }

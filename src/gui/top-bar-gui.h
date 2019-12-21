@@ -1,5 +1,7 @@
 #pragma once
 
+#include <imgui.h>
+
 #include "i-gui.h"
 #include "context.h"
 #include "scomponents/singleton-components.h"
@@ -13,7 +15,12 @@ public:
     virtual void onEvent(GuiEvent e) override;
 
 private:
+    void setDefaultLayout();
+
+private:
     Context& m_ctx;
     SingletonComponents& m_scomps;
-    bool first;
+
+    ImGuiID m_dockspaceId;
+    bool m_setDefaultLayout;
 };
