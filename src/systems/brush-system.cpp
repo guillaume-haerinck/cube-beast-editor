@@ -8,10 +8,20 @@ BrushSystem::BrushSystem(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx)
 BrushSystem::~BrushSystem() {}
 
 void BrushSystem::update() {
+    if (!m_scomps.isBrushStarted && m_tempAddedPos.size() > 0)
+        m_tempAddedPos.clear();
+
     if (m_scomps.hovered.exist && m_scomps.isBrushStarted) {
         comp::Transform trans;
         comp::Material material;
         trans.position = m_scomps.hovered.position;
+
+        bool canAddCube = true;
+        for (const glm::ivec3& pos : m_tempAddedPos) {
+            if (pos == trans.position) {
+                canAddCube = false;
+            }
+        }
 
         if (m_scomps.hovered.isCube) {
             switch (m_scomps.hovered.face) {
@@ -27,11 +37,11 @@ void BrushSystem::update() {
             }
         }
 
-        met::entity entity = m_ctx.registry.create();
-        m_ctx.registry.assign<comp::Material>(entity, material);
-        m_ctx.registry.assign<comp::Transform>(entity, trans);
-
-        // temp
-        m_scomps.isBrushStarted = false;
+        if (canAddCube) {
+            met::entity entity = m_ctx.registry.create();
+            m_ctx.registry.assign<comp::Material>(entity, material);
+            m_ctx.registry.assign<comp::Transform>(entity, trans);
+            m_tempAddedPos.push_back(trans.position);
+        }
     }
 }

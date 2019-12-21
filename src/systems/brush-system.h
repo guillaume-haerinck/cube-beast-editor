@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <vector>
 
 #include "systems/i-system.h"
 #include "context.h"
@@ -15,4 +16,5 @@ public:
 private:
     Context& m_ctx;
     SingletonComponents& m_scomps;
+    std::vector<glm::ivec3> m_tempAddedPos;
 };
