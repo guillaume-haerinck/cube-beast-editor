@@ -17,12 +17,11 @@ void TopBarGui::update() {
     window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
     window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
-    bool open = true;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-    ImGui::Begin("TopBar", &open, window_flags);
+    ImGui::Begin("TopBar", 0, window_flags);
     {
         ImGui::PopStyleVar(3);
 
@@ -54,14 +53,24 @@ void TopBarGui::onEvent(GuiEvent e) {
 void TopBarGui::setDefaultLayout() {
     ImGui::DockBuilderRemoveNode(m_dockspaceId); // Clear out existing layout
     ImGui::DockBuilderAddNode(m_dockspaceId, ImGuiDockNodeFlags_DockSpace); // Add empty node
-    ImGui::DockBuilderSetNodeSize(m_dockspaceId, ImVec2(200, 800)); // TODO use window size
+    ImGui::DockBuilderSetNodeSize(m_dockspaceId, ImVec2(500, 500));
 
-    ImGuiID dock_main_id = m_dockspaceId; // This variable will track the document node, however we are not using it here as we aren't docking anything into it.
-    ImGuiID dock_id_prop = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.20f, NULL, &dock_main_id);
-    ImGuiID dock_id_bottom = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.20f, NULL, &dock_main_id);
+    // Available positions
+    ImGuiID dock_main_id = m_dockspaceId;
+    ImGuiID dock_top_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.5f, nullptr, &dock_main_id);
+	ImGuiID dock_right_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.2f, nullptr, &dock_main_id);
+	ImGuiID dock_left_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.5f, nullptr, &dock_main_id);
+	ImGuiID dock_down_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.5f, nullptr, &dock_main_id);
+    ImGuiID dock_center_id = ImGui::DockBuilderGetCentralNode(m_dockspaceId)->ID;
 
     // Place GUIs
-    ImGui::DockBuilderDockWindow("Viewport", dock_id_bottom);
+    ImGui::DockBuilderDockWindow("Viewport", dock_top_id);
+    ImGui::DockBuilderDockWindow("Main debug window", dock_center_id);
+    ImGui::DockBuilderDockWindow("Dear ImGui Demo", dock_right_id);
 
+    // Set appearance
+    ImGuiDockNode* node = ImGui::DockBuilderGetNode(dock_top_id);
+	node->LocalFlags |= ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoCloseButton | ImGuiDockNodeFlags_NoDockingInCentralNode;
+    
     ImGui::DockBuilderFinish(m_dockspaceId);
 }
