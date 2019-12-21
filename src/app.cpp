@@ -16,6 +16,7 @@
 #include "systems/selection-system.h"
 #include "systems/brushes/voxel-brush-system.h"
 #include "gui/viewport-gui.h"
+#include "gui/top-bar-gui.h"
 
 bool App::m_instanciated = false;
 
@@ -34,6 +35,7 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 
 	// Order GUIs
     m_guis = {
+		new TopBarGui(m_ctx, m_scomps),
         new ViewportGui(m_ctx, m_scomps)
     };
 
