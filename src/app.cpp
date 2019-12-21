@@ -5,11 +5,6 @@
 #include <imgui.h>
 #include <imgui/imgui_impl_sdl.h>
 #include <imgui/imgui_impl_opengl3.h>
-#ifdef __EMSCRIPTEN__
-	#include <GLES3/gl3.h>
-#else
-	#include <glad/gles2.h>
-#endif
 
 #include "systems/render-system.h"
 #include "systems/camera-system.h"
@@ -30,9 +25,6 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 	initSDL();
     initImgui();
 
-	// Init opengl static states
-	glEnable(GL_CULL_FACE);
-
 	// Order GUIs
     m_guis = {
 		new TopBarGui(m_ctx, m_scomps),
@@ -43,6 +35,9 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 	for (auto gui : m_guis) {
 		gui->onEvent(GuiEvent::APP_LAUNCHED);
 	}
+
+	// Init renderer static states
+	m_ctx.rcommand.enableFaceCulling();
 
 	// Order system updates
 	m_systems = {
