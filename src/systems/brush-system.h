@@ -12,6 +12,7 @@ public:
     virtual ~BrushSystem();
 
 	void update() override;
+    void voxelBrush();
 
 private:
     Context& m_ctx;

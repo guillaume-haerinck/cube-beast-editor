@@ -13,7 +13,11 @@
 #include "scomponents/io/selection.h"
 
 enum class BrushType {
-	VOXEL = 0 
+	VOXEL = 0,
+	FACE,
+	BOX,
+	LINE,
+	CIRCLE
 };
 
 /**
@@ -36,6 +40,6 @@ struct SingletonComponents {
 	scomp::Inputs inputs;
 	scomp::Hovered hovered;
 	bool isViewportHovered = false;
-	BrushType currentBrush;
+	BrushType currentBrush = BrushType::VOXEL;
 	bool isBrushStarted = false;
 };
