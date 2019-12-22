@@ -63,9 +63,9 @@ void CameraSystem::update() {
 
 	// Update camera position
 	if (m_scomps.camera.hasToBeUpdated == true) {
-		m_scomps.camera.position.x = m_scomps.camera.radius * sinf(m_scomps.camera.phi) * sinf(m_scomps.camera.theta);
-		m_scomps.camera.position.y = m_scomps.camera.radius * cosf(m_scomps.camera.phi);
-		m_scomps.camera.position.z = m_scomps.camera.radius * sinf(m_scomps.camera.phi) * cosf(m_scomps.camera.theta);
+		m_scomps.camera.position.x = m_scomps.camera.target.x + m_scomps.camera.radius * sinf(m_scomps.camera.phi) * sinf(m_scomps.camera.theta);
+		m_scomps.camera.position.y = m_scomps.camera.target.y + m_scomps.camera.radius * cosf(m_scomps.camera.phi);
+		m_scomps.camera.position.z = m_scomps.camera.target.z + m_scomps.camera.radius * sinf(m_scomps.camera.phi) * cosf(m_scomps.camera.theta);
 
         glm::vec3 eye = m_scomps.camera.position;
         glm::vec3 target = m_scomps.camera.target;
