@@ -70,9 +70,10 @@ void TopBarGui::setDefaultLayout() {
     ImGui::DockBuilderDockWindow("Dear ImGui Demo", dock_right_id);
 
     // Set appearance
-    ImGuiDockNode* node = ImGui::DockBuilderGetNode(dock_top_id);
-	node->LocalFlags |= ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoCloseButton | ImGuiDockNodeFlags_NoDockingInCentralNode;
-    
+	ImGui::DockBuilderGetNode(dock_top_id)->LocalFlags |= ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoCloseButton | ImGuiDockNodeFlags_NoDockingInCentralNode | ImGuiDockNodeFlags_NoWindowMenuButton;
+    ImGui::DockBuilderGetNode(dock_center_id)->LocalFlags |= ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoCloseButton;
+    ImGui::DockBuilderGetNode(dock_right_id)->LocalFlags |= ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoCloseButton;
+
     ImGui::DockBuilderFinish(m_dockspaceId);
 }
 
