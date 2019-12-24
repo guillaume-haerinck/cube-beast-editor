@@ -16,6 +16,7 @@ public:
 
 private:
     void setDefaultLayout();
+    void setDefaultStyle();
 
 private:
     Context& m_ctx;

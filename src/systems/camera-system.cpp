@@ -4,6 +4,8 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <spdlog/spdlog.h>
+
 CameraSystem::CameraSystem(SingletonComponents& scomps) : m_scomps(scomps)
 {
 }
@@ -35,12 +37,14 @@ void CameraSystem::update() {
 		m_scomps.camera.hasToBeUpdated = true;
 	}
 
-	// Move along vertical plane
+	// Move target and camera position from their local coordinate system
+	// https://stackoverflow.com/questions/46978948/move-a-vertex-along-a-plane-given-the-plane-normal
+	// https://stackoverflow.com/questions/35285289/translate-3d-points-along-arbitrary-plane
+	// https://www.youtube.com/watch?v=-Fn4atv2NsQ
+	// https://www.khanacademy.org/math/linear-algebra/alternate-bases/change-of-basis/v/lin-alg-changing-coordinate-systems-to-help-find-a-transformation-matrix
 	if (m_scomps.inputs.actionState.at(scomp::InputAction::CAM_PAN)) {
-		const glm::mat3 invView = glm::inverse(m_scomps.camera.view);
-		glm::vec3 dx = invView * glm::vec3(1.0f, 0.0f, 0.0f);
-		glm::vec3 dy = invView * glm::vec3(0.0f, 1.0f, 0.0f);
-		m_scomps.camera.target += (dy * m_scomps.inputs.delta.y - dx * m_scomps.inputs.delta.x);
+		glm::vec3 planeNormal = glm::normalize(m_scomps.camera.position - m_scomps.camera.target);
+		// TODO
 
 		m_scomps.camera.hasToBeUpdated = true;
 	}
