@@ -59,8 +59,11 @@ void SelectionSystem::update() {
         m_scomps.hovered.face = colorToFace(pixel[3]);
         const comp::Transform trans = m_ctx.registry.get<comp::Transform>(hoveredCube);
         m_scomps.hovered.position = trans.position;
+        m_scomps.hovered.id = hoveredCube;
         
-    } else { 
+    } else {
+        m_scomps.hovered.id = met::null_entity;
+
         // Check grid with raycast
         const glm::mat4 toWorld = glm::inverse((m_scomps.camera.proj * m_scomps.camera.view));
         glm::vec4 from = toWorld * glm::vec4(m_scomps.inputs.NDCMousePos, -1.0f, 1.0f);

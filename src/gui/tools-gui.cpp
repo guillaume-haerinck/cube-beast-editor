@@ -6,8 +6,16 @@ ToolsGui::ToolsGui(Context& ctx, SingletonComponents& scomps)
 ToolsGui::~ToolsGui() {}
 
 void ToolsGui::update() {
+    // TODO use ImGui::ImageButton
+
     ImGui::Begin("Tools", 0);
-        ImGui::Text("Hello world");
+        if (ImGui::Button("Pencil")) {
+            m_scomps.currentBrush = BrushType::VOXEL;
+            m_scomps.currentBushUse = BrushUse::ADD;
+        } else if (ImGui::Button("Eraser")) {
+            m_scomps.currentBrush = BrushType::VOXEL;
+            m_scomps.currentBushUse = BrushUse::REMOVE;
+        }
     ImGui::End();
 }
 

@@ -44,8 +44,21 @@ void BrushSystem::voxelBrush() {
         }
     }
 
-    met::entity entity = m_ctx.registry.create();
-    m_ctx.registry.assign<comp::Material>(entity, material);
-    m_ctx.registry.assign<comp::Transform>(entity, trans);
-    m_tempAddedPos.push_back(trans.position);
+    switch (m_scomps.currentBushUse) {
+    case BrushUse::ADD : {
+        met::entity entity = m_ctx.registry.create();
+        m_ctx.registry.assign<comp::Material>(entity, material);
+        m_ctx.registry.assign<comp::Transform>(entity, trans);
+        m_tempAddedPos.push_back(trans.position);
+        break;
+    }
+        
+    case BrushUse::REMOVE : {
+        if (m_scomps.hovered.isCube)
+            m_ctx.registry.destroy(m_scomps.hovered.id);
+        break;
+    }
+
+    default: break;
+    }
 }

@@ -12,6 +12,8 @@ public:
     virtual ~BrushSystem();
 
 	void update() override;
+
+private:
     void voxelBrush();
 
 private:

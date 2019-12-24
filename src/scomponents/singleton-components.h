@@ -20,6 +20,12 @@ enum class BrushType {
 	CIRCLE
 };
 
+enum class BrushUse {
+	ADD = 0,
+	REMOVE = 1,
+	PAINT = 2
+};
+
 /**
  * @brief Global object used to store the state of the app. Is supposed to be read-only for vast-majority of systems.
  */
@@ -41,5 +47,6 @@ struct SingletonComponents {
 	scomp::Hovered hovered;
 	bool isViewportHovered = false;
 	BrushType currentBrush = BrushType::VOXEL;
+	BrushUse currentBushUse = BrushUse::ADD;
 	bool isBrushStarted = false;
 };
