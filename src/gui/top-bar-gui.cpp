@@ -66,7 +66,7 @@ void TopBarGui::setDefaultLayout() {
 
     // Place GUIs
     ImGui::DockBuilderDockWindow("Viewport", dock_top_id);
-    ImGui::DockBuilderDockWindow("Main debug window", dock_center_id);
+    ImGui::DockBuilderDockWindow("Tools", dock_center_id);
     ImGui::DockBuilderDockWindow("Dear ImGui Demo", dock_right_id);
 
     // Set appearance
