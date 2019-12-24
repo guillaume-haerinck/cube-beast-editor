@@ -49,7 +49,7 @@ void SelectionSystem::update() {
     GLCall(glReadPixels(m_scomps.inputs.mousePos.x, m_scomps.viewportSize.y - m_scomps.inputs.mousePos.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel));
 
     // FIXME intersection point take value "-+4.76837e-07" instead of 0.0 sometimes which causes flicker
-    //m_scomps.hovered.exist = false;
+    m_scomps.hovered.exist = false;
     const met::entity hoveredCube = voxmt::colorToInt(pixel[0], pixel[1], pixel[2]);
     
     // Check existing cubes with framebuffer

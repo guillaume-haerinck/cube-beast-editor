@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_access.hpp>
 
 #include <spdlog/spdlog.h>
 
@@ -43,10 +44,13 @@ void CameraSystem::update() {
 	// https://www.youtube.com/watch?v=-Fn4atv2NsQ
 	// https://www.khanacademy.org/math/linear-algebra/alternate-bases/change-of-basis/v/lin-alg-changing-coordinate-systems-to-help-find-a-transformation-matrix
 	if (m_scomps.inputs.actionState.at(scomp::InputAction::CAM_PAN)) {
-		glm::vec3 planeNormal = glm::normalize(m_scomps.camera.position - m_scomps.camera.target);
+	 	glm::vec4 col0 = glm::normalize(glm::column<glm::mat4x4>(m_scomps.camera.view, 0));
+		glm::vec4 col1 = glm::normalize(glm::column<glm::mat4x4>(m_scomps.camera.view, 1));
+
+
 		// TODO
 
-		m_scomps.camera.hasToBeUpdated = true;
+		// m_scomps.camera.hasToBeUpdated = true;
 	}
 
 	// Change arcball radius

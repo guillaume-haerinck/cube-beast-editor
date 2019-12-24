@@ -6,6 +6,7 @@
 #include <imgui/imgui_impl_sdl.h>
 #include <imgui/imgui_impl_opengl3.h>
 
+#include "gui/font-ruda.h"
 #include "systems/render-system.h"
 #include "systems/camera-system.h"
 #include "systems/selection-system.h"
@@ -201,6 +202,7 @@ void App::initImgui() const {
 	ImGui::StyleColorsDark();
 	ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(compressed_data_base85, 15.0f);
 }
 
 /////////////////////////////////////////////////////////////////////////////

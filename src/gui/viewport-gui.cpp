@@ -30,14 +30,11 @@ ViewportGui::~ViewportGui() {}
 
 void ViewportGui::update() {
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoCollapse;
-
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
     ImGui::Begin("Viewport", 0, window_flags);
     {
-		ImGui::PopStyleVar(3);
+		ImGui::PopStyleVar(1);
 
 		if (ImGui::IsWindowHovered()) {
 			m_scomps.isViewportHovered = true;
