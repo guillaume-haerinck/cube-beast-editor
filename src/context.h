@@ -11,7 +11,7 @@
 struct Context {
 	Context(SingletonComponents& scomps) : rcommand(scomps), ddraw(rcommand, scomps) {}
 
-	met::Registry registry;
+	met::registry registry;
 	RenderCommand rcommand;
 	DebugDraw ddraw;
 };
