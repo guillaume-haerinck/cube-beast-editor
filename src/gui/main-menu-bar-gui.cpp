@@ -64,7 +64,7 @@ void MainMenuBarGui::setDefaultLayout() {
     ImGuiID dock_half_right_id;
     ImGuiID dock_half_left_id = ImGui::DockBuilderSplitNode(dock_full_up_id, ImGuiDir_Left, 0.9f, nullptr, &dock_half_right_id);
     ImGuiID dock_half_left_down_id;
-    ImGuiID dock_half_left_up_id = ImGui::DockBuilderSplitNode(dock_half_left_id, ImGuiDir_Up, 0.1f, nullptr, &dock_half_left_down_id);
+    ImGuiID dock_half_left_up_id = ImGui::DockBuilderSplitNode(dock_half_left_id, ImGuiDir_Up, 0.05f, nullptr, &dock_half_left_down_id);
     ImGuiID dock_half_left_left_id;
     ImGuiID dock_half_left_right_id = ImGui::DockBuilderSplitNode(dock_half_left_down_id, ImGuiDir_Right, 0.9f, nullptr, &dock_half_left_left_id);
 
@@ -85,8 +85,9 @@ void MainMenuBarGui::setDefaultLayout() {
     
     // Set appearance
     ImGui::DockBuilderGetNode(dock_main_id)->LocalFlags |= ImGuiDockNodeFlags_NoSplit;
-    ImGui::DockBuilderGetNode(dock_full_down_id)->LocalFlags |= ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoCloseButton | ImGuiDockNodeFlags_NoDocking | ImGuiDockNodeFlags_NoSplit;
-	ImGui::DockBuilderGetNode(dock_half_left_right_id)->LocalFlags |= ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoCloseButton | ImGuiDockNodeFlags_NoDocking;
+    ImGui::DockBuilderGetNode(dock_half_left_up_id)->LocalFlags |= ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking | ImGuiDockNodeFlags_NoSplit;
+    ImGui::DockBuilderGetNode(dock_full_down_id)->LocalFlags |= ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking | ImGuiDockNodeFlags_NoSplit;
+	ImGui::DockBuilderGetNode(dock_half_left_right_id)->LocalFlags |= ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking;
 
     ImGui::DockBuilderFinish(m_dockspaceId);
 }
