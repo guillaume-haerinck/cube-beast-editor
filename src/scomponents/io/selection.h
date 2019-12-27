@@ -19,6 +19,6 @@ namespace scomp {
         Face face = Face::NONE;
         bool exist = false;
         bool isCube = false;
-        met::entity id = met::null_entity;
+        met::entity id = met::null;
     };
 }

@@ -5,7 +5,6 @@
 #include <unordered_map>
 #include <typeinfo>
 #include <cassert>
-#include <string>
 
 #include "../config/config.hpp"
 #include "component-collection.hpp"

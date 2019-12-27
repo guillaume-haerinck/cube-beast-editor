@@ -14,7 +14,7 @@ namespace met {
     class IComponentCollection {
     public:
         IComponentCollection() {
-            m_entityToComponentIndex.resize(MIN_ENTITIES);
+            m_sparse.resize(MIN_ENTITIES);
         };
         virtual ~IComponentCollection() {};
 
@@ -22,11 +22,11 @@ namespace met {
          * @brief Check if an entity has the component
          */
         bool has(entity id) const {
-            assert(id != null_entity && "Null entity cannot have components");
+            assert(id != null && "Null entity cannot have components");
 
-            if (id > m_entityToComponentIndex.size() - 1) {
+            if (id > m_sparse.size() - 1) {
                 return false;
-            } else if (m_entityToComponentIndex.at(id) != null_component) {
+            } else if (m_sparse.at(id) != null) {
                 return true;
             } else {
                 return false;
@@ -37,7 +37,7 @@ namespace met {
         virtual size_t size() const = 0;
 
     protected:
-        std::vector<unsigned int> m_entityToComponentIndex;
+        std::vector<unsigned int> m_sparse; // Entity to component index
     };
 
     /**
@@ -47,12 +47,10 @@ namespace met {
     class ComponentCollection : public IComponentCollection {
     public:
         ComponentCollection(entity id, T& component) {
-            m_components.reserve(MIN_ENTITIES);
-            m_componentIndexToEntity.reserve(MIN_ENTITIES);
+            m_dense.reserve(MIN_ENTITIES);
 
             // Unused, allow entity id to match array id
-            m_components.push_back(component);
-            m_componentIndexToEntity.push_back(null_component);
+            m_dense.push_back(component);
 
             // Add first entity
             insert(id, component);
@@ -64,17 +62,21 @@ namespace met {
          * @brief Insert a component to an entity
          */
         void insert(entity id, T& component) {
-            assert(id != null_entity && "Null entity cannot have components");
+            assert(id != null && "Null entity cannot have components");
 
-            if (m_entityToComponentIndex.size() <= id) {
-                m_entityToComponentIndex.resize(id + 10);
-                std::fill(m_entityToComponentIndex.begin() + id, m_entityToComponentIndex.end(), null_component);
+            if (m_sparse.size() <= id) {
+                m_sparse.resize(id + 10);
+                std::fill(m_sparse.begin() + id, m_sparse.end(), null);
             }
 
-            // Add a new component at the end of the packed array
-            m_components.push_back(component);
-            m_componentIndexToEntity.push_back(id);
-            m_entityToComponentIndex.at(id) = static_cast<unsigned int>(m_components.size()) - 1;
+            if (m_sparse.at(id) != null) {
+                // Overwrite existing component
+                at(id) = component;
+            } else {
+                // Add a new component at the end of the packed array
+                m_dense.push_back(component);
+                m_sparse.at(id) = static_cast<unsigned int>(m_dense.size()) - 1;
+            } 
         }
 
         /**
@@ -82,29 +84,33 @@ namespace met {
          */
         void remove(entity id) override {
             assert(has(id) && "The entity does not have this component");
-
-            m_entityToComponentIndex.at(id) = null_component;
+            // Temp
+            m_sparse.at(id) = null;
         }
 
         /**
          * @brief Get the component of an entity
          */
         T& at(entity id) {
-            assert(id != null_entity && "Null entity cannot have components");
-            return m_components.at(m_entityToComponentIndex.at(id));
+            assert(has(id) && "The entity does not have this component");
+            return m_dense.at(m_sparse.at(id));
         }
 
         /**
          * @brief Get the number of entities which uses this component type
          */
         size_t size() const override {
-            return m_components.size() - 1;
+            unsigned int size = 0;
+            for (const auto id : m_sparse) {
+                if (id != null)
+                    size++;
+            }
+            return size;
         }
 
         // TODO handle sorting
 
     private:
-        std::vector<unsigned int> m_componentIndexToEntity;
-        std::vector<T> m_components;
+        std::vector<T> m_dense; // Components
     };
 }

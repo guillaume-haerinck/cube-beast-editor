@@ -53,7 +53,7 @@ void SelectionSystem::update() {
     const met::entity hoveredCube = voxmt::colorToInt(pixel[0], pixel[1], pixel[2]);
     
     // Check existing cubes with framebuffer
-    if (hoveredCube != met::null_entity) {
+    if (hoveredCube != met::null) {
         m_scomps.hovered.exist = true;
         m_scomps.hovered.isCube = true;
         m_scomps.hovered.face = colorToFace(pixel[3]);
@@ -62,7 +62,7 @@ void SelectionSystem::update() {
         m_scomps.hovered.id = hoveredCube;
         
     } else {
-        m_scomps.hovered.id = met::null_entity;
+        m_scomps.hovered.id = met::null;
 
         // Check grid with raycast
         const glm::mat4 toWorld = glm::inverse((m_scomps.camera.proj * m_scomps.camera.view));
