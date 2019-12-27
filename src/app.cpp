@@ -10,10 +10,16 @@
 #include "systems/camera-system.h"
 #include "systems/selection-system.h"
 #include "systems/brush-system.h"
+
 #include "gui/font-ruda.h"
+#include "gui/brush-gui.h"
+#include "gui/context-info-bar-gui.h"
+#include "gui/generation-gui.h"
+#include "gui/main-menu-bar-gui.h"
+#include "gui/palette-gui.h"
+#include "gui/scene-outline-gui.h"
 #include "gui/viewport-gui.h"
-#include "gui/top-bar-gui.h"
-#include "gui/tools-gui.h"
+#include "gui/viewport-option-bar-gui.h"
 
 bool App::m_instanciated = false;
 
@@ -29,9 +35,14 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 
 	// Order GUIs
     m_guis = {
-		new TopBarGui(m_ctx, m_scomps),
+		new MainMenuBarGui(m_ctx, m_scomps),
         new ViewportGui(m_ctx, m_scomps),
-		new ToolsGui(m_ctx, m_scomps)
+		new BrushGui(m_ctx, m_scomps),
+		new ContextInfoBarGui(m_ctx, m_scomps),
+		new GenerationGui(m_ctx, m_scomps),
+		new PaletteGui(m_ctx, m_scomps),
+		new SceneOutlineGui(m_ctx, m_scomps),
+		new ViewportOptionBarGui(m_ctx, m_scomps)
     };
 
 	// Send first event

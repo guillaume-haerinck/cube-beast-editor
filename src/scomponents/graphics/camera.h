@@ -12,7 +12,7 @@ namespace scomp {
 		glm::mat4x4 view;
 		glm::mat4x4 proj;
 		glm::vec3 position = { 8, 5, 7 };
-		glm::vec3 target = { 5, 0, 5 };
+		glm::vec3 target = { 5, 5, 5 };
 
 		float radius = 17;
 		float up = 1;

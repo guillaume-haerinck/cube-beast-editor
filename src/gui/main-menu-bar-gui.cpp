@@ -1,13 +1,13 @@
-#include "top-bar-gui.h"
+#include "main-menu-bar-gui.h"
 
 #include <imgui/imgui_internal.h>
 
-TopBarGui::TopBarGui(Context& ctx, SingletonComponents& scomps) 
+MainMenuBarGui::MainMenuBarGui(Context& ctx, SingletonComponents& scomps) 
     : m_ctx(ctx), m_scomps(scomps), m_setDefaultLayout(true) {}
 
-TopBarGui::~TopBarGui() {}
+MainMenuBarGui::~MainMenuBarGui() {}
 
-void TopBarGui::update() {
+void MainMenuBarGui::update() {
     ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->Pos);
     ImGui::SetNextWindowSize(viewport->Size);
@@ -21,7 +21,7 @@ void TopBarGui::update() {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-    ImGui::Begin("TopBar", 0, window_flags);
+    ImGui::Begin("Main Menu Bar", 0, window_flags);
     {
         ImGui::PopStyleVar(3);
 
@@ -45,39 +45,53 @@ void TopBarGui::update() {
     }
 }
 
-void TopBarGui::onEvent(GuiEvent e) {
+void MainMenuBarGui::onEvent(GuiEvent e) {
     switch (e) {
         case GuiEvent::APP_LAUNCHED: break;
     }
 }
 
-void TopBarGui::setDefaultLayout() {
+void MainMenuBarGui::setDefaultLayout() {
     ImGui::DockBuilderRemoveNode(m_dockspaceId); // Clear out existing layout
     ImGui::DockBuilderAddNode(m_dockspaceId, ImGuiDockNodeFlags_DockSpace); // Add empty node
     ImGui::DockBuilderSetNodeSize(m_dockspaceId, ImVec2(500, 500));
 
     // Available positions
     ImGuiID dock_main_id = m_dockspaceId;
-    ImGuiID dock_top_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.5f, nullptr, &dock_main_id);
-	ImGuiID dock_right_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.2f, nullptr, &dock_main_id);
-	ImGuiID dock_left_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.5f, nullptr, &dock_main_id);
-	ImGuiID dock_down_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.5f, nullptr, &dock_main_id);
-    ImGuiID dock_center_id = ImGui::DockBuilderGetCentralNode(m_dockspaceId)->ID;
+    ImGuiID dock_full_up_id;
+	ImGuiID dock_full_down_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.1f, nullptr, &dock_full_up_id);
+    
+    ImGuiID dock_half_right_id;
+    ImGuiID dock_half_left_id = ImGui::DockBuilderSplitNode(dock_full_up_id, ImGuiDir_Left, 0.9f, nullptr, &dock_half_right_id);
+    ImGuiID dock_half_left_down_id;
+    ImGuiID dock_half_left_up_id = ImGui::DockBuilderSplitNode(dock_half_left_id, ImGuiDir_Up, 0.1f, nullptr, &dock_half_left_down_id);
+    ImGuiID dock_half_left_left_id;
+    ImGuiID dock_half_left_right_id = ImGui::DockBuilderSplitNode(dock_half_left_down_id, ImGuiDir_Right, 0.9f, nullptr, &dock_half_left_left_id);
+
+    ImGuiID dock_half_right_down_id;
+    ImGuiID dock_half_right_up_id = ImGui::DockBuilderSplitNode(dock_half_right_id, ImGuiDir_Up, 0.4f, nullptr, &dock_half_right_down_id);
 
     // Place GUIs
-    ImGui::DockBuilderDockWindow("Viewport", dock_top_id);
-    ImGui::DockBuilderDockWindow("Tools", dock_center_id);
-    ImGui::DockBuilderDockWindow("Dear ImGui Demo", dock_right_id);
+    ImGui::DockBuilderDockWindow("Context Info Bar", dock_full_down_id);
+    ImGui::DockBuilderDockWindow("Viewport Option Bar", dock_half_left_up_id);
 
+    ImGui::DockBuilderDockWindow("Viewport", dock_half_left_right_id);
+    ImGui::DockBuilderDockWindow("Brush", dock_half_left_left_id);
+
+    ImGui::DockBuilderDockWindow("Scene Outline", dock_half_right_up_id);
+    ImGui::DockBuilderDockWindow("Palette", dock_half_right_down_id);
+    ImGui::DockBuilderDockWindow("Generation", dock_half_right_down_id);
+    ImGui::DockBuilderDockWindow("Dear ImGui Demo", dock_half_right_down_id);
+    
     // Set appearance
-	ImGui::DockBuilderGetNode(dock_top_id)->LocalFlags |= ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoCloseButton | ImGuiDockNodeFlags_NoDockingInCentralNode | ImGuiDockNodeFlags_NoWindowMenuButton;
-    ImGui::DockBuilderGetNode(dock_center_id)->LocalFlags |= ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoCloseButton;
-    ImGui::DockBuilderGetNode(dock_right_id)->LocalFlags |= ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoCloseButton;
+	//ImGui::DockBuilderGetNode(dock_top_id)->LocalFlags |= ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoCloseButton | ImGuiDockNodeFlags_NoDockingInCentralNode | ImGuiDockNodeFlags_NoWindowMenuButton;
+    //ImGui::DockBuilderGetNode(dock_center_id)->LocalFlags |= ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoCloseButton;
+    //ImGui::DockBuilderGetNode(dock_right_id)->LocalFlags |= ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoCloseButton;
 
     ImGui::DockBuilderFinish(m_dockspaceId);
 }
 
-void TopBarGui::setDefaultStyle() {
+void MainMenuBarGui::setDefaultStyle() {
     ImGui::GetStyle().FrameRounding = 0.0f;
     ImGui::GetStyle().GrabRounding = 0.0f;
     ImGui::GetStyle().TabRounding = 0.0f;

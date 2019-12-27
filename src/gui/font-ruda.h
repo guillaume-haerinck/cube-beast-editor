@@ -1,3 +1,5 @@
+#pragma once
+
 // File: 'Ruda-Bold.ttf' (22768 bytes)
 // Exported using binary_to_compressed_c.cpp
 static const char compressed_data_base85[21610+1] =

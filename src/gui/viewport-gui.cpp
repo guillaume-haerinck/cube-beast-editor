@@ -24,16 +24,6 @@ ViewportGui::ViewportGui(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx)
     met::entity entity = m_ctx.registry.create();
     m_ctx.registry.assign<comp::Material>(entity, material);
     m_ctx.registry.assign<comp::Transform>(entity, glm::ivec3(1, 0, 0));
-
-	entity = m_ctx.registry.create();
-    m_ctx.registry.assign<comp::Material>(entity, material);
-    m_ctx.registry.assign<comp::Transform>(entity, glm::ivec3(2, 0, 0));
-
-	entity = m_ctx.registry.create();
-    m_ctx.registry.assign<comp::Material>(entity, material);
-    m_ctx.registry.assign<comp::Transform>(entity, glm::ivec3(3, 0, 0));
-
-	m_ctx.registry.destroy(2); // Strange it shouldn't affect entity 3. View with matching entity count not correct
 }
 
 ViewportGui::~ViewportGui() {}

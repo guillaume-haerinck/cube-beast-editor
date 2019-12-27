@@ -6,10 +6,10 @@
 #include "context.h"
 #include "scomponents/singleton-components.h"
 
-class TopBarGui : public IGui {
+class MainMenuBarGui : public IGui {
 public:
-    TopBarGui(Context& ctx, SingletonComponents& scomps);
-    virtual ~TopBarGui();
+    MainMenuBarGui(Context& ctx, SingletonComponents& scomps);
+    virtual ~MainMenuBarGui();
 
     virtual void update() override;
     virtual void onEvent(GuiEvent e) override;
