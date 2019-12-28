@@ -85,7 +85,7 @@ void RenderSystem::update() {
         m_ctx.rcommand.bindRenderTarget(m_scomps.renderTargets.at(RenderTargetIndex::RTT_FINAL));
         m_ctx.rcommand.clear();
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(PipelineIndex::PIP_LIGHTING));
-        m_ctx.rcommand.bindTextures(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY).textureIds);
+        m_ctx.rcommand.bindTextureIds(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY).textureIds);
         m_ctx.rcommand.drawIndexed(m_scomps.meshes.plane().ib.count, m_scomps.meshes.plane().ib.type);
     }
 

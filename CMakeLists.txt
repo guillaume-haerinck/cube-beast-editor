@@ -38,6 +38,7 @@ if (NOT EMSCRIPTEN)
 endif()
 file(GLOB_RECURSE IMGUI_SOURCES lib/imgui/*)
 add_library(IMGUI STATIC ${IMGUI_SOURCES})
+add_library(STB_IMAGE STATIC "lib/stb_image/stb_image.cpp")
 
 # /////////////////////////////////////////////////////////////////////////////
 # ///////////////////////////////// INCLUDES //////////////////////////////////
@@ -67,6 +68,7 @@ add_executable(${PROJECT_NAME} ${MY_SOURCES})
 target_link_libraries(
     ${PROJECT_NAME}
     IMGUI
+    STB_IMAGE
 )
 
 if (NOT EMSCRIPTEN)

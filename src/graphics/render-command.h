@@ -77,13 +77,16 @@ public:
 	 */
 	RenderTarget createRenderTarget(const PipelineOutputDescription& description, const glm::ivec2& size) const;
 
+	Texture createTexture(unsigned int slot, const char* filepath) const;
+
     ///////////////////////////////////////////////////////////////////////////
 	////////////////////////////////// BINDING ////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
     void bindVertexBuffer(const VertexBuffer& vb) const;
 	void bindIndexBuffer(const IndexBuffer& ib) const;
-	void bindTextures(const std::vector<unsigned int>& textureIds) const;
+	void bindTexture(const Texture& tex) const;
+	void bindTextureIds(const std::vector<unsigned int>& textureIds) const;
 
 	/**
 	 * @brief Will bind all the shaders of the said pipeline

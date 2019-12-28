@@ -50,6 +50,7 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 	m_scomps.pipelines.init(m_ctx.rcommand, m_scomps.constantBuffers);
 	m_scomps.meshes.init(m_ctx.rcommand);
 	m_scomps.renderTargets.init(m_ctx.rcommand, m_scomps.viewport);
+	m_scomps.textures.init(m_ctx.rcommand);
 
 	// Init renderer static states
 	m_ctx.rcommand.enableFaceCulling();
@@ -75,6 +76,7 @@ App::~App() {
 	m_scomps.pipelines.destroy(m_ctx.rcommand);
 	m_scomps.meshes.destroy(m_ctx.rcommand);
 	m_scomps.renderTargets.destroy(m_ctx.rcommand);
+	m_scomps.textures.destroy(m_ctx.rcommand);
 	
     ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();

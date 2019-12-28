@@ -2,6 +2,7 @@
 
 #include <spdlog/spdlog.h>
 #include <debug_break/debug_break.h>
+#include <stb_image/stb_image.h>
 
 #include "graphics/gl-exception.h"
 #include "graphics/constant-buffer.h"
@@ -318,6 +319,44 @@ RenderTarget RenderCommand::createRenderTarget(const PipelineOutputDescription& 
     return rt;
 }
 
+Texture RenderCommand::createTexture(unsigned int slot, const char* filepath) const {
+	int width, height, bpp;
+	stbi_set_flip_vertically_on_load(true); // Because 0,0 is bottom left in OpenGL
+	unsigned char* localBuffer = stbi_load(filepath, &width, &height, &bpp, 4);
+	if (!localBuffer) {
+		spdlog::critical("[Texture] Unable to open texture {}", filepath);
+		debug_break();
+	}
+
+	unsigned int id;
+	GLCall(glGenTextures(1, &id));
+	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
+	GLCall(glBindTexture(GL_TEXTURE_2D, id));
+	
+	const unsigned int numMipMap = 3; 
+	GLCall(glTexStorage2D(GL_TEXTURE_2D, numMipMap, GL_RGBA8, width, height));
+	GLCall(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer));
+	GLCall(glGenerateMipmap(GL_TEXTURE_2D));
+
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT));
+
+	GLCall(glBindTexture(GL_TEXTURE_2D, 0)); // unbind
+
+	if (localBuffer) {
+		stbi_image_free(localBuffer);
+	}
+
+	// Return result
+	Texture texture = {};
+	texture.id = id;
+	texture.slot = slot;
+
+	return texture;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// BINDING ////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -330,7 +369,12 @@ void RenderCommand::bindIndexBuffer(const IndexBuffer& ib) const {
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib.bufferId));
 }
 
-void RenderCommand::bindTextures(const std::vector<unsigned int>& textureIds) const {
+void RenderCommand::bindTexture(const Texture& tex) const {
+	GLCall(glActiveTexture(GL_TEXTURE0 + tex.slot));
+	GLCall(glBindTexture(GL_TEXTURE_2D, tex.id));
+}
+
+void RenderCommand::bindTextureIds(const std::vector<unsigned int>& textureIds) const {
 	for (size_t i = 0; i < textureIds.size(); i++) {
 		GLCall(glActiveTexture(GL_TEXTURE0 + i));
         GLCall(glBindTexture(GL_TEXTURE_2D, textureIds.at(i)));

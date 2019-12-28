@@ -6,6 +6,7 @@
 #include "scomponents/graphics/materials.h"
 #include "scomponents/graphics/meshes.h"
 #include "scomponents/graphics/render-targets.h"
+#include "scomponents/graphics/textures.h"
 
 #include "scomponents/io/inputs.h"
 #include "scomponents/io/hovered.h"
@@ -24,6 +25,8 @@ struct SingletonComponents {
 	Pipelines pipelines;
 	ConstantBuffers constantBuffers;
 	RenderTargets renderTargets;
+	Textures textures;
+	Materials materials;
 	Camera camera;
 	
 	// IO
