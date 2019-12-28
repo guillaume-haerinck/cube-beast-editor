@@ -15,15 +15,16 @@
 enum class BrushType {
 	VOXEL = 0,
 	FACE,
-	BOX,
+	RECTANGLE,
 	LINE,
 	CIRCLE
 };
 
 enum class BrushUse {
 	ADD = 0,
-	REMOVE = 1,
-	PAINT = 2
+	REMOVE,
+	PAINT,
+	SELECT
 };
 
 /**
@@ -38,7 +39,7 @@ struct SingletonComponents {
 	scomp::Mesh planeMesh;
 	scomp::Mesh invertCubeMesh;
 	scomp::VertexBuffer ddrawVb;
-	scomp::Camera camera;
+    Camera camera;
 	
 	// IO
 	glm::ivec2 viewportSize = { 600, 600 };

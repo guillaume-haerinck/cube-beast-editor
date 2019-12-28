@@ -35,7 +35,7 @@ void CameraSystem::update() {
 			m_scomps.camera.up = -1.0f;
 		}
 
-		m_scomps.camera.hasToBeUpdated = true;
+		m_scomps.camera.m_hasToBeUpdated = true;
 	}
 
 	// Move target and camera position from their local coordinate system
@@ -61,7 +61,7 @@ void CameraSystem::update() {
 			m_scomps.camera.radius += 1;
 		}
 
-		m_scomps.camera.hasToBeUpdated = true;
+		m_scomps.camera.m_hasToBeUpdated = true;
 	}
 
 	// Reset zoom and position
@@ -70,7 +70,7 @@ void CameraSystem::update() {
 	}
 
 	// Update camera position
-	if (m_scomps.camera.hasToBeUpdated == true) {
+	if (m_scomps.camera.hasToBeUpdated() == true) {
 		m_scomps.camera.position.x = m_scomps.camera.target.x + m_scomps.camera.radius * sinf(m_scomps.camera.phi) * sinf(m_scomps.camera.theta);
 		m_scomps.camera.position.y = m_scomps.camera.target.y + m_scomps.camera.radius * cosf(m_scomps.camera.phi);
 		m_scomps.camera.position.z = m_scomps.camera.target.z + m_scomps.camera.radius * sinf(m_scomps.camera.phi) * cosf(m_scomps.camera.theta);
@@ -80,6 +80,6 @@ void CameraSystem::update() {
         glm::vec3 up = glm::vec3(0, m_scomps.camera.up, 0);
 
         m_scomps.camera.view = glm::lookAtLH(eye, target, up);
-		m_scomps.camera.hasToBeUpdated = false;
+		m_scomps.camera.m_hasToBeUpdated = false;
 	}
 }
