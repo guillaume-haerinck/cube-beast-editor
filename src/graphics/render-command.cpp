@@ -366,8 +366,8 @@ void RenderCommand::bindPipeline(const Pipeline& pipeline) const {
 	GLCall(glUseProgram(pipeline.programIndex));
 }
 
-void RenderCommand::bindRenderTargets(const RenderTargets rds) const {
-    //GLCall(glBindFramebuffer(GL_FRAMEBUFFER, rds.frameBufferId));
+void RenderCommand::bindRenderTarget(const RenderTarget rt) const {
+    GLCall(glBindFramebuffer(GL_FRAMEBUFFER, rt.frameBufferId));
 }
 
 ///////////////////////////////////////////////////////////////////////////

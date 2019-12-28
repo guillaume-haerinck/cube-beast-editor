@@ -86,7 +86,7 @@ public:
 	 */
 	void bindPipeline(const Pipeline& pipeline) const;
 
-	void bindRenderTargets(const RenderTargets rds) const;
+	void bindRenderTarget(const RenderTarget rt) const;
 
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////// UNBINDING ///////////////////////////////

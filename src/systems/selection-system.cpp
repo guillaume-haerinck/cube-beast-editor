@@ -41,34 +41,33 @@ SelectionSystem::SelectionSystem(Context& ctx, SingletonComponents& scomps)
 SelectionSystem::~SelectionSystem() {}
 
 void SelectionSystem::update() {
-    /*
-    m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY));
+    m_ctx.rcommand.bindRenderTarget(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY));
 
     // TODO abstract
     unsigned char pixel[] = { 0, 0, 0, 0 };
     GLCall(glReadBuffer(GL_COLOR_ATTACHMENT3));
-    GLCall(glReadPixels(m_scomps.inputs.mousePos.x, m_scomps.viewportSize.y - m_scomps.inputs.mousePos.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel));
+    GLCall(glReadPixels(m_scomps.inputs.mousePos().x, m_scomps.viewport.size().y - m_scomps.inputs.mousePos().y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel));
 
     // FIXME intersection point take value "-+4.76837e-07" instead of 0.0 sometimes which causes flicker
-    m_scomps.hovered.exist = false;
+    m_scomps.hovered.m_exist = false;
     const met::entity hoveredCube = voxmt::colorToInt(pixel[0], pixel[1], pixel[2]);
     
     // Check existing cubes with framebuffer
     if (hoveredCube != met::null) {
-        m_scomps.hovered.exist = true;
-        m_scomps.hovered.isCube = true;
-        m_scomps.hovered.face = colorToFace(pixel[3]);
+        m_scomps.hovered.m_exist = true;
+        m_scomps.hovered.m_isCube = true;
+        m_scomps.hovered.m_face = colorToFace(pixel[3]);
         const comp::Transform trans = m_ctx.registry.get<comp::Transform>(hoveredCube);
-        m_scomps.hovered.position = trans.position;
-        m_scomps.hovered.id = hoveredCube;
+        m_scomps.hovered.m_position = trans.position;
+        m_scomps.hovered.m_id = hoveredCube;
         
     } else {
-        m_scomps.hovered.id = met::null;
+        m_scomps.hovered.m_id = met::null;
 
         // Check grid with raycast
         const glm::mat4 toWorld = glm::inverse((m_scomps.camera.proj() * m_scomps.camera.view()));
-        glm::vec4 from = toWorld * glm::vec4(m_scomps.inputs.NDCMousePos, -1.0f, 1.0f);
-        glm::vec4 to = toWorld * glm::vec4(m_scomps.inputs.NDCMousePos, 1.0f, 1.0f);
+        glm::vec4 from = toWorld * glm::vec4(m_scomps.inputs.ndcMousePos(), -1.0f, 1.0f);
+        glm::vec4 to = toWorld * glm::vec4(m_scomps.inputs.ndcMousePos(), 1.0f, 1.0f);
         from /= from.w;
         to /= to.w;
 
@@ -79,16 +78,15 @@ void SelectionSystem::update() {
                 const bool isInsideMax = intersectionPoint.x <= 10.0f && intersectionPoint.y <= 10.0f && intersectionPoint.z <= 10.0f;
 
                 if (isInsideMin && isInsideMax) {
-                    m_scomps.hovered.exist = true;
-                    m_scomps.hovered.isCube = false;
-                    m_scomps.hovered.face = normalToFace(i);
-                    m_scomps.hovered.position = voxmt::roundUpFloat3(intersectionPoint);
+                    m_scomps.hovered.m_exist = true;
+                    m_scomps.hovered.m_isCube = false;
+                    m_scomps.hovered.m_face = normalToFace(i);
+                    m_scomps.hovered.m_position = voxmt::roundUpFloat3(intersectionPoint);
                     break;
                 }
             }
         }
     }
-    */
 }
 
 Face SelectionSystem::colorToFace(unsigned char color) const {
