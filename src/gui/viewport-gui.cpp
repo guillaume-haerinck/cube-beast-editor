@@ -101,69 +101,7 @@ void ViewportGui::initGraphicsSingletonComponents() {
 
     // Init pipelines
     {
-		std::vector<scomp::ConstantBufferIndex> cbIndices;
-	
-		// Geometry
-		cbIndices = {
-            scomp::ConstantBufferIndex::PER_FRAME
-        };
-		const char* VSGeo = 
-			#include "graphics/shaders/geometry.vert"
-		;
-		const char* FSGeo =
-			#include "graphics/shaders/geometry.frag"
-		;
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GEOMETRY, VSGeo, FSGeo, cbIndices);
-
-		// Grid
-		cbIndices = {
-            scomp::ConstantBufferIndex::PER_FRAME
-        };
-		const char* VSGrid = 
-			#include "graphics/shaders/grid.vert"
-		;
-		const char* FSGrid =
-			#include "graphics/shaders/grid.frag"
-		;
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GRID, VSGrid, FSGrid, cbIndices);
-
-		// Debug draw
-		cbIndices = {
-            scomp::ConstantBufferIndex::PER_FRAME
-        };
-		const char* VSDdraw = 
-			#include "graphics/shaders/ddraw.vert"
-		;
-		const char* FSDdraw =
-			#include "graphics/shaders/ddraw.frag"
-		;
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_DDRAW, VSDdraw, FSDdraw, cbIndices);
-
-		// Gui
-		cbIndices = {
-			 scomp::ConstantBufferIndex::PER_FRAME,
-			 scomp::ConstantBufferIndex::PER_NI_MESH
-		};
-		const char* VSGui = 
-			#include "graphics/shaders/gui.vert"
-		;
-		const char* FSGui =
-			#include "graphics/shaders/gui.frag"
-		;
-		// FIXME perNIMesh overrided by PerWindowChange
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_GUI, VSGui, FSGui, cbIndices);
-
-		// Lighting
-		cbIndices = {
-			scomp::ConstantBufferIndex::PER_FRAME
-		};
-		const char* VSLighting = 
-			#include "graphics/shaders/lighting.vert"
-		;
-		const char* FSLighting =
-			#include "graphics/shaders/lighting.frag"
-		;
-        m_ctx.rcommand.createPipeline(scomp::PipelineIndex::PIP_LIGHTING, VSLighting, FSLighting, cbIndices, {"g_albedo", "g_normal", "g_worldPosition"});
+		
     }
 
 	// Update light constant buffer
