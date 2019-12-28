@@ -20,5 +20,7 @@ void RenderTargets::init(RenderCommand& rcommand, const Viewport& viewport) {
 }
 
 void RenderTargets::destroy(RenderCommand& rcommand) {
-    // TODO
+    for (auto& rt : m_rts) {
+        rcommand.deleteRenderTarget(rt);
+    }
 }

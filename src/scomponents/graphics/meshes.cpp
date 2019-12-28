@@ -84,5 +84,15 @@ void Meshes::init(RenderCommand& rcommand) {
 }
 
 void Meshes::destroy(RenderCommand& rcommand) {
-	// TODO
+	// Cube
+	rcommand.deleteVertexBuffer(m_cube.vb);
+	rcommand.deleteIndexBuffer(m_cube.ib);
+
+	// Plane
+	rcommand.deleteVertexBuffer(m_plane.vb);
+	rcommand.deleteIndexBuffer(m_plane.ib);
+
+	// InvertedCube
+	rcommand.deleteVertexBuffer(m_invertCube.vb);
+	rcommand.deleteIndexBuffer(m_invertCube.ib);
 }

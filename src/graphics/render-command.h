@@ -21,6 +21,10 @@ public:
     RenderCommand();
     ~RenderCommand();
 
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////// FEATURES ////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+
     /**
 	 * @brief Clear the back buffer
 	 */
@@ -114,6 +118,17 @@ public:
 
 	void drawIndexed(unsigned int count, IndexBuffer::dataType type) const;
 	void drawIndexedInstances(unsigned int indexCount, IndexBuffer::dataType type, unsigned int drawCount) const;
+
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////// DELETION ////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+
+	void deleteRenderTarget(RenderTarget& rt) const;
+	void deleteVertexBuffer(VertexBuffer& vb) const;
+	void deleteConstantBuffer(ConstantBuffer& cb) const;
+	void deleteIndexBuffer(IndexBuffer& ib) const;
+	void deleteTexture(Texture& texture) const;
+	void deletePipeline(Pipeline& pip) const;
 
 private:
 	bool hasShaderCompiled(unsigned int shaderId, unsigned int shaderType) const;

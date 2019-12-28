@@ -8,38 +8,11 @@
 
 RenderCommand::RenderCommand() {}
 
-RenderCommand::~RenderCommand() {
-	/*
-	// TODO move to scomponents destroy
+RenderCommand::~RenderCommand() {}
 
-    glDeleteVertexArrays(1, &m_scomps.cubeMesh.vb.vertexArrayId);
-	for (auto buffer : m_scomps.cubeMesh.vb.buffers) {
-        glDeleteBuffers(1, &buffer.bufferId);
-	}
-
-	glDeleteVertexArrays(1, &m_scomps.planeMesh.vb.vertexArrayId);
-	for (auto buffer : m_scomps.planeMesh.vb.buffers) {
-        glDeleteBuffers(1, &buffer.bufferId);
-	}
-
-	glDeleteVertexArrays(1, &m_scomps.invertCubeMesh.vb.vertexArrayId);
-	for (auto buffer : m_scomps.invertCubeMesh.vb.buffers) {
-        glDeleteBuffers(1, &buffer.bufferId);
-	}
-
-	for (auto pipeline : m_scomps.pipelines) {
-		glDeleteProgram(pipeline.programIndex);
-	}
-
-	for (auto cb : m_scomps.constantBuffers) {
-		glDeleteBuffers(1, &cb.bufferId);
-	}
-
-    for (auto rts : m_scomps.renderTargets) {
-        glDeleteFramebuffers(1, &rts.frameBufferId);
-    }
-	*/
-}
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////// FEATURES ////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 
 void RenderCommand::clear() const {
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
@@ -425,6 +398,51 @@ void RenderCommand::drawIndexed(unsigned int count, IndexBuffer::dataType type) 
 
 void RenderCommand::drawIndexedInstances(unsigned int indexCount, IndexBuffer::dataType type, unsigned int drawCount) const {
 	GLCall(glDrawElementsInstanced(GL_TRIANGLES, indexCount, indexBufferDataTypeToOpenGLBaseType(type), (void*)0, drawCount));
+}
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////// DELETION ////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+void RenderCommand::deleteRenderTarget(RenderTarget& rt) const {
+	GLCall(glDeleteFramebuffers(1, &rt.frameBufferId));
+	GLCall(glDeleteRenderbuffers(rt.renderBufferIds.size(), rt.renderBufferIds.data()));
+	GLCall(glDeleteTextures(rt.textureIds.size(), rt.textureIds.data()));
+	rt.frameBufferId = 0;
+	rt.renderBufferIds.clear();
+	rt.textureIds.clear();
+}
+
+void RenderCommand::deleteVertexBuffer(VertexBuffer& vb) const {
+	GLCall(glDeleteVertexArrays(1, &vb.vertexArrayId));
+	for (auto buffer : vb.buffers) {
+        GLCall(glDeleteBuffers(1, &buffer.bufferId));
+	}
+	vb.vertexArrayId = 0;
+	vb.buffers.clear();
+}
+
+void RenderCommand::deleteConstantBuffer(ConstantBuffer& cb) const {
+	GLCall(glDeleteBuffers(1, &cb.bufferId));
+	cb.byteWidth = 0;
+	cb.bufferId = 0;
+}
+
+void RenderCommand::deleteIndexBuffer(IndexBuffer& ib) const {
+	GLCall(glDeleteBuffers(1, &ib.bufferId));
+	ib.bufferId = 0;
+	ib.count = 0;
+}
+
+void RenderCommand::deleteTexture(Texture& texture) const {
+	GLCall(glDeleteTextures(1, &texture.id));
+	texture.id = 0;
+	texture.slot = 0;
+}
+
+void RenderCommand::deletePipeline(Pipeline& pip) const {
+	GLCall(glDeleteProgram(pip.programIndex));
+	pip.programIndex = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////

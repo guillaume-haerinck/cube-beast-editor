@@ -13,5 +13,7 @@ void ConstantBuffers::init(RenderCommand& rcommand) {
 }
 
 void ConstantBuffers::destroy(RenderCommand& rcommand) {
-    // TODO
+    for (auto& cb : m_cbs) {
+        rcommand.deleteConstantBuffer(cb);
+    }
 }

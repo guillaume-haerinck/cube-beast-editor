@@ -70,5 +70,7 @@ void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs) {
 }
 
 void Pipelines::destroy(RenderCommand& rcommand) {
-    // TODO
+    for (auto& pip : m_pips) {
+        rcommand.deletePipeline(pip);
+    }
 }
