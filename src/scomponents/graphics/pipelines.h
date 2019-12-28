@@ -3,6 +3,7 @@
 #include <array>
 #include <vector>
 #include <cassert>
+#include <string>
 
 #include "scomponents/graphics/constant-buffers.h"
 
@@ -36,7 +37,7 @@ enum class PipelineIndex {
  */
 struct Pipeline {
 	unsigned int programIndex = 0;
-	std::vector<ConstantBufferIndex> constantBufferIndices;
+	std::vector<std::string> cbNames;
 };
 
 class Pipelines {
@@ -49,7 +50,7 @@ public:
 	}
 
 private:
-	void init(RenderCommand& rcommand);
+	void init(RenderCommand& rcommand, const ConstantBuffers& cbs);
 
 private:
 	std::array<Pipeline, static_cast<unsigned int>(PipelineIndex::_PIP_MAX)> m_pips;

@@ -47,7 +47,7 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 
 	// Init graphics objects
 	m_scomps.constantBuffers.init(m_ctx.rcommand);
-	m_scomps.pipelines.init(m_ctx.rcommand);
+	m_scomps.pipelines.init(m_ctx.rcommand, m_scomps.constantBuffers);
 	m_scomps.meshes.init(m_ctx.rcommand);
 	m_scomps.renderTargets.init(m_ctx.rcommand);
 

@@ -149,7 +149,7 @@ ConstantBuffer RenderCommand::createConstantBuffer(const char* name, unsigned in
 	return cb;
 }
 
-Pipeline RenderCommand::createPipeline(const char* vsSrc, const char* fsSrc, const std::vector<ConstantBufferIndex>& cbIndices, const std::vector<std::string>& samplerNames) const {
+Pipeline RenderCommand::createPipeline(const char* vsSrc, const char* fsSrc, const std::vector<ConstantBuffer>& cbs, const std::vector<std::string>& samplerNames) const {
 	// Compile vertex shader
 	unsigned int vsId = glCreateShader(GL_VERTEX_SHADER);
 	GLCall(glShaderSource(vsId, 1, &vsSrc, nullptr));
@@ -204,15 +204,14 @@ Pipeline RenderCommand::createPipeline(const char* vsSrc, const char* fsSrc, con
 	// the associated cb are not correct
 	GLCall(glUseProgram(programId));
 	Pipeline sPipeline = {};
-	/*
-	for (size_t i = 0; i < cbIndices.size(); i++) {
-		ConstantBuffer& cb = m_scomps.constantBuffers.at(static_cast<unsigned int>(cbIndices.at(i)));
+	unsigned int index = 0;
+	for (const ConstantBuffer& cb : cbs) {
 		unsigned int blockIndex = glGetUniformBlockIndex(programId, cb.name.c_str());
-		GLCall(glUniformBlockBinding(programId, blockIndex, i));
-		GLCall(glBindBufferBase(GL_UNIFORM_BUFFER, i, cb.bufferId));
-		sPipeline.constantBufferIndices.push_back(cbIndices.at(i));
+		GLCall(glUniformBlockBinding(programId, blockIndex, index));
+		GLCall(glBindBufferBase(GL_UNIFORM_BUFFER, index, cb.bufferId));
+		sPipeline.cbNames.push_back(cb.name);
+		index++;
 	}
-	*/
 
 	// Set samplers texture units to the order they were declared
 	for (size_t i = 0; i < samplerNames.size(); i++) {

@@ -3,12 +3,12 @@
 #include "graphics/render-command.h"
 #include "graphics/constant-buffer.h"
 
-void Pipelines::init(RenderCommand& rcommand) {
-    std::vector<ConstantBufferIndex> cbIndices;
+void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs) {
+    std::vector<ConstantBuffer> usedCbs;
 
     // Geometry
-    cbIndices = {
-        ConstantBufferIndex::PER_FRAME
+    usedCbs = {
+        cbs.at(ConstantBufferIndex::PER_FRAME)
     };
     const char* VSGeo = 
         #include "graphics/shaders/geometry.vert"
@@ -16,11 +16,11 @@ void Pipelines::init(RenderCommand& rcommand) {
     const char* FSGeo =
         #include "graphics/shaders/geometry.frag"
     ;
-    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_GEOMETRY)) = rcommand.createPipeline(VSGeo, FSGeo, cbIndices);
+    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_GEOMETRY)) = rcommand.createPipeline(VSGeo, FSGeo, usedCbs);
 
     // Grid
-    cbIndices = {
-        ConstantBufferIndex::PER_FRAME
+    usedCbs = {
+        cbs.at(ConstantBufferIndex::PER_FRAME)
     };
     const char* VSGrid = 
         #include "graphics/shaders/grid.vert"
@@ -28,11 +28,11 @@ void Pipelines::init(RenderCommand& rcommand) {
     const char* FSGrid =
         #include "graphics/shaders/grid.frag"
     ;
-    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_GRID)) = rcommand.createPipeline(VSGrid, FSGrid, cbIndices);
+    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_GRID)) = rcommand.createPipeline(VSGrid, FSGrid, usedCbs);
 
     // Debug draw
-    cbIndices = {
-        ConstantBufferIndex::PER_FRAME
+    usedCbs = {
+        cbs.at(ConstantBufferIndex::PER_FRAME)
     };
     const char* VSDdraw = 
         #include "graphics/shaders/ddraw.vert"
@@ -40,12 +40,12 @@ void Pipelines::init(RenderCommand& rcommand) {
     const char* FSDdraw =
         #include "graphics/shaders/ddraw.frag"
     ;
-    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_DDRAW)) = rcommand.createPipeline(VSDdraw, FSDdraw, cbIndices);
+    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_DDRAW)) = rcommand.createPipeline(VSDdraw, FSDdraw, usedCbs);
 
     // Gui
-    cbIndices = {
-        ConstantBufferIndex::PER_FRAME,
-        ConstantBufferIndex::PER_NI_MESH
+    usedCbs = {
+        cbs.at(ConstantBufferIndex::PER_FRAME),
+        cbs.at(ConstantBufferIndex::PER_NI_MESH)
     };
     const char* VSGui = 
         #include "graphics/shaders/gui.vert"
@@ -54,11 +54,11 @@ void Pipelines::init(RenderCommand& rcommand) {
         #include "graphics/shaders/gui.frag"
     ;
     // FIXME perNIMesh overrided by PerWindowChange
-    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_GUI)) = rcommand.createPipeline(VSGui, FSGui, cbIndices);
+    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_GUI)) = rcommand.createPipeline(VSGui, FSGui, usedCbs);
 
     // Lighting
-    cbIndices = {
-        ConstantBufferIndex::PER_FRAME
+    usedCbs = {
+        cbs.at(ConstantBufferIndex::PER_FRAME)
     };
     const char* VSLighting = 
         #include "graphics/shaders/lighting.vert"
@@ -66,5 +66,5 @@ void Pipelines::init(RenderCommand& rcommand) {
     const char* FSLighting =
         #include "graphics/shaders/lighting.frag"
     ;
-    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_LIGHTING)) = rcommand.createPipeline(VSLighting, FSLighting, cbIndices, {"g_albedo", "g_normal", "g_worldPosition"});
+    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_LIGHTING)) = rcommand.createPipeline(VSLighting, FSLighting, usedCbs, {"g_albedo", "g_normal", "g_worldPosition"});
 }
