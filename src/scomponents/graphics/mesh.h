@@ -5,7 +5,6 @@
 
 #include "graphics/pipeline-input-description.h"
 
-
 enum class AttributeBufferType {
 	PER_VERTEX_ANY = 0,
 	PER_INSTANCE_TRANSLATION,
@@ -66,8 +65,18 @@ struct Mesh {
 };
 
 class Meshes {
+public:
+	Meshes() {};
+
+	const Mesh& cube() const { return m_cube; }
+	const Mesh& plane() const { return m_plane; }
+	const Mesh& invertCube() const { return m_invertCube; }
+
 private:
-	Mesh m_cubeMesh;
-	Mesh m_planeMesh;
-	Mesh m_invertCubeMesh;
+	Mesh m_cube;
+	Mesh m_plane;
+	Mesh m_invertCube;
+
+private:
+	friend class ViewportGui;
 };

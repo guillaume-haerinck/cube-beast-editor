@@ -2,6 +2,7 @@
 
 #include <array>
 #include <vector>
+#include <cassert>
 
 enum class RenderTargetIndex {
 	RTT_GEOMETRY = 0,
@@ -23,13 +24,15 @@ struct RenderTarget {
  */
 class RenderTargets {
 public:
-	const RenderTarget& at(RenderTargetIndex id) {
-		// TODO
-		return m_rtts.at(0);
+	RenderTargets() {};
+
+	const RenderTarget& at(RenderTargetIndex id) const {
+		assert(id != RenderTargetIndex::_RTT_MAX && "Invalid Render target index !");
+		return m_rtts.at(static_cast<unsigned int>(id));
 	}
 
 private:
-	std::array<RenderTarget, 1> m_rtts;
+	std::array<RenderTarget, static_cast<unsigned int>(RenderTargetIndex::_RTT_MAX)> m_rtts;
 
 private:
 	friend class ViewportGui;

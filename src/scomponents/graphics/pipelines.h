@@ -2,6 +2,7 @@
 
 #include <array>
 #include <vector>
+#include <cassert>
 
 #include "scomponents/graphics/constant-buffers.h"
 
@@ -38,13 +39,15 @@ struct Pipeline {
 
 class Pipelines {
 public:
-	const Pipeline& at(PipelineIndex id) {
-		// TODO
-		return m_pips.at(0);
+	Pipelines() {};
+
+	const Pipeline& at(PipelineIndex id) const {
+		assert(id != PipelineIndex::_PIP_MAX && "Invalid pipeline index !");
+		return m_pips.at(static_cast<unsigned int>(id));
 	}
 
 private:
-	std::array<Pipeline, 1> m_pips;
+	std::array<Pipeline, static_cast<unsigned int>(PipelineIndex::_PIP_MAX)> m_pips;
 
 private:
 	friend class ViewportGui;

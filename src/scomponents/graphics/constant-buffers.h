@@ -2,6 +2,7 @@
 
 #include <array>
 #include <string>
+#include <cassert>
 
 /**
  * @note The layouts are accessible on the graphics/ConstantBuffer.h file
@@ -25,13 +26,15 @@ struct ConstantBuffer {
 
 class ConstantBuffers {
 public:
-	const ConstantBuffer& at(ConstantBufferIndex id) {
-		// TODO
-		return m_cbs.at(0);
+	ConstantBuffers() {};
+
+	const ConstantBuffer& at(ConstantBufferIndex id) const {
+		assert(id != ConstantBufferIndex::_CB_MAX);
+		return m_cbs.at(static_cast<unsigned int>(id));
 	}
 
 private:
-	std::array<ConstantBuffer, 1> m_cbs;
+	std::array<ConstantBuffer, static_cast<unsigned int>(ConstantBufferIndex::_CB_MAX)> m_cbs;
 
 private:
 	friend class ViewportGui;
