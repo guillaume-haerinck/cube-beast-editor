@@ -5,7 +5,6 @@
 
 #include "render-command.h"
 #include "scomponents/singleton-components.h"
-#include "scomponents/graphics/mesh.h"
 
 class DebugDraw {
 public:

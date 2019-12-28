@@ -4,7 +4,7 @@
 #include "scomponents/graphics/constant-buffers.h"
 #include "scomponents/graphics/camera.h"
 #include "scomponents/graphics/materials.h"
-#include "scomponents/graphics/mesh.h"
+#include "scomponents/graphics/meshes.h"
 #include "scomponents/graphics/render-targets.h"
 
 #include "scomponents/io/inputs.h"

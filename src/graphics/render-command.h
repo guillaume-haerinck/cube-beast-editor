@@ -10,9 +10,9 @@
 #include "scomponents/singleton-components.h"
 #include "scomponents/graphics/constant-buffers.h"
 #include "scomponents/graphics/pipelines.h"
-#include "scomponents/graphics/mesh.h"
+#include "scomponents/graphics/meshes.h"
 #include "scomponents/graphics/render-targets.h"
-#include "scomponents/graphics/texture.h"
+#include "scomponents/graphics/textures.h"
 #include "graphics/pipeline-input-description.h"
 #include "graphics/pipeline-output-description.h"
 
