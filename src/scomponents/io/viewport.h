@@ -17,4 +17,5 @@ private:
 
 private:
     friend class App;
+    friend class ViewportGui;
 };

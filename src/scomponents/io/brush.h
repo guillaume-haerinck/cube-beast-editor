@@ -30,4 +30,5 @@ private:
 
 private:
     friend class BrushGui;
+	friend class App;
 };

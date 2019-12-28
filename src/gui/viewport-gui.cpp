@@ -34,53 +34,38 @@ void ViewportGui::update() {
 		ImGui::PopStyleVar(1);
 
 		if (ImGui::IsWindowHovered()) {
-			//m_scomps.isViewportHovered = true;
+			m_scomps.viewport.m_isHovered = true;
 		} else {
-			//m_scomps.isViewportHovered = false;
+			m_scomps.viewport.m_isHovered = false;
 		}
 
         // Handle framebuffer
         ImVec2 viewportSize = ImGui::GetWindowSize();
-		/*
-        if (viewportSize.x != m_scomps.viewportSize.x || viewportSize.y != m_scomps.viewportSize.y) {
-            m_scomps.viewportSize = glm::ivec2(viewportSize.x, viewportSize.y);
-            glViewport(0, 0, m_scomps.viewportSize.x, m_scomps.viewportSize.y);
-            m_scomps.camera.m_proj = glm::perspectiveFovLH(glm::quarter_pi<float>(), (float) m_scomps.viewportSize.x, (float) m_scomps.viewportSize.y, 0.1f, 100.0f);
+        if (viewportSize.x != m_scomps.viewport.size().x || viewportSize.y != m_scomps.viewport.size().y) {
+            m_scomps.viewport.m_size = glm::ivec2(viewportSize.x, viewportSize.y);
+            glViewport(0, 0, viewportSize.x, viewportSize.y);
+            m_scomps.camera.m_proj = glm::perspectiveFovLH(glm::quarter_pi<float>(), (float) viewportSize.x, (float) viewportSize.y, 0.1f, 100.0f);
+            
             // TODO abstract
 			// RemakeFramebuffers
             {
-                //glDeleteFramebuffers(1, &m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).frameBufferId);
-                PipelineOutputDescription outputDescription = {
-                    { RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Albedo" },
-                    { RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Normal" },
-                    { RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_WorldPosition" },
-                    { RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetDataType::UCHAR, RenderTargetChannels::RGBA, "EntityIdToColor" },
-                    { RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetDataType::FLOAT, RenderTargetChannels::R, "Depth" }
-                };
-                //m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_GEOMETRY, outputDescription);
-
-                //glDeleteFramebuffers(1, &m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_FINAL).frameBufferId);
-                outputDescription = {
-                    { RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Color" },
-                    { RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetDataType::FLOAT, RenderTargetChannels::R, "Depth" }
-                };
-                //m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_FINAL, outputDescription);
+                glDeleteFramebuffers(1, &m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY).frameBufferId);
+                glDeleteFramebuffers(1, &m_scomps.renderTargets.at(RenderTargetIndex::RTT_FINAL).frameBufferId);
+                m_scomps.renderTargets.init(m_ctx.rcommand, m_scomps.viewport);
             }
         }
 
         // Update viewport position & draw framebuffer
         {
             const ImVec2 viewportPosTopLeft = ImGui::GetCursorScreenPos();
-            m_scomps.viewportPosTopLeft = glm::ivec2(viewportPosTopLeft.x, viewportPosTopLeft.y);
-			/*
+            m_scomps.viewport.m_posTopLeft = glm::ivec2(viewportPosTopLeft.x, viewportPosTopLeft.y);
 			ImGui::GetWindowDrawList()->AddImage(
-				(void*) m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_FINAL).textureIds.at(0),
+				(void*) m_scomps.renderTargets.at(RenderTargetIndex::RTT_FINAL).textureIds.at(0),
 				viewportPosTopLeft,
-				ImVec2(viewportPosTopLeft.x + m_scomps.viewportSize.x, viewportPosTopLeft.y + m_scomps.viewportSize.y),
+				ImVec2(viewportPosTopLeft.x + viewportSize.x, viewportPosTopLeft.y + viewportSize.y),
 				ImVec2(0, 1), ImVec2(1, 0)
 			);
         }
-		*/
     }
     ImGui::End();
 }
