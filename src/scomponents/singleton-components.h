@@ -13,7 +13,8 @@
 #include "scomponents/io/brush.h"
 
 /**
- * @brief Global object used to store the state of the app. Read-only for vast-majority of systems.
+ * @brief Global object used to store the state of the app. 
+ * @note Only store data, it has no logic. Read-only for vast-majority of systems.
  */
 struct SingletonComponents {
 	SingletonComponents() {};

@@ -45,10 +45,11 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 		new ViewportOptionBarGui(m_ctx, m_scomps)
     };
 
-	// Send first event
-	for (auto gui : m_guis) {
-		gui->onEvent(GuiEvent::APP_LAUNCHED);
-	}
+	// Init graphics objects
+	m_scomps.constantBuffers.init(m_ctx.rcommand);
+	m_scomps.pipelines.init(m_ctx.rcommand);
+	m_scomps.meshes.init(m_ctx.rcommand);
+	m_scomps.renderTargets.init(m_ctx.rcommand);
 
 	// Init renderer static states
 	m_ctx.rcommand.enableFaceCulling();

@@ -14,7 +14,5 @@ void SceneOutlineGui::update() {
 }
 
 void SceneOutlineGui::onEvent(GuiEvent e) {
-    switch (e) {
-        case GuiEvent::APP_LAUNCHED: break;
-    }
+
 }

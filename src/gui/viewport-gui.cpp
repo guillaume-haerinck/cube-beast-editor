@@ -90,13 +90,13 @@ void ViewportGui::update() {
 
 void ViewportGui::onEvent(GuiEvent e) {
     switch (e) {
-        case GuiEvent::APP_LAUNCHED: initGraphicsSingletonComponents(); break;
         default: break;
     }
 }
 
+/*
 void ViewportGui::initGraphicsSingletonComponents() {
-	/*
+
     // Init Constant Buffers
 	{
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_NI_MESH, sizeof(cb::perNiMesh));
@@ -300,5 +300,5 @@ void ViewportGui::initGraphicsSingletonComponents() {
 		mesh.vb = vb;
 		m_scomps.invertCubeMesh = mesh;
 	}
-	*/
 }
+*/

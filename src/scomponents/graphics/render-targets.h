@@ -4,6 +4,8 @@
 #include <vector>
 #include <cassert>
 
+class RenderCommand; // Forward declaration to prevent circular inclusion
+
 enum class RenderTargetIndex {
 	RTT_GEOMETRY = 0,
 	RTT_FINAL,
@@ -32,8 +34,11 @@ public:
 	}
 
 private:
+	void init(RenderCommand& rcommand);
+
+private:
 	std::array<RenderTarget, static_cast<unsigned int>(RenderTargetIndex::_RTT_MAX)> m_rtts;
 
 private:
-	friend class ViewportGui;
+	friend class App;
 };

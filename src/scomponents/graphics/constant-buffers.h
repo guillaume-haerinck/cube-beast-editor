@@ -4,6 +4,8 @@
 #include <string>
 #include <cassert>
 
+class RenderCommand; // Forward declaration to prevent circular inclusion
+
 /**
  * @note The layouts are accessible on the graphics/ConstantBuffer.h file
  */
@@ -34,8 +36,11 @@ public:
 	}
 
 private:
+	void init(RenderCommand& rcommand);
+
+private:
 	std::array<ConstantBuffer, static_cast<unsigned int>(ConstantBufferIndex::_CB_MAX)> m_cbs;
 
 private:
-	friend class ViewportGui;
+	friend class App;
 };

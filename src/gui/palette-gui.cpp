@@ -14,7 +14,5 @@ void PaletteGui::update() {
 }
 
 void PaletteGui::onEvent(GuiEvent e) {
-    switch (e) {
-        case GuiEvent::APP_LAUNCHED: break;
-    }
+
 }

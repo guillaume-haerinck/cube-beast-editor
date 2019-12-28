@@ -5,6 +5,8 @@
 
 #include "graphics/pipeline-input-description.h"
 
+class RenderCommand; // Forward declaration to prevent circular inclusion
+
 enum class AttributeBufferType {
 	PER_VERTEX_ANY = 0,
 	PER_INSTANCE_TRANSLATION,
@@ -73,10 +75,13 @@ public:
 	const Mesh& invertCube() const { return m_invertCube; }
 
 private:
+	void init(RenderCommand& rcommand);
+
+private:
 	Mesh m_cube;
 	Mesh m_plane;
 	Mesh m_invertCube;
 
 private:
-	friend class ViewportGui;
+	friend class App;
 };

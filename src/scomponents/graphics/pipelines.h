@@ -6,6 +6,8 @@
 
 #include "scomponents/graphics/constant-buffers.h"
 
+class RenderCommand; // Forward declaration to prevent circular inclusion
+
 /**
  * @brief A vertex shader. The first stage in the graphic pipeline.
  */
@@ -47,8 +49,11 @@ public:
 	}
 
 private:
+	void init(RenderCommand& rcommand);
+
+private:
 	std::array<Pipeline, static_cast<unsigned int>(PipelineIndex::_PIP_MAX)> m_pips;
 
 private:
-	friend class ViewportGui;
+	friend class App;
 };

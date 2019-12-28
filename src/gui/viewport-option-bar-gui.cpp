@@ -18,7 +18,5 @@ void ViewportOptionBarGui::update() {
 }
 
 void ViewportOptionBarGui::onEvent(GuiEvent e) {
-    switch (e) {
-        case GuiEvent::APP_LAUNCHED: break;
-    }
+
 }

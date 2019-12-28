@@ -51,7 +51,5 @@ void BrushGui::update() {
 }
 
 void BrushGui::onEvent(GuiEvent e) {
-    switch (e) {
-        case GuiEvent::APP_LAUNCHED: break;
-    }
+
 }

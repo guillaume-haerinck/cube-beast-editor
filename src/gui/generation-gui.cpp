@@ -14,7 +14,5 @@ void GenerationGui::update() {
 }
 
 void GenerationGui::onEvent(GuiEvent e) {
-    switch (e) {
-        case GuiEvent::APP_LAUNCHED: break;
-    }
+
 }
