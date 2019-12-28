@@ -14,7 +14,5 @@ void ContextInfoBarGui::update() {
 }
 
 void ContextInfoBarGui::onEvent(GuiEvent e) {
-    switch (e) {
-        case GuiEvent::APP_LAUNCHED: break;
-    }
+
 }

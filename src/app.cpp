@@ -45,10 +45,11 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 		new ViewportOptionBarGui(m_ctx, m_scomps)
     };
 
-	// Send first event
-	for (auto gui : m_guis) {
-		gui->onEvent(GuiEvent::APP_LAUNCHED);
-	}
+	// Init graphics objects
+	m_scomps.constantBuffers.init(m_ctx.rcommand);
+	m_scomps.pipelines.init(m_ctx.rcommand, m_scomps.constantBuffers);
+	m_scomps.meshes.init(m_ctx.rcommand);
+	m_scomps.renderTargets.init(m_ctx.rcommand, m_scomps.viewport);
 
 	// Init renderer static states
 	m_ctx.rcommand.enableFaceCulling();
@@ -69,7 +70,12 @@ App::~App() {
 	for (ISystem* system : m_systems) {
 		delete system;
 	}
-    m_ctx.rcommand.~RenderCommand();
+
+	m_scomps.constantBuffers.destroy(m_ctx.rcommand);
+	m_scomps.pipelines.destroy(m_ctx.rcommand);
+	m_scomps.meshes.destroy(m_ctx.rcommand);
+	m_scomps.renderTargets.destroy(m_ctx.rcommand);
+	
     ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
@@ -107,8 +113,8 @@ void App::update() {
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	// Reset input deltas
-	m_scomps.inputs.delta = glm::vec2(0.0f);
-	m_scomps.inputs.wheelDelta = 0;
+	m_scomps.inputs.m_posDelta = glm::vec2(0.0f);
+	m_scomps.inputs.m_wheelDelta = 0;
 
 	SDL_GL_SwapWindow(m_window);
 }
@@ -125,43 +131,42 @@ void App::handleSDLEvents() {
         case SDL_QUIT: exit(); break;
 
         case SDL_MOUSEWHEEL:
-            m_scomps.inputs.wheelDelta = e.wheel.y;
-            m_scomps.inputs.actionState.at(scomp::InputAction::CAM_DOLLY) = true;
+            m_scomps.inputs.m_wheelDelta = e.wheel.y;
+            m_scomps.inputs.m_actionState.at(static_cast<unsigned int>(InputAction::CAM_DOLLY)) = true;
             break;
 
         case SDL_MOUSEMOTION:
-            m_scomps.inputs.delta.x = m_scomps.inputs.mousePos.x - e.button.x + m_scomps.viewportPosTopLeft.x;
-            m_scomps.inputs.delta.y = m_scomps.inputs.mousePos.y - e.button.y + m_scomps.viewportPosTopLeft.y;
-            m_scomps.inputs.mousePos.x = static_cast<float>(e.button.x - m_scomps.viewportPosTopLeft.x);
-            m_scomps.inputs.mousePos.y = static_cast<float>(e.button.y - m_scomps.viewportPosTopLeft.y);
-			m_scomps.inputs.NDCMousePos.x = ((float) m_scomps.inputs.mousePos.x / m_scomps.viewportSize.x) * 2.0f - 1.0f;
-			m_scomps.inputs.NDCMousePos.y = -(((float) m_scomps.inputs.mousePos.y / m_scomps.viewportSize.y) * 2.0f - 1.0f);
+            m_scomps.inputs.m_posDelta.x = m_scomps.inputs.mousePos().x - e.button.x + m_scomps.viewport.posTopLeft().x;
+            m_scomps.inputs.m_posDelta.y = m_scomps.inputs.mousePos().y - e.button.y + m_scomps.viewport.posTopLeft().y;
+            m_scomps.inputs.m_mousePos.x = static_cast<float>(e.button.x - m_scomps.viewport.posTopLeft().x);
+            m_scomps.inputs.m_mousePos.y = static_cast<float>(e.button.y - m_scomps.viewport.posTopLeft().y);
+			m_scomps.inputs.m_ndcMousePos.x = ((float) m_scomps.inputs.mousePos().x / m_scomps.viewport.size().x) * 2.0f - 1.0f;
+			m_scomps.inputs.m_ndcMousePos.y = -(((float) m_scomps.inputs.mousePos().y / m_scomps.viewport.size().y) * 2.0f - 1.0f);
             break;
         
-
         case SDL_MOUSEBUTTONDOWN:
 			if (e.button.button == SDL_BUTTON_RIGHT)
-            	m_scomps.inputs.actionState.at(scomp::InputAction::CAM_ORBIT) = true;
+				m_scomps.inputs.m_actionState.at(static_cast<unsigned int>(InputAction::CAM_ORBIT)) = true;
 			else if (e.button.button == SDL_BUTTON_MIDDLE)
-				m_scomps.inputs.actionState.at(scomp::InputAction::CAM_PAN) = true;
+				m_scomps.inputs.m_actionState.at(static_cast<unsigned int>(InputAction::CAM_PAN)) = true;
 			else if (e.button.button == SDL_BUTTON_LEFT)
-				m_scomps.isBrushStarted = true;
+				m_scomps.brush.m_started = true;
             break;
 
         case SDL_MOUSEBUTTONUP:
 			if (e.button.button == SDL_BUTTON_RIGHT)
-				m_scomps.inputs.actionState.at(scomp::InputAction::CAM_ORBIT) = false;
+				m_scomps.inputs.m_actionState.at(static_cast<unsigned int>(InputAction::CAM_ORBIT)) = false;
 			else if (e.button.button == SDL_BUTTON_LEFT)
-				m_scomps.isBrushStarted = false;
+				m_scomps.brush.m_started = false;
 			else if (e.button.button == SDL_BUTTON_MIDDLE)
-				m_scomps.inputs.actionState.at(scomp::InputAction::CAM_PAN) = false;
+				m_scomps.inputs.m_actionState.at(static_cast<unsigned int>(InputAction::CAM_PAN)) = false;
             break;
 
         default: break;
         }
 
-		if (!m_scomps.isViewportHovered)
-			m_scomps.inputs.actionState.fill(false);
+		if (!m_scomps.viewport.isHovered())
+			m_scomps.inputs.m_actionState.fill(false);
     }
 }
 
@@ -183,7 +188,7 @@ void App::initSDL() {
 	m_window = SDL_CreateWindow(
 		"Voxel Editor",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		m_scomps.viewportSize.x, m_scomps.viewportSize.y,
+		m_scomps.viewport.size().x, m_scomps.viewport.size().y,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE
     );
 	if (m_window == nullptr) {

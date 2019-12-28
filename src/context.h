@@ -9,7 +9,7 @@
  * @brief Global object used accross systems
  */
 struct Context {
-	Context(SingletonComponents& scomps) : rcommand(scomps), ddraw(rcommand, scomps) {}
+	Context(SingletonComponents& scomps) : ddraw(rcommand, scomps) {}
 
 	met::registry registry;
 	RenderCommand rcommand;

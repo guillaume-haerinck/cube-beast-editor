@@ -17,9 +17,9 @@ CameraSystem::~CameraSystem()
 
 void CameraSystem::update() {
 	// ArcBall rotation
-	if (m_scomps.inputs.actionState.at(scomp::InputAction::CAM_ORBIT)) {
-		m_scomps.camera.m_theta -= m_scomps.inputs.delta.x * 0.01f;
-		m_scomps.camera.m_phi += m_scomps.inputs.delta.y * 0.01f;
+	if (m_scomps.inputs.actionState(InputAction::CAM_ORBIT)) {
+		m_scomps.camera.m_theta -= m_scomps.inputs.posDelta().x * 0.01f;
+		m_scomps.camera.m_phi += m_scomps.inputs.posDelta().y * 0.01f;
 
 		// Keep phi within -2PI to +2PI for easy 'up' comparison
 		if (m_scomps.camera.m_phi > glm::two_pi<float>())   {
@@ -43,7 +43,7 @@ void CameraSystem::update() {
 	// https://stackoverflow.com/questions/35285289/translate-3d-points-along-arbitrary-plane
 	// https://www.youtube.com/watch?v=-Fn4atv2NsQ
 	// https://www.khanacademy.org/math/linear-algebra/alternate-bases/change-of-basis/v/lin-alg-changing-coordinate-systems-to-help-find-a-transformation-matrix
-	if (m_scomps.inputs.actionState.at(scomp::InputAction::CAM_PAN)) {
+	if (m_scomps.inputs.actionState(InputAction::CAM_PAN)) {
 	 	glm::vec4 col0 = glm::normalize(glm::column<glm::mat4x4>(m_scomps.camera.m_view, 0));
 		glm::vec4 col1 = glm::normalize(glm::column<glm::mat4x4>(m_scomps.camera.m_view, 1));
 
@@ -54,10 +54,10 @@ void CameraSystem::update() {
 	}
 
 	// Change arcball radius
-	if (m_scomps.inputs.actionState.at(scomp::InputAction::CAM_DOLLY)) {
-		if (m_scomps.inputs.wheelDelta > 0 && m_scomps.camera.m_radius >= 2) {
+	if (m_scomps.inputs.actionState(InputAction::CAM_DOLLY)) {
+		if (m_scomps.inputs.wheelDelta() > 0 && m_scomps.camera.m_radius >= 2) {
 			m_scomps.camera.m_radius -= 1;
-		} else if (m_scomps.inputs.wheelDelta < 0) {
+		} else if (m_scomps.inputs.wheelDelta() < 0) {
 			m_scomps.camera.m_radius += 1;
 		}
 
@@ -65,7 +65,7 @@ void CameraSystem::update() {
 	}
 
 	// Reset zoom and position
-	if (m_scomps.inputs.actionState.at(scomp::InputAction::CAM_RESET)) {
+	if (m_scomps.inputs.actionState(InputAction::CAM_RESET)) {
 		// TODO
 	}
 

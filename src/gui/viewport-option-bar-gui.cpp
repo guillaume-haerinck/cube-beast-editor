@@ -12,13 +12,12 @@ void ViewportOptionBarGui::update() {
         // TODO switch between edit and object mode
         // TODO outline cube
         // TODO show or hide grid, and ui on the 3d scene
+        // TODO undo & redo
 
         ImGui::Text("set options");
     ImGui::End();
 }
 
 void ViewportOptionBarGui::onEvent(GuiEvent e) {
-    switch (e) {
-        case GuiEvent::APP_LAUNCHED: break;
-    }
+
 }

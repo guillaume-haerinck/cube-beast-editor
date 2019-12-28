@@ -14,10 +14,10 @@ public:
 		m_view = glm::lookAtLH(m_position, m_target, glm::vec3(0, m_up, 0));
 	}
 
-	const bool hasToBeUpdated() { return m_hasToBeUpdated; }
-	const glm::mat4x4& view() { return m_view; }
-	const glm::mat4x4& proj() { return m_proj; }
-	const glm::vec3& position() { return m_position; }
+	const bool hasToBeUpdated() const { return m_hasToBeUpdated; }
+	const glm::mat4x4& view() const { return m_view; }
+	const glm::mat4x4& proj() const { return m_proj; }
+	const glm::vec3& position() const { return m_position; }
 
 private:
 	glm::mat4x4 m_view;
@@ -33,5 +33,5 @@ private:
 
 private:
 	friend class CameraSystem;
-	friend class ViewportGui;	
+	friend class ViewportGui; // temp
 };

@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 
 #include "context.h"
+#include "scomponents/singleton-components.h"
 #include "gui/i-gui.h"
 #include "systems/i-system.h"
 

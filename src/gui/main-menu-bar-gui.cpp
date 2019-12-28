@@ -46,9 +46,7 @@ void MainMenuBarGui::update() {
 }
 
 void MainMenuBarGui::onEvent(GuiEvent e) {
-    switch (e) {
-        case GuiEvent::APP_LAUNCHED: break;
-    }
+
 }
 
 void MainMenuBarGui::setDefaultLayout() {

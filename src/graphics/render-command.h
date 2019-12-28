@@ -10,15 +10,15 @@
 #include "scomponents/singleton-components.h"
 #include "scomponents/graphics/constant-buffers.h"
 #include "scomponents/graphics/pipelines.h"
-#include "scomponents/graphics/mesh.h"
+#include "scomponents/graphics/meshes.h"
 #include "scomponents/graphics/render-targets.h"
-#include "scomponents/graphics/texture.h"
+#include "scomponents/graphics/textures.h"
 #include "graphics/pipeline-input-description.h"
 #include "graphics/pipeline-output-description.h"
 
 class RenderCommand {
 public:
-    RenderCommand(SingletonComponents& scomps);
+    RenderCommand();
     ~RenderCommand();
 
     /**
@@ -42,52 +42,51 @@ public:
 	 * @param usage - (Optional) Used to know if the buffer is going to be updated or not
 	 * @param type - (Optional) Used by instanced rendering to know which buffer to update
 	 */
-	scomp::AttributeBuffer createAttributeBuffer(const void* vertices, unsigned int count, unsigned int stride, scomp::AttributeBufferUsage usage = scomp::AttributeBufferUsage::STATIC_DRAW, scomp::AttributeBufferType type = scomp::AttributeBufferType::PER_VERTEX_ANY) const;
+	AttributeBuffer createAttributeBuffer(const void* vertices, unsigned int count, unsigned int stride, AttributeBufferUsage usage = AttributeBufferUsage::STATIC_DRAW, AttributeBufferType type = AttributeBufferType::PER_VERTEX_ANY) const;
 
 	/**
 	 * @param description - Layout of the buffers
 	 * @param attributeBuffers - Array of buffers describing positions, normals, etc. The count is defined by the description size.
 	 */
-	scomp::VertexBuffer createVertexBuffer(const PipelineInputDescription& description, scomp::AttributeBuffer* attributeBuffers) const;
+	VertexBuffer createVertexBuffer(const PipelineInputDescription& description, AttributeBuffer* attributeBuffers) const;
 
     /**
 	 * @param indices - Array of integrer
 	 * @param count - The number of elements in the array
 	 * @param type - The type of integrer used in the array
 	 */
-	scomp::IndexBuffer createIndexBuffer(const void* indices, unsigned int count, scomp::IndexBuffer::dataType type) const;
+	IndexBuffer createIndexBuffer(const void* indices, unsigned int count, IndexBuffer::dataType type) const;
 
 	/**
-	 * @param index - The type of constant buffer to create. It is used as an array index in singleton components
 	 * @param byteWidth - The total size of the buffer. Allows to create an array of said type.
 	 * @param data
 	 */
-	void createConstantBuffer(scomp::ConstantBufferIndex index, unsigned int byteWidth, void* data = nullptr) const;
+	ConstantBuffer createConstantBuffer(const char* name, unsigned int byteWidth, void* data = nullptr) const;
 
 	/**
 	 * @brief Create a shader pipeline
 	 */
-	void createPipeline(scomp::PipelineIndex index, const char* VSfilePath, const char* FSfilePath, const std::vector<scomp::ConstantBufferIndex>& cbIndices, const std::vector<std::string>& samplerNames = {}) const;
+	Pipeline createPipeline(const char* VSfilePath, const char* FSfilePath, const std::vector<ConstantBuffer>& cbs, const std::vector<std::string>& samplerNames = {}) const;
 
 	/**
 	 * @brief Allow a fragment shader to render to texture(s).
 	 */
-	void createRenderTargets(scomp::RenderTargetsIndex index, const PipelineOutputDescription& description) const;
+	RenderTarget createRenderTarget(const PipelineOutputDescription& description, const glm::ivec2& size) const;
 
     ///////////////////////////////////////////////////////////////////////////
 	////////////////////////////////// BINDING ////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
-    void bindVertexBuffer(const scomp::VertexBuffer& vb) const;
-	void bindIndexBuffer(const scomp::IndexBuffer& ib) const;
+    void bindVertexBuffer(const VertexBuffer& vb) const;
+	void bindIndexBuffer(const IndexBuffer& ib) const;
 	void bindTextures(const std::vector<unsigned int>& textureIds) const;
 
 	/**
 	 * @brief Will bind all the shaders of the said pipeline
 	 */
-	void bindPipeline(const scomp::Pipeline& pipeline) const;
+	void bindPipeline(const Pipeline& pipeline) const;
 
-	void bindRenderTargets(const scomp::RenderTargets rds) const;
+	void bindRenderTarget(const RenderTarget rt) const;
 
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////// UNBINDING ///////////////////////////////
@@ -101,11 +100,11 @@ public:
 	///////////////////////////////// UPDATING ////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
-    void updateConstantBuffer(const scomp::ConstantBuffer& cb, void* data) const;
+    void updateConstantBuffer(const ConstantBuffer& cb, void* data) const;
 
-	void updateAttributeBuffer(const scomp::AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const;
+	void updateAttributeBuffer(const AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const;
 
-	void updateAttributeBufferAnySize(scomp::AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const;
+	void updateAttributeBufferAnySize(AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const;
 
     ///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////// DRAWING /////////////////////////////////
@@ -113,18 +112,15 @@ public:
 
 	void drawLines(unsigned int count) const;
 
-	void drawIndexed(unsigned int count, scomp::IndexBuffer::dataType type) const;
-	void drawIndexedInstances(unsigned int indexCount, scomp::IndexBuffer::dataType type, unsigned int drawCount) const;
+	void drawIndexed(unsigned int count, IndexBuffer::dataType type) const;
+	void drawIndexedInstances(unsigned int indexCount, IndexBuffer::dataType type, unsigned int drawCount) const;
 
 private:
 	bool hasShaderCompiled(unsigned int shaderId, unsigned int shaderType) const;
 	GLenum shaderDataTypeToOpenGLBaseType(ShaderDataType type) const;
-	GLenum indexBufferDataTypeToOpenGLBaseType(scomp::IndexBuffer::dataType) const;
+	GLenum indexBufferDataTypeToOpenGLBaseType(IndexBuffer::dataType) const;
 	GLenum renderTargetChannelsToOpenGLInternalFormat(RenderTargetChannels channels, RenderTargetDataType dataType) const;
 	GLenum renderTargetChannelsToOpenGLBaseFormat(RenderTargetChannels channels) const;
 	GLenum renderTargetDataTypeToOpenGLBaseType(RenderTargetDataType dataType) const;
-	GLenum attributeBufferUsageToOpenGLBaseType(scomp::AttributeBufferUsage usage) const;
-
-private:
-	SingletonComponents& m_scomps;
+	GLenum attributeBufferUsageToOpenGLBaseType(AttributeBufferUsage usage) const;
 };

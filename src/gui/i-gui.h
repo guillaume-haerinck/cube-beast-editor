@@ -1,7 +1,7 @@
 #pragma once
 
 enum class GuiEvent {
-    APP_LAUNCHED = 0
+    TEST = 0
 };
 
 /**
