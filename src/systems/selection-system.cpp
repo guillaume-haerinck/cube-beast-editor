@@ -41,6 +41,7 @@ SelectionSystem::SelectionSystem(Context& ctx, SingletonComponents& scomps)
 SelectionSystem::~SelectionSystem() {}
 
 void SelectionSystem::update() {
+    /*
     m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY));
 
     // TODO abstract
@@ -87,6 +88,7 @@ void SelectionSystem::update() {
             }
         }
     }
+    */
 }
 
 scomp::Face SelectionSystem::colorToFace(unsigned char color) const {

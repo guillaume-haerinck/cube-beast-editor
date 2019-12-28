@@ -11,6 +11,7 @@ RenderCommand::RenderCommand(SingletonComponents& scomps) : m_scomps(scomps)
 }
 
 RenderCommand::~RenderCommand() {
+	/*
     glDeleteVertexArrays(1, &m_scomps.cubeMesh.vb.vertexArrayId);
 	for (auto buffer : m_scomps.cubeMesh.vb.buffers) {
         glDeleteBuffers(1, &buffer.bufferId);
@@ -37,6 +38,7 @@ RenderCommand::~RenderCommand() {
     for (auto rts : m_scomps.renderTargets) {
         glDeleteFramebuffers(1, &rts.frameBufferId);
     }
+	*/
 }
 
 void RenderCommand::clear() const {
@@ -59,13 +61,13 @@ void RenderCommand::enableFaceCulling() const {
 ///////////////////////////////// CREATION ////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-scomp::AttributeBuffer RenderCommand::createAttributeBuffer(const void* vertices, unsigned int count, unsigned int stride, scomp::AttributeBufferUsage usage, scomp::AttributeBufferType type) const {
+AttributeBuffer RenderCommand::createAttributeBuffer(const void* vertices, unsigned int count, unsigned int stride, AttributeBufferUsage usage, AttributeBufferType type) const {
 	unsigned int id;
 	GLCall(glGenBuffers(1, &id));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
 	GLCall(glBufferData(GL_ARRAY_BUFFER, stride * count, vertices, attributeBufferUsageToOpenGLBaseType(usage)));
 
-	scomp::AttributeBuffer buffer = {};
+	AttributeBuffer buffer = {};
 	buffer.bufferId = id;
 	buffer.byteWidth = stride * count;
 	buffer.count = count;
@@ -76,7 +78,7 @@ scomp::AttributeBuffer RenderCommand::createAttributeBuffer(const void* vertices
 	return buffer;
 }
 
-scomp::VertexBuffer RenderCommand::createVertexBuffer(const PipelineInputDescription& description, scomp::AttributeBuffer* attributeBuffers) const {
+VertexBuffer RenderCommand::createVertexBuffer(const PipelineInputDescription& description, AttributeBuffer* attributeBuffers) const {
 	GLuint va;
 	GLCall(glGenVertexArrays(1, &va));
 	GLCall(glBindVertexArray(va));
@@ -113,19 +115,19 @@ scomp::VertexBuffer RenderCommand::createVertexBuffer(const PipelineInputDescrip
 
 	GLCall(glBindVertexArray(0));
 
-	scomp::VertexBuffer vb = {};
+	VertexBuffer vb = {};
 	vb.vertexArrayId = va;
 	vb.buffers.assign(attributeBuffers, attributeBuffers + description.size());
 	return vb;
 }
 
-scomp::IndexBuffer RenderCommand::createIndexBuffer(const void* indices, unsigned int count, scomp::IndexBuffer::dataType type) const {
+IndexBuffer RenderCommand::createIndexBuffer(const void* indices, unsigned int count, IndexBuffer::dataType type) const {
 	unsigned int id;
 	GLCall(glGenBuffers(1, &id));
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id));
 	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), indices, GL_STATIC_DRAW));
 
-	scomp::IndexBuffer buffer = {};
+	IndexBuffer buffer = {};
 	buffer.bufferId = id;
 	buffer.count = count;
 	buffer.type = type;
@@ -133,15 +135,15 @@ scomp::IndexBuffer RenderCommand::createIndexBuffer(const void* indices, unsigne
 	return buffer;
 }
 
-void RenderCommand::createConstantBuffer(scomp::ConstantBufferIndex index, unsigned int byteWidth, void* data) const {
+void RenderCommand::createConstantBuffer(ConstantBufferIndex index, unsigned int byteWidth, void* data) const {
     assert(byteWidth % 16 == 0 && "Constant Buffer byteWidth must be a multiple of 16 !");
 
 	std::string name = "";
 	switch (index) {
-		case scomp::PER_NI_MESH: name = "perNiMesh"; break;
-		case scomp::PER_FRAME: name = "perFrame"; break;
-		case scomp::PER_MATERIAL_CHANGE: name = "perMaterialChange"; break;
-		case scomp::PER_LIGHT_CHANGE: name = "perLightChange"; break;
+		case ConstantBufferIndex::PER_NI_MESH: name = "perNiMesh"; break;
+		case ConstantBufferIndex::PER_FRAME: name = "perFrame"; break;
+		case ConstantBufferIndex::PER_MATERIAL_CHANGE: name = "perMaterialChange"; break;
+		case ConstantBufferIndex::PER_LIGHT_CHANGE: name = "perLightChange"; break;
 		default:
 			spdlog::error("[createConstantBuffer] unknown index {}", index);
             debug_break();
@@ -155,16 +157,16 @@ void RenderCommand::createConstantBuffer(scomp::ConstantBufferIndex index, unsig
 	GLCall(glBufferData(GL_UNIFORM_BUFFER, byteWidth, data, GL_DYNAMIC_COPY));
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 
-	scomp::ConstantBuffer cb = {};
+	ConstantBuffer cb = {};
 	cb.bufferId = cbId;
 	cb.byteWidth = byteWidth;
 	cb.name = name;
 
 	// Save to singleton components
-	m_scomps.constantBuffers.at(index) = cb;
+	//m_scomps.constantBuffers.at(static_cast<unsigned int>(index)) = cb;
 }
 
-void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* vsSrc, const char* fsSrc, const std::vector<scomp::ConstantBufferIndex>& cbIndices, const std::vector<std::string>& samplerNames) const {
+void RenderCommand::createPipeline(PipelineIndex index, const char* vsSrc, const char* fsSrc, const std::vector<ConstantBufferIndex>& cbIndices, const std::vector<std::string>& samplerNames) const {
 	// Compile vertex shader
 	unsigned int vsId = glCreateShader(GL_VERTEX_SHADER);
 	GLCall(glShaderSource(vsId, 1, &vsSrc, nullptr));
@@ -218,14 +220,16 @@ void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* vsSrc
 	// FIXME problems when assigning multiple pipelines next to each other
 	// the associated cb are not correct
 	GLCall(glUseProgram(programId));
-	scomp::Pipeline sPipeline = {};
+	Pipeline sPipeline = {};
+	/*
 	for (size_t i = 0; i < cbIndices.size(); i++) {
-		scomp::ConstantBuffer& cb = m_scomps.constantBuffers.at(cbIndices.at(i));
+		ConstantBuffer& cb = m_scomps.constantBuffers.at(static_cast<unsigned int>(cbIndices.at(i)));
 		unsigned int blockIndex = glGetUniformBlockIndex(programId, cb.name.c_str());
 		GLCall(glUniformBlockBinding(programId, blockIndex, i));
 		GLCall(glBindBufferBase(GL_UNIFORM_BUFFER, i, cb.bufferId));
 		sPipeline.constantBufferIndices.push_back(cbIndices.at(i));
 	}
+	*/
 
 	// Set samplers texture units to the order they were declared
 	for (size_t i = 0; i < samplerNames.size(); i++) {
@@ -244,17 +248,17 @@ void RenderCommand::createPipeline(scomp::PipelineIndex index, const char* vsSrc
 	
 	// Save to singleton components
 	sPipeline.programIndex = programId;
-	m_scomps.pipelines.at(index) = sPipeline;
+	//m_scomps.pipelines.at(index) = sPipeline;
 }
 
-void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const PipelineOutputDescription& description) const {
+void RenderCommand::createRenderTarget(RenderTargetIndex index, const PipelineOutputDescription& description) const {
 	// Create new framebuffer
 	unsigned int fb;
 	GLCall(glGenFramebuffers(1, &fb));
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, fb));
 
     unsigned int slot = 0;
-	scomp::RenderTargets rts;
+	RenderTargets rts;
     for (const auto& target : description) {
         unsigned int rbo;
         unsigned int textureId;
@@ -265,13 +269,13 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
             GLCall(glBindTexture(GL_TEXTURE_2D, textureId));
             GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
             GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-			rts.textureIds.push_back(textureId);
+			//rts.textureIds.push_back(textureId);
             break;
 
         case RenderTargetType::RenderBuffer:
             GLCall(glGenRenderbuffers(1, &rbo));
             GLCall(glBindRenderbuffer(GL_RENDERBUFFER, rbo));
-			rts.renderBufferIds.push_back(rbo);
+			//rts.renderBufferIds.push_back(rbo);
             break;
 
         default:
@@ -353,19 +357,19 @@ void RenderCommand::createRenderTargets(scomp::RenderTargetsIndex index, const P
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 
     // Assign to singleton components
-	rts.frameBufferId = fb;
-    m_scomps.renderTargets.at(index) = rts;
+	//rts.frameBufferId = fb;
+    //m_scomps.renderTargets.at(index) = rts;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// BINDING ////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-void RenderCommand::bindVertexBuffer(const scomp::VertexBuffer& vb) const {
+void RenderCommand::bindVertexBuffer(const VertexBuffer& vb) const {
 	GLCall(glBindVertexArray(vb.vertexArrayId));
 }
 
-void RenderCommand::bindIndexBuffer(const scomp::IndexBuffer& ib) const {
+void RenderCommand::bindIndexBuffer(const IndexBuffer& ib) const {
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib.bufferId));
 }
 
@@ -376,12 +380,12 @@ void RenderCommand::bindTextures(const std::vector<unsigned int>& textureIds) co
 	}
 }
 
-void RenderCommand::bindPipeline(const scomp::Pipeline& pipeline) const {
+void RenderCommand::bindPipeline(const Pipeline& pipeline) const {
 	GLCall(glUseProgram(pipeline.programIndex));
 }
 
-void RenderCommand::bindRenderTargets(const scomp::RenderTargets rds) const {
-    GLCall(glBindFramebuffer(GL_FRAMEBUFFER, rds.frameBufferId));
+void RenderCommand::bindRenderTargets(const RenderTargets rds) const {
+    //GLCall(glBindFramebuffer(GL_FRAMEBUFFER, rds.frameBufferId));
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -400,20 +404,20 @@ void RenderCommand::unbindVertexBuffer() const {
 ///////////////////////////////// UPDATING ////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-void RenderCommand::updateConstantBuffer(const scomp::ConstantBuffer& cb, void* data) const {
+void RenderCommand::updateConstantBuffer(const ConstantBuffer& cb, void* data) const {
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, cb.bufferId));
 	GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, cb.byteWidth, data));
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 }
 
-void RenderCommand::updateAttributeBuffer(const scomp::AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const {
+void RenderCommand::updateAttributeBuffer(const AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const {
 	assert(dataByteWidth < buffer.byteWidth && "New attribute buffer data exceed the size of the allocated buffer");
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer.bufferId));
 	GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, dataByteWidth, data));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
-void RenderCommand::updateAttributeBufferAnySize(scomp::AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const {
+void RenderCommand::updateAttributeBufferAnySize(AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const {
 	if (dataByteWidth >= buffer.byteWidth) {
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer.bufferId));
 		GLCall(glBufferData(GL_ARRAY_BUFFER, dataByteWidth * 2, 0, attributeBufferUsageToOpenGLBaseType(buffer.usage)));
@@ -431,11 +435,11 @@ void RenderCommand::drawLines(unsigned int count) const {
 	GLCall(glDrawArrays(GL_LINES, 0, count));
 }
 
-void RenderCommand::drawIndexed(unsigned int count, scomp::IndexBuffer::dataType type) const {
+void RenderCommand::drawIndexed(unsigned int count, IndexBuffer::dataType type) const {
 	GLCall(glDrawElements(GL_TRIANGLES, count, indexBufferDataTypeToOpenGLBaseType(type), (void*) 0));
 }
 
-void RenderCommand::drawIndexedInstances(unsigned int indexCount, scomp::IndexBuffer::dataType type, unsigned int drawCount) const {
+void RenderCommand::drawIndexedInstances(unsigned int indexCount, IndexBuffer::dataType type, unsigned int drawCount) const {
 	GLCall(glDrawElementsInstanced(GL_TRIANGLES, indexCount, indexBufferDataTypeToOpenGLBaseType(type), (void*)0, drawCount));
 }
 
@@ -489,11 +493,11 @@ GLenum RenderCommand::shaderDataTypeToOpenGLBaseType(ShaderDataType type) const 
 	return 0;
 }
 
-GLenum RenderCommand::indexBufferDataTypeToOpenGLBaseType(scomp::IndexBuffer::dataType type) const {
+GLenum RenderCommand::indexBufferDataTypeToOpenGLBaseType(IndexBuffer::dataType type) const {
 	switch (type) {
-	case scomp::IndexBuffer::dataType::UNSIGNED_BYTE : return GL_UNSIGNED_BYTE;
-	case scomp::IndexBuffer::dataType::UNSIGNED_SHORT : return GL_UNSIGNED_SHORT; 
-	case scomp::IndexBuffer::dataType::UNSIGNED_INT : return GL_UNSIGNED_INT;
+	case IndexBuffer::dataType::UNSIGNED_BYTE : return GL_UNSIGNED_BYTE;
+	case IndexBuffer::dataType::UNSIGNED_SHORT : return GL_UNSIGNED_SHORT; 
+	case IndexBuffer::dataType::UNSIGNED_INT : return GL_UNSIGNED_INT;
 	default:	break;
 	}
 
@@ -548,10 +552,10 @@ GLenum RenderCommand::renderTargetDataTypeToOpenGLBaseType(RenderTargetDataType 
 	return 0;
 }
 
-GLenum RenderCommand::attributeBufferUsageToOpenGLBaseType(scomp::AttributeBufferUsage usage) const {
+GLenum RenderCommand::attributeBufferUsageToOpenGLBaseType(AttributeBufferUsage usage) const {
 	switch (usage) {
-	case scomp::AttributeBufferUsage::STATIC_DRAW: return GL_STATIC_DRAW;
-	case scomp::AttributeBufferUsage::DYNAMIC_DRAW:  return GL_DYNAMIC_DRAW;
+	case AttributeBufferUsage::STATIC_DRAW: return GL_STATIC_DRAW;
+	case AttributeBufferUsage::DYNAMIC_DRAW:  return GL_DYNAMIC_DRAW;
 	default:
 		break;
 	}

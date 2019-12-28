@@ -51,7 +51,7 @@ void ViewportGui::update() {
             // TODO abstract
 			// RemakeFramebuffers
             {
-                glDeleteFramebuffers(1, &m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).frameBufferId);
+                //glDeleteFramebuffers(1, &m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).frameBufferId);
                 PipelineOutputDescription outputDescription = {
                     { RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Albedo" },
                     { RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Normal" },
@@ -59,14 +59,14 @@ void ViewportGui::update() {
                     { RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetDataType::UCHAR, RenderTargetChannels::RGBA, "EntityIdToColor" },
                     { RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetDataType::FLOAT, RenderTargetChannels::R, "Depth" }
                 };
-                m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_GEOMETRY, outputDescription);
+                //m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_GEOMETRY, outputDescription);
 
-                glDeleteFramebuffers(1, &m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_FINAL).frameBufferId);
+                //glDeleteFramebuffers(1, &m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_FINAL).frameBufferId);
                 outputDescription = {
                     { RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Color" },
                     { RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetDataType::FLOAT, RenderTargetChannels::R, "Depth" }
                 };
-                m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_FINAL, outputDescription);
+                //m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_FINAL, outputDescription);
             }
         }
 
@@ -74,13 +74,14 @@ void ViewportGui::update() {
         {
             const ImVec2 viewportPosTopLeft = ImGui::GetCursorScreenPos();
             m_scomps.viewportPosTopLeft = glm::ivec2(viewportPosTopLeft.x, viewportPosTopLeft.y);
-
+			/*
 			ImGui::GetWindowDrawList()->AddImage(
 				(void*) m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_FINAL).textureIds.at(0),
 				viewportPosTopLeft,
 				ImVec2(viewportPosTopLeft.x + m_scomps.viewportSize.x, viewportPosTopLeft.y + m_scomps.viewportSize.y),
 				ImVec2(0, 1), ImVec2(1, 0)
 			);
+			*/
         }
     }
     ImGui::End();
@@ -94,6 +95,7 @@ void ViewportGui::onEvent(GuiEvent e) {
 }
 
 void ViewportGui::initGraphicsSingletonComponents() {
+	/*
     // Init Constant Buffers
 	{
 		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_NI_MESH, sizeof(cb::perNiMesh));
@@ -173,7 +175,7 @@ void ViewportGui::initGraphicsSingletonComponents() {
 
 	// Update light constant buffer
 	{
-		scomp::ConstantBuffer& perLightChangeCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_LIGHT_CHANGE);
+		scomp::ConstantBuffer& perLightChangeCB = m_scomps.constantBuffers.at(static_cast<unsigned int>(scomp::ConstantBufferIndex::PER_LIGHT_CHANGE));
 		cb::perLightChange cbData;
 		cbData.color = glm::vec3(0.5, 0.5, 0.5);
 
@@ -297,4 +299,5 @@ void ViewportGui::initGraphicsSingletonComponents() {
 		mesh.vb = vb;
 		m_scomps.invertCubeMesh = mesh;
 	}
+	*/
 }

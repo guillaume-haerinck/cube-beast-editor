@@ -1,18 +1,36 @@
 #pragma once
 
-namespace scomp {
-    enum RenderTargetsIndex {
-        RTT_GEOMETRY = 0,
-        RTT_FINAL,
-        _RTT_MAX
-    };
+#include <array>
+#include <vector>
 
-	/**
-	 * @brief 
-	 */
-	struct RenderTargets {
-		unsigned int frameBufferId;
-		std::vector<unsigned int> textureIds;
-		std::vector<unsigned int> renderBufferIds;
-	};
-}
+enum class RenderTargetIndex {
+	RTT_GEOMETRY = 0,
+	RTT_FINAL,
+	_RTT_MAX
+};
+
+/**
+ * @brief 
+ */
+struct RenderTarget {
+	unsigned int frameBufferId;
+	std::vector<unsigned int> textureIds;
+	std::vector<unsigned int> renderBufferIds;
+};
+
+/**
+ * @brief 
+ */
+class RenderTargets {
+public:
+	const RenderTarget& at(RenderTargetIndex id) {
+		// TODO
+		return m_rtts.at(0);
+	}
+
+private:
+	std::array<RenderTarget, 1> m_rtts;
+
+private:
+	friend class ViewportGui;
+};

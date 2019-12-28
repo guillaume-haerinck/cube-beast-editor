@@ -5,35 +5,47 @@
 
 #include "scomponents/graphics/constant-buffers.h"
 
-namespace scomp {
-	/**
-	 * @brief A vertex shader. The first stage in the graphic pipeline.
-	 */
-	struct VertexShader {
-		unsigned int shaderId;
-	};
+/**
+ * @brief A vertex shader. The first stage in the graphic pipeline.
+ */
+struct VertexShader {
+	unsigned int shaderId;
+};
 
-	/**
-	 * @brief A pixel shader. The last stage in the graphic pipeline.
-	 */
-	struct FragmentShader {
-		unsigned int shaderId;
-	};
+/**
+ * @brief A pixel shader. The last stage in the graphic pipeline.
+ */
+struct FragmentShader {
+	unsigned int shaderId;
+};
 
-    enum PipelineIndex {
-		PIP_GEOMETRY = 0,
-        PIP_LIGHTING,
-		PIP_GRID,
-		PIP_GUI,
-		PIP_DDRAW,
-        _PIP_MAX
-    };
+enum class PipelineIndex {
+	PIP_GEOMETRY = 0,
+	PIP_LIGHTING,
+	PIP_GRID,
+	PIP_GUI,
+	PIP_DDRAW,
+	_PIP_MAX
+};
 
-	/**
-	 * @brief An OpenGL object which store a vertex shader with a pixel shader with their constant buffers
-	 */
-	struct Pipeline {
-		unsigned int programIndex = 0;
-		std::vector<scomp::ConstantBufferIndex> constantBufferIndices;
-	};
+/**
+ * @brief An OpenGL object which store a vertex shader with a pixel shader with their constant buffers
+ */
+struct Pipeline {
+	unsigned int programIndex = 0;
+	std::vector<ConstantBufferIndex> constantBufferIndices;
+};
+
+class Pipelines {
+public:
+	const Pipeline& at(PipelineIndex id) {
+		// TODO
+		return m_pips.at(0);
+	}
+
+private:
+	std::array<Pipeline, 1> m_pips;
+
+private:
+	friend class ViewportGui;
 };

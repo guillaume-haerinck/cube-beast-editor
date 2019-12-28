@@ -24,10 +24,11 @@ RenderSystem::~RenderSystem() {
 }
 
 void RenderSystem::update() {
+    /*
     // Update per frame constant buffer
 	{
 		cb::perFrame cbData;
-        scomp::ConstantBuffer& perFrameCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_FRAME);
+        scomp::ConstantBuffer& perFrameCB = m_scomps.constantBuffers.at(static_cast<unsigned int>(scomp::ConstantBufferIndex::PER_FRAME));
 
         // Set data
         cbData.cameraPos = m_scomps.camera.position();
@@ -115,7 +116,7 @@ void RenderSystem::update() {
         // Update per non-instanced mesh constant buffer
         {
             cb::perNiMesh cbData;
-            scomp::ConstantBuffer& perNiMeshCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_NI_MESH);
+            scomp::ConstantBuffer& perNiMeshCB = m_scomps.constantBuffers.at(static_cast<unsigned int>(scomp::ConstantBufferIndex::PER_NI_MESH));
 
             if (m_scomps.hovered.exist) {
                 glm::vec3 pos = m_scomps.hovered.position;
@@ -175,4 +176,5 @@ void RenderSystem::update() {
 
         m_ctx.rcommand.drawIndexed(m_scomps.planeMesh.ib.count, m_scomps.planeMesh.ib.type);
     }
+    */
 }
