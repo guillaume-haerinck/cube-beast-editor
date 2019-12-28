@@ -77,7 +77,7 @@ public:
 	 */
 	RenderTarget createRenderTarget(const PipelineOutputDescription& description, const glm::ivec2& size) const;
 
-	Texture createTexture(unsigned int slot, const char* filepath) const;
+	Texture createTexture(unsigned int slot, const unsigned char* data, unsigned int dataSize) const;
 
     ///////////////////////////////////////////////////////////////////////////
 	////////////////////////////////// BINDING ////////////////////////////////

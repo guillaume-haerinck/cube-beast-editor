@@ -209,9 +209,9 @@ void App::initSDL() {
 	SDL_GL_SetSwapInterval(1);
 
 	// Set icon
-	SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(iconsData::sdl, 16, 16, 16, 16 * 2, 0x0f00, 0x00f0, 0x000f, 0xf000);
-	SDL_SetWindowIcon(m_window, surface);
-	SDL_FreeSurface(surface);
+	//SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(iconsData::sdl, 16, 16, 16, 16 * 2, 0x0f00, 0x00f0, 0x000f, 0xf000);
+	//SDL_SetWindowIcon(m_window, surface);
+	//SDL_FreeSurface(surface);
 
 #ifndef __EMSCRIPTEN__
 	if (!gladLoadGLES2((GLADloadfunc) SDL_GL_GetProcAddress)) {

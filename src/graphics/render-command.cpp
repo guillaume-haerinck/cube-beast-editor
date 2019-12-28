@@ -319,11 +319,11 @@ RenderTarget RenderCommand::createRenderTarget(const PipelineOutputDescription& 
     return rt;
 }
 
-Texture RenderCommand::createTexture(unsigned int slot, const char* filepath) const {
+Texture RenderCommand::createTexture(unsigned int slot, const unsigned char* data, unsigned int dataSize) const {
 	int width, height, bpp;
-	unsigned char* localBuffer = stbi_load(filepath, &width, &height, &bpp, 4);
+	unsigned char* localBuffer = stbi_load_from_memory(data, dataSize, &width, &height, &bpp, 4);
 	if (!localBuffer) {
-		spdlog::critical("[Texture] Unable to open texture {}", filepath);
+		spdlog::critical("[Texture] Unable to open texture");
 		debug_break();
 	}
 
