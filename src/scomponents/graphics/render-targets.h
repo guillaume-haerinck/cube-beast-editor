@@ -4,6 +4,8 @@
 #include <vector>
 #include <cassert>
 
+#include "scomponents/io/viewport.h"
+
 class RenderCommand; // Forward declaration to prevent circular inclusion
 
 enum class RenderTargetIndex {
@@ -34,7 +36,7 @@ public:
 	}
 
 private:
-	void init(RenderCommand& rcommand);
+	void init(RenderCommand& rcommand, const Viewport& viewport);
 
 private:
 	std::array<RenderTarget, static_cast<unsigned int>(RenderTargetIndex::_RTT_MAX)> m_rts;

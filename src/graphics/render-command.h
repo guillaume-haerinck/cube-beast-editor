@@ -71,7 +71,7 @@ public:
 	/**
 	 * @brief Allow a fragment shader to render to texture(s).
 	 */
-	RenderTarget createRenderTarget(const PipelineOutputDescription& description) const;
+	RenderTarget createRenderTarget(const PipelineOutputDescription& description, const glm::ivec2& size) const;
 
     ///////////////////////////////////////////////////////////////////////////
 	////////////////////////////////// BINDING ////////////////////////////////

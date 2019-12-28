@@ -233,7 +233,7 @@ Pipeline RenderCommand::createPipeline(const char* vsSrc, const char* fsSrc, con
 	return sPipeline;
 }
 
-RenderTarget RenderCommand::createRenderTarget(const PipelineOutputDescription& description) const {
+RenderTarget RenderCommand::createRenderTarget(const PipelineOutputDescription& description, const glm::ivec2& size) const {
 	// Create new framebuffer
 	unsigned int fb;
 	GLCall(glGenFramebuffers(1, &fb));
@@ -241,7 +241,6 @@ RenderTarget RenderCommand::createRenderTarget(const PipelineOutputDescription& 
 
     unsigned int slot = 0;
 	RenderTarget rt;
-	/*
     for (const auto& target : description) {
         unsigned int rbo;
         unsigned int textureId;
@@ -252,13 +251,13 @@ RenderTarget RenderCommand::createRenderTarget(const PipelineOutputDescription& 
             GLCall(glBindTexture(GL_TEXTURE_2D, textureId));
             GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
             GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-			//rts.textureIds.push_back(textureId);
+			rt.textureIds.push_back(textureId);
             break;
 
         case RenderTargetType::RenderBuffer:
             GLCall(glGenRenderbuffers(1, &rbo));
             GLCall(glBindRenderbuffer(GL_RENDERBUFFER, rbo));
-			//rts.renderBufferIds.push_back(rbo);
+			rt.renderBufferIds.push_back(rbo);
             break;
 
         default:
@@ -271,10 +270,10 @@ RenderTarget RenderCommand::createRenderTarget(const PipelineOutputDescription& 
         switch (target.usage) {
         case RenderTargetUsage::Color:
             if (target.type == RenderTargetType::Texture) {
-                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, renderTargetChannelsToOpenGLInternalFormat(target.channels, target.dataType), m_scomps.viewportSize.x, m_scomps.viewportSize.y, 0, renderTargetChannelsToOpenGLBaseFormat(target.channels), renderTargetDataTypeToOpenGLBaseType(target.dataType), 0));
+                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, renderTargetChannelsToOpenGLInternalFormat(target.channels, target.dataType), size.x, size.y, 0, renderTargetChannelsToOpenGLBaseFormat(target.channels), renderTargetDataTypeToOpenGLBaseType(target.dataType), 0));
                 GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, textureId, 0));
             } else if (target.type == RenderTargetType::RenderBuffer) {
-                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, renderTargetChannelsToOpenGLInternalFormat(target.channels, target.dataType), m_scomps.viewportSize.x, m_scomps.viewportSize.y));
+                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, renderTargetChannelsToOpenGLInternalFormat(target.channels, target.dataType), size.x, size.y));
                 GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_RENDERBUFFER, rbo));
             }
             slot++;
@@ -282,20 +281,20 @@ RenderTarget RenderCommand::createRenderTarget(const PipelineOutputDescription& 
    
         case RenderTargetUsage::Depth:
             if (target.type == RenderTargetType::Texture) {
-                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, m_scomps.viewportSize.x, m_scomps.viewportSize.y, 0, GL_DEPTH_COMPONENT, renderTargetDataTypeToOpenGLBaseType(target.dataType), 0));
+                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, size.x, size.y, 0, GL_DEPTH_COMPONENT, renderTargetDataTypeToOpenGLBaseType(target.dataType), 0));
                 GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureId, 0));
             } else if (target.type == RenderTargetType::RenderBuffer) {
-                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_scomps.viewportSize.x, m_scomps.viewportSize.y));
+                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, size.x, size.y));
                 GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo));
             }
             break;
 
         case RenderTargetUsage::DepthStencil:
             if (target.type == RenderTargetType::Texture) {
-                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_scomps.viewportSize.x, m_scomps.viewportSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0));
+                GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, size.x, size.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0));
                 GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, textureId, 0));
             } else if (target.type == RenderTargetType::RenderBuffer) {
-                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_scomps.viewportSize.x, m_scomps.viewportSize.y));
+                GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, size.x, size.y));
                 GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo));
             }
             break;
@@ -338,7 +337,6 @@ RenderTarget RenderCommand::createRenderTarget(const PipelineOutputDescription& 
 	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-	*/
 
     // Assign to singleton components
 	rt.frameBufferId = fb;
