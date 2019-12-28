@@ -8,6 +8,7 @@ BrushSystem::BrushSystem(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx)
 BrushSystem::~BrushSystem() {}
 
 void BrushSystem::update() {
+    /*
     if (!m_scomps.isBrushStarted && m_tempAddedPos.size() > 0)
         m_tempAddedPos.clear();
 
@@ -17,19 +18,20 @@ void BrushSystem::update() {
             default: break;
         }
     }
+    */
 }
 
 void BrushSystem::voxelBrush() {
     comp::Transform trans;
     comp::Material material;
-    trans.position = m_scomps.hovered.position;
+    //trans.position = m_scomps.hovered.position;
 
     for (const glm::ivec3& pos : m_tempAddedPos) {
         if (pos == trans.position) {
             return;
         }
     }
-
+/*
     if (m_scomps.hovered.isCube) {
         switch (m_scomps.hovered.face) {
         case scomp::Face::FRONT: trans.position.z--; break;
@@ -61,4 +63,5 @@ void BrushSystem::voxelBrush() {
 
     default: break;
     }
+    */
 }

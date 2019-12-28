@@ -4,27 +4,29 @@
 #include <array>
 #include <vector>
 
-namespace scomp {
-	enum InputAction {
-		CAM_ORBIT = 0,
-		CAM_PAN,
-		CAM_DOLLY,
-		CAM_RESET,
-		_ACTION_MAX
-	};
 
-    /**
-	 * @brief Store inputs state for current frame. Not undoable or re-doable.
-	 */
-	struct Inputs {
-		Inputs() {
-			actionState.fill(false);
-		}
+enum class InputAction {
+	CAM_ORBIT = 0,
+	CAM_PAN,
+	CAM_DOLLY,
+	CAM_RESET,
+	_ACTION_MAX
+};
 
-		std::array<bool, InputAction::_ACTION_MAX> actionState;
-		glm::vec2 mousePos = { 0, 0 };
-		glm::vec2 NDCMousePos = { 0, 0 };
-		glm::vec2 delta = { 0, 0 };
-		short wheelDelta = 0;
-	};
-}
+/**
+ * @brief Store inputs state for current frame. Not undoable or re-doable.
+ */
+class Inputs {
+public:
+	Inputs() {
+		m_actionState.fill(false);
+	}
+
+private:
+	std::array<bool, 1> m_actionState;
+	glm::vec2 m_mousePos = { 0, 0 };
+	glm::vec2 m_NDCMousePos = { 0, 0 };
+	glm::vec2 m_delta = { 0, 0 };
+	short m_wheelDelta = 0;
+};
+

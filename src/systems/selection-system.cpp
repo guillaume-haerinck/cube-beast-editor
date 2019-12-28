@@ -91,33 +91,33 @@ void SelectionSystem::update() {
     */
 }
 
-scomp::Face SelectionSystem::colorToFace(unsigned char color) const {
+Face SelectionSystem::colorToFace(unsigned char color) const {
     switch (color) {
-        case 0: return scomp::Face::NONE;
-        case 1: return scomp::Face::BACK;
-        case 2: return scomp::Face::RIGHT;
-        case 3: return scomp::Face::TOP;
-        case 4: return scomp::Face::FRONT;
-        case 5: return scomp::Face::LEFT;
-        case 6: return scomp::Face::BOTTOM;
+        case 0: return Face::NONE;
+        case 1: return Face::BACK;
+        case 2: return Face::RIGHT;
+        case 3: return Face::TOP;
+        case 4: return Face::FRONT;
+        case 5: return Face::LEFT;
+        case 6: return Face::BOTTOM;
         default:
             debug_break();
             assert(false && "Unknown face picked");
-            return scomp::Face::NONE;
+            return Face::NONE;
     }
 }
 
-scomp::Face SelectionSystem::normalToFace(unsigned int normalIndex) const {
+Face SelectionSystem::normalToFace(unsigned int normalIndex) const {
     switch (normalIndex) {
-        case 0: return scomp::Face::RIGHT;
-        case 1: return scomp::Face::TOP;
-        case 2: return scomp::Face::BACK;
-        case 3: return scomp::Face::LEFT;
-        case 4: return scomp::Face::BOTTOM;
-        case 5: return scomp::Face::FRONT;
+        case 0: return Face::RIGHT;
+        case 1: return Face::TOP;
+        case 2: return Face::BACK;
+        case 3: return Face::LEFT;
+        case 4: return Face::BOTTOM;
+        case 5: return Face::FRONT;
         default:
             debug_break();
             assert(false && "Unknown face picked");
-            return scomp::Face::NONE;
+            return Face::NONE;
     }
 }

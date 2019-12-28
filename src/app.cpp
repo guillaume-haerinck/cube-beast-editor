@@ -107,8 +107,8 @@ void App::update() {
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	// Reset input deltas
-	m_scomps.inputs.delta = glm::vec2(0.0f);
-	m_scomps.inputs.wheelDelta = 0;
+	//m_scomps.inputs.delta = glm::vec2(0.0f);
+	//m_scomps.inputs.wheelDelta = 0;
 
 	SDL_GL_SwapWindow(m_window);
 }
@@ -123,6 +123,7 @@ void App::handleSDLEvents() {
         ImGui_ImplSDL2_ProcessEvent(&e);
         switch (e.type) {
         case SDL_QUIT: exit(); break;
+		/*
 
         case SDL_MOUSEWHEEL:
             m_scomps.inputs.wheelDelta = e.wheel.y;
@@ -156,12 +157,15 @@ void App::handleSDLEvents() {
 			else if (e.button.button == SDL_BUTTON_MIDDLE)
 				m_scomps.inputs.actionState.at(scomp::InputAction::CAM_PAN) = false;
             break;
+			*/
 
         default: break;
         }
 
+/*
 		if (!m_scomps.isViewportHovered)
 			m_scomps.inputs.actionState.fill(false);
+			*/
     }
 }
 
@@ -179,13 +183,14 @@ void App::initSDL() {
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
+/*
 	m_window = SDL_CreateWindow(
 		"Voxel Editor",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		m_scomps.viewportSize.x, m_scomps.viewportSize.y,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE
     );
+	*/
 	if (m_window == nullptr) {
         spdlog::critical("[SDL2] Window is null: {}", SDL_GetError());
         debug_break();

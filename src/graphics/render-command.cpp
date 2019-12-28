@@ -256,6 +256,7 @@ void RenderCommand::createRenderTarget(RenderTargetIndex index, const PipelineOu
 	unsigned int fb;
 	GLCall(glGenFramebuffers(1, &fb));
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, fb));
+	/*
 
     unsigned int slot = 0;
 	RenderTargets rts;
@@ -355,6 +356,7 @@ void RenderCommand::createRenderTarget(RenderTargetIndex index, const PipelineOu
 	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	*/
 
     // Assign to singleton components
 	//rts.frameBufferId = fb;

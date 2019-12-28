@@ -16,6 +16,7 @@ CameraSystem::~CameraSystem()
 }
 
 void CameraSystem::update() {
+	/*
 	// ArcBall rotation
 	if (m_scomps.inputs.actionState.at(scomp::InputAction::CAM_ORBIT)) {
 		m_scomps.camera.m_theta -= m_scomps.inputs.delta.x * 0.01f;
@@ -82,4 +83,5 @@ void CameraSystem::update() {
         m_scomps.camera.m_view = glm::lookAtLH(eye, target, up);
 		m_scomps.camera.m_hasToBeUpdated = false;
 	}
+	*/
 }

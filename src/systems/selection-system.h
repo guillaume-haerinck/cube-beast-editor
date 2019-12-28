@@ -4,7 +4,7 @@
 
 #include "i-system.h"
 #include "context.h"
-#include "scomponents/io/selection.h"
+#include "scomponents/io/hovered.h"
 
 class SelectionSystem : public ISystem {
 public:
@@ -14,8 +14,8 @@ public:
 	void update() override;
 
 private:
-    scomp::Face colorToFace(unsigned char color) const;
-    scomp::Face normalToFace(unsigned int normalIndex) const;
+    Face colorToFace(unsigned char color) const;
+    Face normalToFace(unsigned int normalIndex) const;
 
 private:
     Context& m_ctx;

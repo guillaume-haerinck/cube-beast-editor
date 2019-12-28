@@ -37,13 +37,14 @@ void ViewportGui::update() {
 		ImGui::PopStyleVar(1);
 
 		if (ImGui::IsWindowHovered()) {
-			m_scomps.isViewportHovered = true;
+			//m_scomps.isViewportHovered = true;
 		} else {
-			m_scomps.isViewportHovered = false;
+			//m_scomps.isViewportHovered = false;
 		}
 
         // Handle framebuffer
         ImVec2 viewportSize = ImGui::GetWindowSize();
+		/*
         if (viewportSize.x != m_scomps.viewportSize.x || viewportSize.y != m_scomps.viewportSize.y) {
             m_scomps.viewportSize = glm::ivec2(viewportSize.x, viewportSize.y);
             glViewport(0, 0, m_scomps.viewportSize.x, m_scomps.viewportSize.y);
@@ -81,8 +82,8 @@ void ViewportGui::update() {
 				ImVec2(viewportPosTopLeft.x + m_scomps.viewportSize.x, viewportPosTopLeft.y + m_scomps.viewportSize.y),
 				ImVec2(0, 1), ImVec2(1, 0)
 			);
-			*/
         }
+		*/
     }
     ImGui::End();
 }
