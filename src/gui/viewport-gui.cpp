@@ -7,9 +7,6 @@
 
 #include "components/graphics/material.h"
 #include "components/physics/transform.h"
-#include "graphics/primitive-data.h"
-#include "graphics/constant-buffer.h"
-#include "scomponents/graphics/render-targets.h"
 
 // Temp
 #ifdef __EMSCRIPTEN__
@@ -89,118 +86,7 @@ void ViewportGui::update() {
 }
 
 void ViewportGui::onEvent(GuiEvent e) {
-    switch (e) {
+    switch(e) {
         default: break;
     }
 }
-
-/*
-void ViewportGui::initGraphicsSingletonComponents() {
-
-
-    // Init Render Targets
-    {
-        
-    }
-
-	// Init dynamic debug draw vertex buffer
-	{
-		// Attributes
-		glm::vec3 positions[] = {
-        	glm::vec3(10, 10, 10), glm::vec3(0, 0, 0),
-			glm::vec3(10, 10, 10), glm::vec3(0, 0, 0),
-			glm::vec3(10, 10, 10), glm::vec3(0, 0, 0),
-			glm::vec3(10, 10, 10), glm::vec3(0, 0, 0),
-			glm::vec3(10, 10, 10), glm::vec3(0, 0, 0)
-		};
-		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(positions, static_cast<unsigned int>(std::size(positions)), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_VERTEX_ANY);
-		
-		// Vertex buffer
-		PipelineInputDescription inputDescription = {
-			{ ShaderDataType::Float3, "Position" }
-		};
-		scomp::AttributeBuffer attributeBuffers[] = {
-			positionBuffer
-		};
-		m_scomps.ddrawVb = m_ctx.rcommand.createVertexBuffer(inputDescription, attributeBuffers);
-	}
-
-	// Init Plane Mesh
-	{
-		// Attributes
-		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&squareData::positions, static_cast<unsigned int>(std::size(squareData::positions)), sizeof(glm::vec3));
-		scomp::AttributeBuffer texCoordBuffer = m_ctx.rcommand.createAttributeBuffer(&squareData::texCoords, static_cast<unsigned int>(std::size(squareData::texCoords)), sizeof(glm::vec2));
-
-		// Vertex & Index buffers
-		PipelineInputDescription inputDescription = {
-			{ ShaderDataType::Float3, "Position" },
-			{ ShaderDataType::Float2, "TexCoord" }
-		};
-		scomp::AttributeBuffer attributeBuffers[] = {
-			positionBuffer, texCoordBuffer
-		};
-		scomp::VertexBuffer vb = m_ctx.rcommand.createVertexBuffer(inputDescription, attributeBuffers);
-		scomp::IndexBuffer ib = m_ctx.rcommand.createIndexBuffer(squareData::indices, static_cast<unsigned int>(std::size(squareData::indices)), scomp::IndexBuffer::dataType::UNSIGNED_BYTE);
-
-		// Save data
-		scomp::Mesh mesh;
-		mesh.ib = ib;
-		mesh.vb = vb;
-		m_scomps.planeMesh = mesh;
-	}
-
-	// Init CubeMesh
-	{
-		// Attributes
-		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
-		scomp::AttributeBuffer normalBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::normals, static_cast<unsigned int>(std::size(cubeData::normals)), sizeof(glm::vec3));
-		std::array<glm::vec3, 15> translations; // TODO set to scene size
-		scomp::AttributeBuffer translationInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(translations.data(), static_cast<unsigned int>(translations.size()), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_TRANSLATION);
-		std::array<glm::vec3, 15> entityIds;
-		scomp::AttributeBuffer entityInstanceBuffer = m_ctx.rcommand.createAttributeBuffer(entityIds.data(), static_cast<unsigned int>(entityIds.size()), sizeof(glm::vec3), scomp::AttributeBufferUsage::DYNAMIC_DRAW, scomp::AttributeBufferType::PER_INSTANCE_ENTITY_ID);
-
-		// Vertex & Index buffers
-		PipelineInputDescription inputDescription = {
-			{ ShaderDataType::Float3, "Position" },
-			{ ShaderDataType::Float3, "Normal" },
-			{ ShaderDataType::Float3, "Translation", BufferElementUsage::PerInstance },
-			{ ShaderDataType::Float3, "EntityId", BufferElementUsage::PerInstance }
-		};
-		scomp::AttributeBuffer attributeBuffers[] = {
-			positionBuffer, normalBuffer, translationInstanceBuffer, entityInstanceBuffer
-		};
-		scomp::VertexBuffer vb = m_ctx.rcommand.createVertexBuffer(inputDescription, attributeBuffers);
-		scomp::IndexBuffer ib = m_ctx.rcommand.createIndexBuffer(cubeData::indices, static_cast<unsigned int>(std::size(cubeData::indices)), scomp::IndexBuffer::dataType::UNSIGNED_BYTE);
-
-		// Save data
-		scomp::Mesh mesh;
-		mesh.ib = ib;
-		mesh.vb = vb;
-		m_scomps.cubeMesh = mesh;
-	}
-
-	// Init Inverted CubeMesh
-	{
-		// Attributes
-		scomp::AttributeBuffer positionBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::positions, static_cast<unsigned int>(std::size(cubeData::positions)), sizeof(glm::vec3));
-		scomp::AttributeBuffer texCoordBuffer = m_ctx.rcommand.createAttributeBuffer(&cubeData::texCoords, static_cast<unsigned int>(std::size(cubeData::texCoords)), sizeof(glm::vec2));
-
-		// Vertex & Index buffers
-		PipelineInputDescription inputDescription = {
-			{ ShaderDataType::Float3, "Position" },
-			{ ShaderDataType::Float2, "TexCoord" }
-		};
-		scomp::AttributeBuffer attributeBuffers[] = {
-			positionBuffer, texCoordBuffer
-		};
-		scomp::VertexBuffer vb = m_ctx.rcommand.createVertexBuffer(inputDescription, attributeBuffers);
-		scomp::IndexBuffer ib = m_ctx.rcommand.createIndexBuffer(cubeData::invertIndices, static_cast<unsigned int>(std::size(cubeData::invertIndices)), scomp::IndexBuffer::dataType::UNSIGNED_BYTE);
-
-		// Save data
-		scomp::Mesh mesh;
-		mesh.ib = ib;
-		mesh.vb = vb;
-		m_scomps.invertCubeMesh = mesh;
-	}
-}
-*/
