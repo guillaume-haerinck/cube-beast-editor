@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <glm/glm.hpp>
 
 /**
  * @brief Structure of data for one PBR material

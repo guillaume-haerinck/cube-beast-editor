@@ -46,13 +46,10 @@ void ViewportGui::update() {
             glViewport(0, 0, viewportSize.x, viewportSize.y);
             m_scomps.camera.m_proj = glm::perspectiveFovLH(glm::quarter_pi<float>(), (float) viewportSize.x, (float) viewportSize.y, 0.1f, 100.0f);
             
-            // TODO abstract
-			// RemakeFramebuffers
-            {
-                glDeleteFramebuffers(1, &m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY).frameBufferId);
-                glDeleteFramebuffers(1, &m_scomps.renderTargets.at(RenderTargetIndex::RTT_FINAL).frameBufferId);
-                m_scomps.renderTargets.init(m_ctx.rcommand, m_scomps.viewport);
-            }
+			// Remake Framebuffers
+            // TODO do it only after a delay
+            m_scomps.renderTargets.destroy(m_ctx.rcommand);
+            m_scomps.renderTargets.init(m_ctx.rcommand, m_scomps.viewport);
         }
 
         // Update viewport position & draw framebuffer

@@ -321,7 +321,6 @@ RenderTarget RenderCommand::createRenderTarget(const PipelineOutputDescription& 
 
 Texture RenderCommand::createTexture(unsigned int slot, const char* filepath) const {
 	int width, height, bpp;
-	stbi_set_flip_vertically_on_load(true); // Because 0,0 is bottom left in OpenGL
 	unsigned char* localBuffer = stbi_load(filepath, &width, &height, &bpp, 4);
 	if (!localBuffer) {
 		spdlog::critical("[Texture] Unable to open texture {}", filepath);

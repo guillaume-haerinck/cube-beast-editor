@@ -12,11 +12,14 @@ void BrushGui::update() {
         ImGui::Text("Usage");
         if (ImGui::Button("Select")) {
             m_scomps.brush.m_usage = BrushUse::SELECT;
-        } else if (ImGui::Button("Add")) {
+        }
+        if (ImGui::Button("Add")) {
             m_scomps.brush.m_usage = BrushUse::ADD;
-        } else if (ImGui::Button("Remove")) {
+        }
+        if (ImGui::ImageButton((void*) m_scomps.textures.at(TextureIndex::UI).id, ImVec2(25, 25))) {
             m_scomps.brush.m_usage = BrushUse::REMOVE;
-        } else if (ImGui::Button("Paint")) {
+        }
+        if (ImGui::Button("Paint")) {
             m_scomps.brush.m_usage = BrushUse::PAINT;
         }
 
@@ -25,13 +28,17 @@ void BrushGui::update() {
         ImGui::Text("Mode");
         if (ImGui::Button("Voxel")) {
             m_scomps.brush.m_type = BrushType::VOXEL;
-        } else if (ImGui::Button("Rectangle")) {
+        }
+        if (ImGui::Button("Rectangle")) {
             m_scomps.brush.m_type = BrushType::RECTANGLE;
-        } else if (ImGui::Button("Face")) {
+        }
+        if (ImGui::Button("Face")) {
             m_scomps.brush.m_type = BrushType::FACE;
-        } else if (ImGui::Button("Line")) {
+        }
+        if (ImGui::Button("Line")) {
             m_scomps.brush.m_type = BrushType::LINE;
-        } else if (ImGui::Button("Circle")) {
+        }
+        if (ImGui::Button("Circle")) {
             m_scomps.brush.m_type = BrushType::CIRCLE;
         }
 
