@@ -10,35 +10,35 @@ BrushGui::~BrushGui() {}
 void BrushGui::update() {
     ImGui::Begin("Brush", 0);
         ImGui::Text("Usage");
-        if (ImGui::Button("Select")) {
+        if (ImGui::ImageButton((void*) m_scomps.textures.at(TextureIndex::UI).id, ImVec2(48, 48), ImVec2(0.8f, 0.2f), ImVec2(1.0f, 0.4f))) {
             m_scomps.brush.m_usage = BrushUse::SELECT;
         }
-        if (ImGui::Button("Add")) {
+        if (ImGui::ImageButton((void*) m_scomps.textures.at(TextureIndex::UI).id, ImVec2(48, 48), ImVec2(0, 0), ImVec2(0.2f, 0.2f))) {
             m_scomps.brush.m_usage = BrushUse::ADD;
         }
-        if (ImGui::ImageButton((void*) m_scomps.textures.at(TextureIndex::UI).id, ImVec2(25, 25))) {
+        if (ImGui::ImageButton((void*) m_scomps.textures.at(TextureIndex::UI).id, ImVec2(48, 48), ImVec2(0.6f, 0), ImVec2(0.8f, 0.2f))) {
             m_scomps.brush.m_usage = BrushUse::REMOVE;
         }
-        if (ImGui::Button("Paint")) {
+        if (ImGui::ImageButton((void*) m_scomps.textures.at(TextureIndex::UI).id, ImVec2(48, 48), ImVec2(0.4f, 0.6f), ImVec2(0.6f, 0.8f))) {
             m_scomps.brush.m_usage = BrushUse::PAINT;
         }
 
         ImGui::Separator();
 
         ImGui::Text("Mode");
-        if (ImGui::Button("Voxel")) {
+        if (ImGui::ImageButton((void*) m_scomps.textures.at(TextureIndex::UI).id, ImVec2(48, 48), ImVec2(0.4f, 0.8f), ImVec2(0.6f, 1.0f))) {
             m_scomps.brush.m_type = BrushType::VOXEL;
         }
-        if (ImGui::Button("Rectangle")) {
+        if (ImGui::ImageButton((void*) m_scomps.textures.at(TextureIndex::UI).id, ImVec2(48, 48), ImVec2(0.8f, 0), ImVec2(1.0f, 0.2f))) {
             m_scomps.brush.m_type = BrushType::RECTANGLE;
         }
-        if (ImGui::Button("Face")) {
+        if (ImGui::ImageButton((void*) m_scomps.textures.at(TextureIndex::UI).id, ImVec2(48, 48), ImVec2(0, 0.2f), ImVec2(0.2f, 0.4f))) {
             m_scomps.brush.m_type = BrushType::FACE;
         }
-        if (ImGui::Button("Line")) {
+        if (ImGui::ImageButton((void*) m_scomps.textures.at(TextureIndex::UI).id, ImVec2(48, 48), ImVec2(0, 0.4f), ImVec2(0.2f, 0.6f))) {
             m_scomps.brush.m_type = BrushType::LINE;
         }
-        if (ImGui::Button("Circle")) {
+        if (ImGui::ImageButton((void*) m_scomps.textures.at(TextureIndex::UI).id, ImVec2(48, 48), ImVec2(0.2f, 0), ImVec2(0.4f, 0.2f))) {
             m_scomps.brush.m_type = BrushType::CIRCLE;
         }
 
