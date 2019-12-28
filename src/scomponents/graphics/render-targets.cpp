@@ -18,3 +18,7 @@ void RenderTargets::init(RenderCommand& rcommand, const Viewport& viewport) {
     };
     m_rts.at(static_cast<unsigned int>(RenderTargetIndex::RTT_FINAL)) = rcommand.createRenderTarget(outputDescription, viewport.size());
 }
+
+void RenderTargets::destroy(RenderCommand& rcommand) {
+    // TODO
+}

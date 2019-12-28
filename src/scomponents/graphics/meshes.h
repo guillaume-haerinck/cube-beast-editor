@@ -76,6 +76,7 @@ public:
 
 private:
 	void init(RenderCommand& rcommand);
+	void destroy(RenderCommand& rcommand);
 
 private:
 	Mesh m_cube;

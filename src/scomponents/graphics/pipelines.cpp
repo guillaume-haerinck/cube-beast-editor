@@ -68,3 +68,7 @@ void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs) {
     ;
     m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_LIGHTING)) = rcommand.createPipeline(VSLighting, FSLighting, usedCbs, {"g_albedo", "g_normal", "g_worldPosition"});
 }
+
+void Pipelines::destroy(RenderCommand& rcommand) {
+    // TODO
+}

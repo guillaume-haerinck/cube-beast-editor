@@ -37,6 +37,7 @@ public:
 
 private:
 	void init(RenderCommand& rcommand, const Viewport& viewport);
+	void destroy(RenderCommand& rcommand);
 
 private:
 	std::array<RenderTarget, static_cast<unsigned int>(RenderTargetIndex::_RTT_MAX)> m_rts;

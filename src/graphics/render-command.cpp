@@ -10,6 +10,8 @@ RenderCommand::RenderCommand() {}
 
 RenderCommand::~RenderCommand() {
 	/*
+	// TODO move to scomponents destroy
+
     glDeleteVertexArrays(1, &m_scomps.cubeMesh.vb.vertexArrayId);
 	for (auto buffer : m_scomps.cubeMesh.vb.buffers) {
         glDeleteBuffers(1, &buffer.bufferId);

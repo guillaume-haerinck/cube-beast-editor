@@ -51,6 +51,7 @@ public:
 
 private:
 	void init(RenderCommand& rcommand, const ConstantBuffers& cbs);
+	void destroy(RenderCommand& rcommand);
 
 private:
 	std::array<Pipeline, static_cast<unsigned int>(PipelineIndex::_PIP_MAX)> m_pips;

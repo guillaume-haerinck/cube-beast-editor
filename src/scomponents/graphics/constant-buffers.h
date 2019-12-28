@@ -37,6 +37,7 @@ public:
 
 private:
 	void init(RenderCommand& rcommand);
+	void destroy(RenderCommand& rcommand);
 
 private:
 	std::array<ConstantBuffer, static_cast<unsigned int>(ConstantBufferIndex::_CB_MAX)> m_cbs;

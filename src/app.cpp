@@ -70,7 +70,12 @@ App::~App() {
 	for (ISystem* system : m_systems) {
 		delete system;
 	}
-    m_ctx.rcommand.~RenderCommand();
+
+	m_scomps.constantBuffers.destroy(m_ctx.rcommand);
+	m_scomps.pipelines.destroy(m_ctx.rcommand);
+	m_scomps.meshes.destroy(m_ctx.rcommand);
+	m_scomps.renderTargets.destroy(m_ctx.rcommand);
+	
     ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();

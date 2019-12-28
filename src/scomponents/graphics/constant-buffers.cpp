@@ -11,3 +11,7 @@ void ConstantBuffers::init(RenderCommand& rcommand) {
     m_cbs.at(static_cast<unsigned int>(ConstantBufferIndex::PER_MATERIAL_CHANGE)) = rcommand.createConstantBuffer("perMaterialChange", sizeof(cb::perMaterialChange));
     m_cbs.at(static_cast<unsigned int>(ConstantBufferIndex::PER_LIGHT_CHANGE)) = rcommand.createConstantBuffer("perLightChange", sizeof(cb::perLightChange));
 }
+
+void ConstantBuffers::destroy(RenderCommand& rcommand) {
+    // TODO
+}

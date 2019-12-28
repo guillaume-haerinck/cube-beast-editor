@@ -82,3 +82,7 @@ void Meshes::init(RenderCommand& rcommand) {
 		m_invertCube = mesh;
 	}
 }
+
+void Meshes::destroy(RenderCommand& rcommand) {
+	// TODO
+}
