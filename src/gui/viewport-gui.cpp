@@ -97,15 +97,7 @@ void ViewportGui::onEvent(GuiEvent e) {
 /*
 void ViewportGui::initGraphicsSingletonComponents() {
 
-    // Init Constant Buffers
-	{
-		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_NI_MESH, sizeof(cb::perNiMesh));
-		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_FRAME, sizeof(cb::perFrame));
 
-		// TODO use arrays
-		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_MATERIAL_CHANGE, sizeof(cb::perMaterialChange));
-		m_ctx.rcommand.createConstantBuffer(scomp::ConstantBufferIndex::PER_LIGHT_CHANGE, sizeof(cb::perLightChange));
-	}
 
     // Init pipelines
     {

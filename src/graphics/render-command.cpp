@@ -6,9 +6,7 @@
 #include "graphics/gl-exception.h"
 #include "graphics/constant-buffer.h"
 
-RenderCommand::RenderCommand(SingletonComponents& scomps) : m_scomps(scomps)
-{
-}
+RenderCommand::RenderCommand() {}
 
 RenderCommand::~RenderCommand() {
 	/*
@@ -135,21 +133,8 @@ IndexBuffer RenderCommand::createIndexBuffer(const void* indices, unsigned int c
 	return buffer;
 }
 
-void RenderCommand::createConstantBuffer(ConstantBufferIndex index, unsigned int byteWidth, void* data) const {
+ConstantBuffer RenderCommand::createConstantBuffer(const char* name, unsigned int byteWidth, void* data) const {
     assert(byteWidth % 16 == 0 && "Constant Buffer byteWidth must be a multiple of 16 !");
-
-	std::string name = "";
-	switch (index) {
-		case ConstantBufferIndex::PER_NI_MESH: name = "perNiMesh"; break;
-		case ConstantBufferIndex::PER_FRAME: name = "perFrame"; break;
-		case ConstantBufferIndex::PER_MATERIAL_CHANGE: name = "perMaterialChange"; break;
-		case ConstantBufferIndex::PER_LIGHT_CHANGE: name = "perLightChange"; break;
-		default:
-			spdlog::error("[createConstantBuffer] unknown index {}", index);
-            debug_break();
-            assert(false);
-		break;
-	}
 	
 	unsigned int cbId = 0;
 	GLCall(glGenBuffers(1, &cbId));
@@ -161,12 +146,10 @@ void RenderCommand::createConstantBuffer(ConstantBufferIndex index, unsigned int
 	cb.bufferId = cbId;
 	cb.byteWidth = byteWidth;
 	cb.name = name;
-
-	// Save to singleton components
-	//m_scomps.constantBuffers.at(static_cast<unsigned int>(index)) = cb;
+	return cb;
 }
 
-void RenderCommand::createPipeline(PipelineIndex index, const char* vsSrc, const char* fsSrc, const std::vector<ConstantBufferIndex>& cbIndices, const std::vector<std::string>& samplerNames) const {
+Pipeline RenderCommand::createPipeline(const char* vsSrc, const char* fsSrc, const std::vector<ConstantBufferIndex>& cbIndices, const std::vector<std::string>& samplerNames) const {
 	// Compile vertex shader
 	unsigned int vsId = glCreateShader(GL_VERTEX_SHADER);
 	GLCall(glShaderSource(vsId, 1, &vsSrc, nullptr));
@@ -248,18 +231,18 @@ void RenderCommand::createPipeline(PipelineIndex index, const char* vsSrc, const
 	
 	// Save to singleton components
 	sPipeline.programIndex = programId;
-	//m_scomps.pipelines.at(index) = sPipeline;
+	return sPipeline;
 }
 
-void RenderCommand::createRenderTarget(RenderTargetIndex index, const PipelineOutputDescription& description) const {
+RenderTarget RenderCommand::createRenderTarget(const PipelineOutputDescription& description) const {
 	// Create new framebuffer
 	unsigned int fb;
 	GLCall(glGenFramebuffers(1, &fb));
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, fb));
-	/*
 
     unsigned int slot = 0;
-	RenderTargets rts;
+	RenderTarget rt;
+	/*
     for (const auto& target : description) {
         unsigned int rbo;
         unsigned int textureId;
@@ -359,8 +342,8 @@ void RenderCommand::createRenderTarget(RenderTargetIndex index, const PipelineOu
 	*/
 
     // Assign to singleton components
-	//rts.frameBufferId = fb;
-    //m_scomps.renderTargets.at(index) = rts;
+	rt.frameBufferId = fb;
+    return rt;
 }
 
 ///////////////////////////////////////////////////////////////////////////

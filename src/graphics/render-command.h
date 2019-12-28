@@ -18,7 +18,7 @@
 
 class RenderCommand {
 public:
-    RenderCommand(SingletonComponents& scomps);
+    RenderCommand();
     ~RenderCommand();
 
     /**
@@ -58,21 +58,20 @@ public:
 	IndexBuffer createIndexBuffer(const void* indices, unsigned int count, IndexBuffer::dataType type) const;
 
 	/**
-	 * @param index - The type of constant buffer to create. It is used as an array index in singleton components
 	 * @param byteWidth - The total size of the buffer. Allows to create an array of said type.
 	 * @param data
 	 */
-	void createConstantBuffer(ConstantBufferIndex index, unsigned int byteWidth, void* data = nullptr) const;
+	ConstantBuffer createConstantBuffer(const char* name, unsigned int byteWidth, void* data = nullptr) const;
 
 	/**
 	 * @brief Create a shader pipeline
 	 */
-	void createPipeline(PipelineIndex index, const char* VSfilePath, const char* FSfilePath, const std::vector<ConstantBufferIndex>& cbIndices, const std::vector<std::string>& samplerNames = {}) const;
+	Pipeline createPipeline(const char* VSfilePath, const char* FSfilePath, const std::vector<ConstantBufferIndex>& cbIndices, const std::vector<std::string>& samplerNames = {}) const;
 
 	/**
 	 * @brief Allow a fragment shader to render to texture(s).
 	 */
-	void createRenderTarget(RenderTargetIndex index, const PipelineOutputDescription& description) const;
+	RenderTarget createRenderTarget(const PipelineOutputDescription& description) const;
 
     ///////////////////////////////////////////////////////////////////////////
 	////////////////////////////////// BINDING ////////////////////////////////
@@ -124,7 +123,4 @@ private:
 	GLenum renderTargetChannelsToOpenGLBaseFormat(RenderTargetChannels channels) const;
 	GLenum renderTargetDataTypeToOpenGLBaseType(RenderTargetDataType dataType) const;
 	GLenum attributeBufferUsageToOpenGLBaseType(AttributeBufferUsage usage) const;
-
-private:
-	SingletonComponents& m_scomps;
 };
