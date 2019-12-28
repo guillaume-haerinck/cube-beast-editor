@@ -145,14 +145,14 @@ void App::handleSDLEvents() {
 			else if (e.button.button == SDL_BUTTON_MIDDLE)
 				m_scomps.inputs.m_actionState.at(static_cast<unsigned int>(InputAction::CAM_PAN)) = true;
 			else if (e.button.button == SDL_BUTTON_LEFT)
-				m_scomps.brush.m_isBrushStarted = true;
+				m_scomps.brush.m_started = true;
             break;
 
         case SDL_MOUSEBUTTONUP:
 			if (e.button.button == SDL_BUTTON_RIGHT)
 				m_scomps.inputs.m_actionState.at(static_cast<unsigned int>(InputAction::CAM_ORBIT)) = false;
 			else if (e.button.button == SDL_BUTTON_LEFT)
-				m_scomps.brush.m_isBrushStarted = false;
+				m_scomps.brush.m_started = false;
 			else if (e.button.button == SDL_BUTTON_MIDDLE)
 				m_scomps.inputs.m_actionState.at(static_cast<unsigned int>(InputAction::CAM_PAN)) = false;
             break;

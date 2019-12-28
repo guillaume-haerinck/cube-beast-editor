@@ -19,14 +19,14 @@ class Brush {
 public:
     Brush() {};
 
-    BrushType currentBrush() const { return m_currentBrush; }
-    BrushUse currentBrushUse() const { return m_currentBushUse; }
-    bool isBrushStarted() const { return m_isBrushStarted; }
+    BrushType type() const { return m_type; }
+    BrushUse usage() const { return m_usage; }
+    bool started() const { return m_started; }
 
 private:
-    BrushType m_currentBrush = BrushType::VOXEL;
-	BrushUse m_currentBushUse = BrushUse::ADD;
-	bool m_isBrushStarted = false;
+    BrushType m_type = BrushType::VOXEL;
+	BrushUse m_usage = BrushUse::ADD;
+	bool m_started = false;
 
 private:
     friend class BrushGui;
