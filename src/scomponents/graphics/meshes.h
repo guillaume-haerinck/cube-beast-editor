@@ -84,4 +84,5 @@ private:
 
 private:
 	friend class App;
+	friend class RenderSystem;
 };

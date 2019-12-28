@@ -24,11 +24,10 @@ RenderSystem::~RenderSystem() {
 }
 
 void RenderSystem::update() {
-    /*
     // Update per frame constant buffer
 	{
 		cb::perFrame cbData;
-        scomp::ConstantBuffer& perFrameCB = m_scomps.constantBuffers.at(static_cast<unsigned int>(scomp::ConstantBufferIndex::PER_FRAME));
+        const ConstantBuffer& perFrameCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_FRAME);
 
         // Set data
         cbData.cameraPos = m_scomps.camera.position();
@@ -50,14 +49,14 @@ void RenderSystem::update() {
 
         if (nbInstances >= view.size()) {
             // Update instance buffers
-            for (auto& buffer : m_scomps.cubeMesh.vb.buffers) {
+            for (auto& buffer : m_scomps.meshes.m_cube.vb.buffers) {
                 switch (buffer.type) {
-                case scomp::AttributeBufferType::PER_INSTANCE_TRANSLATION:
+                case AttributeBufferType::PER_INSTANCE_TRANSLATION:
                     m_ctx.rcommand.updateAttributeBufferAnySize(buffer, m_tempTranslations.data(), sizeof(glm::vec3) * nbInstances);
                     m_tempTranslations.clear();
                     break;
 
-                case scomp::AttributeBufferType::PER_INSTANCE_ENTITY_ID:
+                case AttributeBufferType::PER_INSTANCE_ENTITY_ID:
                     m_ctx.rcommand.updateAttributeBufferAnySize(buffer, m_tempEntityIds.data(), sizeof(glm::vec3) * nbInstances);
                     m_tempEntityIds.clear();
                     break;
@@ -71,94 +70,96 @@ void RenderSystem::update() {
     // Geometry pass
     {
         m_ctx.rcommand.enableDepthTest();
-        m_ctx.rcommand.bindVertexBuffer(m_scomps.cubeMesh.vb);
-        m_ctx.rcommand.bindIndexBuffer(m_scomps.cubeMesh.ib);
-        m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY));
+        m_ctx.rcommand.bindVertexBuffer(m_scomps.meshes.cube().vb);
+        m_ctx.rcommand.bindIndexBuffer(m_scomps.meshes.cube().ib);
+        m_ctx.rcommand.bindRenderTarget(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY));
         m_ctx.rcommand.clear();
-        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GEOMETRY));
-        m_ctx.rcommand.drawIndexedInstances(m_scomps.cubeMesh.ib.count, m_scomps.cubeMesh.ib.type, nbInstances);
+        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(PipelineIndex::PIP_GEOMETRY));
+        m_ctx.rcommand.drawIndexedInstances(m_scomps.meshes.cube().ib.count, m_scomps.meshes.cube().ib.type, nbInstances);
     }
     
     // Lighting pass
     {
-        m_ctx.rcommand.bindVertexBuffer(m_scomps.planeMesh.vb);
-        m_ctx.rcommand.bindIndexBuffer(m_scomps.planeMesh.ib);
-        m_ctx.rcommand.bindRenderTargets(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_FINAL));
+        m_ctx.rcommand.bindVertexBuffer(m_scomps.meshes.plane().vb);
+        m_ctx.rcommand.bindIndexBuffer(m_scomps.meshes.plane().ib);
+        m_ctx.rcommand.bindRenderTarget(m_scomps.renderTargets.at(RenderTargetIndex::RTT_FINAL));
         m_ctx.rcommand.clear();
-        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_LIGHTING));
-        m_ctx.rcommand.bindTextures(m_scomps.renderTargets.at(scomp::RenderTargetsIndex::RTT_GEOMETRY).textureIds);
-        m_ctx.rcommand.drawIndexed(m_scomps.planeMesh.ib.count, m_scomps.planeMesh.ib.type);
+        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(PipelineIndex::PIP_LIGHTING));
+        m_ctx.rcommand.bindTextures(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY).textureIds);
+        m_ctx.rcommand.drawIndexed(m_scomps.meshes.plane().ib.count, m_scomps.meshes.plane().ib.type);
     }
 
     // Grid pass
     {
-        m_ctx.rcommand.bindVertexBuffer(m_scomps.invertCubeMesh.vb);
-        m_ctx.rcommand.bindIndexBuffer(m_scomps.invertCubeMesh.ib);
-        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GRID));
-        m_ctx.rcommand.drawIndexed(m_scomps.invertCubeMesh.ib.count, m_scomps.invertCubeMesh.ib.type);
+        m_ctx.rcommand.bindVertexBuffer(m_scomps.meshes.invertCube().vb);
+        m_ctx.rcommand.bindIndexBuffer(m_scomps.meshes.invertCube().ib);
+        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(PipelineIndex::PIP_GRID));
+        m_ctx.rcommand.drawIndexed(m_scomps.meshes.invertCube().ib.count, m_scomps.meshes.invertCube().ib.type);
     }
 
     // Debug draw pass
+    /*
     {
         m_ctx.ddraw.updateBuffer();
         m_ctx.rcommand.bindVertexBuffer(m_scomps.ddrawVb);
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_DDRAW));
         m_ctx.rcommand.drawLines(m_ctx.ddraw.getCount());
     }
+    */
 
     // Gui pass
     {
         m_ctx.rcommand.disableDepthTest();
-        m_ctx.rcommand.bindVertexBuffer(m_scomps.planeMesh.vb);
-        m_ctx.rcommand.bindIndexBuffer(m_scomps.planeMesh.ib);
-        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(scomp::PipelineIndex::PIP_GUI));
+        m_ctx.rcommand.bindVertexBuffer(m_scomps.meshes.plane().vb);
+        m_ctx.rcommand.bindIndexBuffer(m_scomps.meshes.plane().ib);
+        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(PipelineIndex::PIP_GUI));
 
         // Update per non-instanced mesh constant buffer
         {
             cb::perNiMesh cbData;
-            scomp::ConstantBuffer& perNiMeshCB = m_scomps.constantBuffers.at(static_cast<unsigned int>(scomp::ConstantBufferIndex::PER_NI_MESH));
+            const ConstantBuffer& perNiMeshCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_NI_MESH);
 
-            if (m_scomps.hovered.exist) {
-                glm::vec3 pos = m_scomps.hovered.position;
+            if (m_scomps.hovered.exist()) {
+                glm::vec3 pos = m_scomps.hovered.position();
                 pos += 0.5f;
 
-                switch (m_scomps.hovered.face) {
-                    case scomp::Face::FRONT:
-                        (m_scomps.hovered.isCube) ? pos.z -= 0.5f : pos.z += 0.5f;
+                switch (m_scomps.hovered.face()) {
+                    case Face::FRONT:
+                        (m_scomps.hovered.isCube()) ? pos.z -= 0.5f : pos.z += 0.5f;
                         cbData.matWorld = glm::translate(glm::mat4(1), pos); 
                         break;
 
-                    case scomp::Face::BACK:
-                        (m_scomps.hovered.isCube) ? pos.z += 0.5f : pos.z -= 0.5f;
+                    case Face::BACK:
+                        (m_scomps.hovered.isCube()) ? pos.z += 0.5f : pos.z -= 0.5f;
                         cbData.matWorld = glm::translate(glm::mat4(1), pos);
                         cbData.matWorld = glm::rotate(cbData.matWorld, glm::pi<float>(), glm::vec3(0, 1, 0));
                         break;
 
-                    case scomp::Face::RIGHT:
-                        (m_scomps.hovered.isCube) ? pos.x += 0.5f : pos.x -= 0.5f; 
+                    case Face::RIGHT:
+                        (m_scomps.hovered.isCube()) ? pos.x += 0.5f : pos.x -= 0.5f; 
                         cbData.matWorld = glm::translate(glm::mat4(1), pos);
                         cbData.matWorld = glm::rotate(cbData.matWorld, -glm::half_pi<float>(), glm::vec3(0, 1, 0));
                         break;
 
-                    case scomp::Face::LEFT:
-                        (m_scomps.hovered.isCube) ? pos.x -= 0.5f : pos.x += 0.5f; 
+                    case Face::LEFT:
+                        (m_scomps.hovered.isCube()) ? pos.x -= 0.5f : pos.x += 0.5f; 
                         cbData.matWorld = glm::translate(glm::mat4(1), pos);
                         cbData.matWorld = glm::rotate(cbData.matWorld, glm::half_pi<float>(), glm::vec3(0, 1, 0));
                         break;
 
-                    case scomp::Face::TOP:
-                        (m_scomps.hovered.isCube) ? pos.y += 0.5f : pos.y -= 0.5f; 
+                    case Face::TOP:
+                        (m_scomps.hovered.isCube()) ? pos.y += 0.5f : pos.y -= 0.5f; 
                         cbData.matWorld = glm::translate(glm::mat4(1), pos);
                         cbData.matWorld = glm::rotate(cbData.matWorld, glm::half_pi<float>(), glm::vec3(1, 0, 0));
                         break;
                     
-                    case scomp::Face::BOTTOM:
-                        (m_scomps.hovered.isCube) ? pos.y -= 0.5f : pos.y += 0.5f;
+                    case Face::BOTTOM:
+                        (m_scomps.hovered.isCube()) ? pos.y -= 0.5f : pos.y += 0.5f;
                         cbData.matWorld = glm::translate(glm::mat4(1), pos);
                         cbData.matWorld = glm::rotate(cbData.matWorld, -glm::half_pi<float>(), glm::vec3(1, 0, 0));
                         break;
 
-                    case scomp::Face::NONE:
+                    case Face::NONE:
                         cbData.matWorld = glm::scale(glm::mat4(1), glm::vec3(0));
                         break;
                     
@@ -174,7 +175,6 @@ void RenderSystem::update() {
             m_ctx.rcommand.updateConstantBuffer(perNiMeshCB, &cbData);
         }
 
-        m_ctx.rcommand.drawIndexed(m_scomps.planeMesh.ib.count, m_scomps.planeMesh.ib.type);
+        m_ctx.rcommand.drawIndexed(m_scomps.meshes.plane().ib.count, m_scomps.meshes.plane().ib.type);
     }
-    */
 }
