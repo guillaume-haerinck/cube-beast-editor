@@ -98,37 +98,9 @@ void ViewportGui::onEvent(GuiEvent e) {
 void ViewportGui::initGraphicsSingletonComponents() {
 
 
-
-    // Init pipelines
-    {
-		
-    }
-
-	// Update light constant buffer
-	{
-		scomp::ConstantBuffer& perLightChangeCB = m_scomps.constantBuffers.at(static_cast<unsigned int>(scomp::ConstantBufferIndex::PER_LIGHT_CHANGE));
-		cb::perLightChange cbData;
-		cbData.color = glm::vec3(0.5, 0.5, 0.5);
-
-		m_ctx.rcommand.updateConstantBuffer(perLightChangeCB, &cbData);
-	}
-
     // Init Render Targets
     {
-        PipelineOutputDescription outputDescription = {
-			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Albedo" },
-			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Normal" },
-			{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_WorldPosition" },
-            { RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetDataType::UCHAR, RenderTargetChannels::RGBA, "EntityIdToColor" },
-			{ RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetDataType::FLOAT, RenderTargetChannels::R, "Depth" }
-        };
-        m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_GEOMETRY, outputDescription);
-
-        outputDescription = {
-            { RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Color" },
-            { RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetDataType::FLOAT, RenderTargetChannels::R, "Depth" }
-        };
-        m_ctx.rcommand.createRenderTargets(scomp::RenderTargetsIndex::RTT_FINAL, outputDescription);
+        
     }
 
 	// Init dynamic debug draw vertex buffer

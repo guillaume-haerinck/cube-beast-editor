@@ -30,14 +30,14 @@ public:
 
 	const RenderTarget& at(RenderTargetIndex id) const {
 		assert(id != RenderTargetIndex::_RTT_MAX && "Invalid Render target index !");
-		return m_rtts.at(static_cast<unsigned int>(id));
+		return m_rts.at(static_cast<unsigned int>(id));
 	}
 
 private:
 	void init(RenderCommand& rcommand);
 
 private:
-	std::array<RenderTarget, static_cast<unsigned int>(RenderTargetIndex::_RTT_MAX)> m_rtts;
+	std::array<RenderTarget, static_cast<unsigned int>(RenderTargetIndex::_RTT_MAX)> m_rts;
 
 private:
 	friend class App;
