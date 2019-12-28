@@ -30,8 +30,8 @@ void RenderSystem::update() {
         scomp::ConstantBuffer& perFrameCB = m_scomps.constantBuffers.at(scomp::ConstantBufferIndex::PER_FRAME);
 
         // Set data
-        cbData.cameraPos = m_scomps.camera.position;
-        cbData.matViewProj =  m_scomps.camera.proj * m_scomps.camera.view;
+        cbData.cameraPos = m_scomps.camera.position();
+        cbData.matViewProj =  m_scomps.camera.proj() * m_scomps.camera.view();
 
         // Send data
 		m_ctx.rcommand.updateConstantBuffer(perFrameCB, &cbData);

@@ -65,7 +65,7 @@ void SelectionSystem::update() {
         m_scomps.hovered.id = met::null;
 
         // Check grid with raycast
-        const glm::mat4 toWorld = glm::inverse((m_scomps.camera.proj * m_scomps.camera.view));
+        const glm::mat4 toWorld = glm::inverse((m_scomps.camera.proj() * m_scomps.camera.view()));
         glm::vec4 from = toWorld * glm::vec4(m_scomps.inputs.NDCMousePos, -1.0f, 1.0f);
         glm::vec4 to = toWorld * glm::vec4(m_scomps.inputs.NDCMousePos, 1.0f, 1.0f);
         from /= from.w;

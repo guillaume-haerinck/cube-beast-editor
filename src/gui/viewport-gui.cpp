@@ -47,7 +47,7 @@ void ViewportGui::update() {
         if (viewportSize.x != m_scomps.viewportSize.x || viewportSize.y != m_scomps.viewportSize.y) {
             m_scomps.viewportSize = glm::ivec2(viewportSize.x, viewportSize.y);
             glViewport(0, 0, m_scomps.viewportSize.x, m_scomps.viewportSize.y);
-            m_scomps.camera.proj = glm::perspectiveFovLH(glm::quarter_pi<float>(), (float) m_scomps.viewportSize.x, (float) m_scomps.viewportSize.y, 0.1f, 100.0f);
+            m_scomps.camera.m_proj = glm::perspectiveFovLH(glm::quarter_pi<float>(), (float) m_scomps.viewportSize.x, (float) m_scomps.viewportSize.y, 0.1f, 100.0f);
             // TODO abstract
 			// RemakeFramebuffers
             {
