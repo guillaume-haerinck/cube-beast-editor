@@ -71,14 +71,26 @@ VertexBuffer RenderCommand::createVertexBuffer(const PipelineInputDescription& d
 
 		for (unsigned int i = 0; i < iter; i++) {
 			GLCall(glEnableVertexAttribArray(vbIndex + i));
-			GLCall(glVertexAttribPointer(
-				vbIndex + i,
-				element.getComponentCount() / iter,
-				shaderDataTypeToOpenGLBaseType(element.type),
-				element.normalized ? GL_TRUE : GL_FALSE,
-				element.size,
-				(const void*) ((element.size / iter) * i)
-			));
+
+			if (isShaderDataTypeIntegrer(element.type)) {
+				GLCall(glVertexAttribIPointer(
+					vbIndex + i,
+					element.getComponentCount() / iter,
+					shaderDataTypeToOpenGLBaseType(element.type),
+					element.size,
+					(const void*) ((element.size / iter) * i)
+				));
+			} else {
+				GLCall(glVertexAttribPointer(
+					vbIndex + i,
+					element.getComponentCount() / iter,
+					shaderDataTypeToOpenGLBaseType(element.type),
+					element.normalized ? GL_TRUE : GL_FALSE,
+					element.size,
+					(const void*) ((element.size / iter) * i)
+				));
+			}
+
 			if (element.usage == BufferElementUsage::PerInstance) {
 				GLCall(glVertexAttribDivisor(vbIndex + i, 1));
 			}
@@ -401,7 +413,8 @@ void RenderCommand::unbindVertexBuffer() const {
 ///////////////////////////////// UPDATING ////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-void RenderCommand::updateConstantBuffer(const ConstantBuffer& cb, void* data) const {
+void RenderCommand::updateConstantBuffer(const ConstantBuffer& cb, void* data, unsigned int dataByteWidth) const {
+	assert(dataByteWidth <= cb.byteWidth && "New attribute buffer data exceed the size of the allocated buffer");
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, cb.bufferId));
 	GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, cb.byteWidth, data));
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
@@ -513,6 +526,26 @@ bool RenderCommand::hasShaderCompiled(unsigned int shaderId, unsigned int shader
 	}
 
 	return true;
+}
+
+bool RenderCommand::isShaderDataTypeIntegrer(ShaderDataType type) const {
+	switch (type) {
+	case ShaderDataType::Float:    return false;
+	case ShaderDataType::Float2:   return false;
+	case ShaderDataType::Float3:   return false;
+	case ShaderDataType::Float4:   return false;
+	case ShaderDataType::Mat3:     return false;
+	case ShaderDataType::Mat4:     return false;
+	case ShaderDataType::Int:      return true;
+	case ShaderDataType::Int2:     return true;
+	case ShaderDataType::Int3:     return true;
+	case ShaderDataType::Int4:     return true;
+	case ShaderDataType::UInt:     return true;
+	case ShaderDataType::Bool:     return true;
+	}
+
+	assert(false && "Unknown ShaderDataType!");
+	return false;
 }
 
 GLenum RenderCommand::shaderDataTypeToOpenGLBaseType(ShaderDataType type) const {

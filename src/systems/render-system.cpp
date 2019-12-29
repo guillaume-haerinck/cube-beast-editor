@@ -34,20 +34,22 @@ void RenderSystem::update() {
         cbData.matViewProj =  m_scomps.camera.proj() * m_scomps.camera.view();
 
         // Send data
-		m_ctx.rcommand.updateConstantBuffer(perFrameCB, &cbData);
+		m_ctx.rcommand.updateConstantBuffer(perFrameCB, &cbData, sizeof(cb::perFrame));
 	}
 
     // Update per Material change constant buffer
 	{
-		cb::perMaterialChange cbData;
-        const ConstantBuffer& perMatChangeCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_MATERIAL_CHANGE);
-
-        // Set data
-        cbData.albedo = glm::vec3(1.0f, 1.0f, 0.0f);
-        cbData.emissiveFactor = 0.0f;
+		cb::perMaterialChange cbData[5] = {
+            { glm::vec3(1.0f, 0.0f, 0.0f), 0.0f },
+            { glm::vec3(0.0f, 1.0f, 0.0f), 0.0f },
+            { glm::vec3(0.0f, 0.0f, 1.0f), 0.0f },
+            { glm::vec3(1.0f, 1.0f, 1.0f), 0.0f },
+            { glm::vec3(1.0f, 1.0f, 0.0f), 0.0f }
+        };
 
         // Send data
-		m_ctx.rcommand.updateConstantBuffer(perMatChangeCB, &cbData);
+        const ConstantBuffer& perMatChangeCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_MATERIAL_CHANGE);
+		m_ctx.rcommand.updateConstantBuffer(perMatChangeCB, &cbData, sizeof(cb::perMaterialChange) * 5);
 	}
 
     auto view = m_ctx.registry.view<comp::Material, comp::Transform>();
@@ -191,7 +193,7 @@ void RenderSystem::update() {
                 cbData.matWorld = glm::scale(glm::mat4(1), glm::vec3(0));
             }
 
-            m_ctx.rcommand.updateConstantBuffer(perNiMeshCB, &cbData);
+            m_ctx.rcommand.updateConstantBuffer(perNiMeshCB, &cbData, sizeof(cb::perNiMesh));
         }
 
         m_ctx.rcommand.drawIndexed(m_scomps.meshes.plane().ib.count, m_scomps.meshes.plane().ib.type);

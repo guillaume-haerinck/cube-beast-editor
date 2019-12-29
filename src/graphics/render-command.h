@@ -107,7 +107,7 @@ public:
 	///////////////////////////////// UPDATING ////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
-    void updateConstantBuffer(const ConstantBuffer& cb, void* data) const;
+    void updateConstantBuffer(const ConstantBuffer& cb, void* data, unsigned int dataByteWidth) const;
 
 	void updateAttributeBuffer(const AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const;
 
@@ -135,6 +135,7 @@ public:
 
 private:
 	bool hasShaderCompiled(unsigned int shaderId, unsigned int shaderType) const;
+	bool isShaderDataTypeIntegrer(ShaderDataType type) const;
 	GLenum shaderDataTypeToOpenGLBaseType(ShaderDataType type) const;
 	GLenum indexBufferDataTypeToOpenGLBaseType(IndexBuffer::dataType) const;
 	GLenum renderTargetChannelsToOpenGLInternalFormat(RenderTargetChannels channels, RenderTargetDataType dataType) const;
