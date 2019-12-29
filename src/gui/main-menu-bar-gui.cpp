@@ -77,9 +77,9 @@ void MainMenuBarGui::setDefaultLayout() {
     ImGui::DockBuilderDockWindow("Viewport", dock_half_left_right_id);
     ImGui::DockBuilderDockWindow(ICON_FA_BRUSH "  Brush", dock_half_left_left_id);
 
-    ImGui::DockBuilderDockWindow("Scene Outline", dock_half_right_up_id);
-    ImGui::DockBuilderDockWindow("Palette", dock_half_right_down_id);
-    ImGui::DockBuilderDockWindow("Generation", dock_half_right_down_id);
+    ImGui::DockBuilderDockWindow(ICON_FA_GLOBE_AMERICAS "  Scene Outline", dock_half_right_up_id);
+    ImGui::DockBuilderDockWindow(ICON_FA_PALETTE "  Palette", dock_half_right_down_id);
+    ImGui::DockBuilderDockWindow(ICON_FA_SEEDLING "  Generation", dock_half_right_down_id);
     ImGui::DockBuilderDockWindow("Dear ImGui Demo", dock_half_right_down_id);
     
     // Set appearance
@@ -87,6 +87,7 @@ void MainMenuBarGui::setDefaultLayout() {
     ImGui::DockBuilderGetNode(dock_half_left_up_id)->LocalFlags |= ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking | ImGuiDockNodeFlags_NoSplit;
     ImGui::DockBuilderGetNode(dock_full_down_id)->LocalFlags |= ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking | ImGuiDockNodeFlags_NoSplit;
 	ImGui::DockBuilderGetNode(dock_half_left_right_id)->LocalFlags |= ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDocking;
+    ImGui::DockBuilderGetNode(dock_half_left_left_id)->LocalFlags |= ImGuiDockNodeFlags_NoCloseButton | ImGuiDockNodeFlags_NoWindowMenuButton;
 
     ImGui::DockBuilderFinish(m_dockspaceId);
 }

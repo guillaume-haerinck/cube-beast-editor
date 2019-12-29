@@ -5,6 +5,7 @@
 #include <imgui.h>
 #include <imgui/imgui_impl_sdl.h>
 #include <imgui/imgui_impl_opengl3.h>
+#include <stb_image/stb_image.h>
 
 #include "systems/render-system.h"
 #include "systems/camera-system.h"
@@ -211,9 +212,46 @@ void App::initSDL() {
 	SDL_GL_SetSwapInterval(1);
 
 	// Set icon
-	//SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(iconsData::sdl, 16, 16, 16, 16 * 2, 0x0f00, 0x00f0, 0x000f, 0xf000);
-	//SDL_SetWindowIcon(m_window, surface);
-	//SDL_FreeSurface(surface);
+	{
+		int req_format = STBI_rgb_alpha;
+		int width, height, orig_format;
+		unsigned char* localBuffer = stbi_load_from_memory(iconsData::logo_black_png, iconsData::logo_black_png_size, &width, &height, &orig_format, req_format);
+		if (!localBuffer) {
+			spdlog::critical("[App] Unable to open app icon");
+			debug_break();
+		}
+
+		// Set up the pixel format color masks for RGB(A) byte arrays
+		Uint32 rmask, gmask, bmask, amask;
+		#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+			int shift = (req_format == STBI_rgb) ? 8 : 0;
+			rmask = 0xff000000 >> shift;
+			gmask = 0x00ff0000 >> shift;
+			bmask = 0x0000ff00 >> shift;
+			amask = 0x000000ff >> shift;
+		#else // little endian
+			rmask = 0x000000ff;
+			gmask = 0x0000ff00;
+			bmask = 0x00ff0000;
+			amask = (req_format == STBI_rgb) ? 0 : 0xff000000;
+		#endif
+
+		int depth, pitch;
+		if (req_format == STBI_rgb) {
+			depth = 24;
+			pitch = 3 * width; // 3 bytes per pixel * pixels per row
+		} else { // STBI_rgb_alpha (RGBA)
+			depth = 32;
+			pitch = 4 * width;
+		}
+
+		SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(localBuffer, width, height, depth, pitch, rmask, gmask, bmask, amask);
+		SDL_SetWindowIcon(m_window, surface);
+		SDL_FreeSurface(surface);
+		if (localBuffer) {
+			stbi_image_free(localBuffer);
+		}
+	}
 
 #ifndef __EMSCRIPTEN__
 	if (!gladLoadGLES2((GLADloadfunc) SDL_GL_GetProcAddress)) {

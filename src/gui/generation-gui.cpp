@@ -1,6 +1,7 @@
 #include "generation-gui.h"
 
 #include <imgui/imgui.h>
+#include "gui/icons-awesome.h"
 
 GenerationGui::GenerationGui(Context& ctx, SingletonComponents& scomps) 
     : m_ctx(ctx), m_scomps(scomps) {}
@@ -8,7 +9,7 @@ GenerationGui::GenerationGui(Context& ctx, SingletonComponents& scomps)
 GenerationGui::~GenerationGui() {}
 
 void GenerationGui::update() {
-    ImGui::Begin("Generation", 0);
+    ImGui::Begin(ICON_FA_SEEDLING "  Generation", 0);
         ImGui::Text("generate procedural");
     ImGui::End();
 }
