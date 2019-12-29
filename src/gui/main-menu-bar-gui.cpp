@@ -1,6 +1,7 @@
 #include "main-menu-bar-gui.h"
 
 #include <imgui/imgui_internal.h>
+#include "icons-awesome.h"
 
 MainMenuBarGui::MainMenuBarGui(Context& ctx, SingletonComponents& scomps) 
     : m_ctx(ctx), m_scomps(scomps), m_setDefaultLayout(true) {}
@@ -74,7 +75,7 @@ void MainMenuBarGui::setDefaultLayout() {
     ImGui::DockBuilderDockWindow("Viewport Option Bar", dock_half_left_up_id);
 
     ImGui::DockBuilderDockWindow("Viewport", dock_half_left_right_id);
-    ImGui::DockBuilderDockWindow("Brush", dock_half_left_left_id);
+    ImGui::DockBuilderDockWindow(ICON_FA_BRUSH " Brush", dock_half_left_left_id);
 
     ImGui::DockBuilderDockWindow("Scene Outline", dock_half_right_up_id);
     ImGui::DockBuilderDockWindow("Palette", dock_half_right_down_id);

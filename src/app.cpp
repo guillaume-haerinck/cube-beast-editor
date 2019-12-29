@@ -12,6 +12,8 @@
 #include "systems/brush-system.h"
 
 #include "gui/font-ruda.h"
+#include "gui/font-awesome.h"
+#include "gui/icons-awesome.h"
 #include "gui/icons.h"
 #include "gui/brush-gui.h"
 #include "gui/context-info-bar-gui.h"
@@ -229,7 +231,14 @@ void App::initImgui() const {
 	ImGui::StyleColorsDark();
 	ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(compressed_data_base85, 15.0f);
+
+	// Custom Fonts
+	io.Fonts->AddFontFromMemoryCompressedTTF(ruda_compressed_data, ruda_compressed_size, 16.0f);
+	static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+	ImFontConfig icons_config;
+	icons_config.MergeMode = true;
+	icons_config.PixelSnapH = true;
+	io.Fonts->AddFontFromMemoryCompressedTTF(awesome_compressed_data, awesome_compressed_size, 16.0f, &icons_config, icons_ranges);
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -8,8 +8,7 @@
 class RenderCommand; // Forward declaration to prevent circular inclusion
 
 enum class TextureIndex {
-	UI = 0,
-	_TEX_MAX
+	_TEX_MAX = 0
 };
 
 /**

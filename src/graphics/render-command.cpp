@@ -332,7 +332,7 @@ Texture RenderCommand::createTexture(unsigned int slot, const unsigned char* dat
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
 	GLCall(glBindTexture(GL_TEXTURE_2D, id));
 	
-	const unsigned int numMipMap = 3;
+	const unsigned int numMipMap = 1;
 	GLCall(glTexStorage2D(GL_TEXTURE_2D, numMipMap, GL_RGBA8, width, height));
 	GLCall(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer));
 	GLCall(glGenerateMipmap(GL_TEXTURE_2D));
