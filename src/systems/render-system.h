@@ -19,4 +19,5 @@ private:
 	SingletonComponents& m_scomps;
 	std::vector<glm::vec3> m_tempTranslations;
 	std::vector<glm::vec3> m_tempEntityIds;
+	std::vector<unsigned int> m_tempMaterialIds;
 };

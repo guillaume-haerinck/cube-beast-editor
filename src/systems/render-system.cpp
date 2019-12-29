@@ -46,6 +46,7 @@ void RenderSystem::update() {
         nbInstances++;
         m_tempTranslations.push_back(transform.position);
         m_tempEntityIds.push_back(voxmt::intToNormColor(entity));
+        m_tempMaterialIds.push_back(nbInstances - 1);
 
         if (nbInstances >= view.size()) {
             // Update instance buffers
@@ -59,6 +60,11 @@ void RenderSystem::update() {
                 case AttributeBufferType::PER_INSTANCE_ENTITY_ID:
                     m_ctx.rcommand.updateAttributeBufferAnySize(buffer, m_tempEntityIds.data(), sizeof(glm::vec3) * nbInstances);
                     m_tempEntityIds.clear();
+                    break;
+
+                case AttributeBufferType::PER_INSTANCE_MATERIAL:
+                    m_ctx.rcommand.updateAttributeBufferAnySize(buffer, m_tempMaterialIds.data(), sizeof(unsigned int) * nbInstances);
+                    m_tempMaterialIds.clear();
                     break;
 
                 default: break;

@@ -37,16 +37,19 @@ void Meshes::init(RenderCommand& rcommand) {
 		AttributeBuffer translationInstanceBuffer = rcommand.createAttributeBuffer(translations.data(), static_cast<unsigned int>(translations.size()), sizeof(glm::vec3), AttributeBufferUsage::DYNAMIC_DRAW, AttributeBufferType::PER_INSTANCE_TRANSLATION);
 		std::array<glm::vec3, 15> entityIds;
 		AttributeBuffer entityInstanceBuffer = rcommand.createAttributeBuffer(entityIds.data(), static_cast<unsigned int>(entityIds.size()), sizeof(glm::vec3), AttributeBufferUsage::DYNAMIC_DRAW, AttributeBufferType::PER_INSTANCE_ENTITY_ID);
+		std::array<unsigned int, 15> materialIndices;
+		AttributeBuffer materialInstanceBuffer = rcommand.createAttributeBuffer(materialIndices.data(), static_cast<unsigned int>(materialIndices.size()), sizeof(unsigned int), AttributeBufferUsage::DYNAMIC_DRAW, AttributeBufferType::PER_INSTANCE_MATERIAL);
 
 		// Vertex & Index buffers
 		PipelineInputDescription inputDescription = {
 			{ ShaderDataType::Float3, "Position" },
 			{ ShaderDataType::Float3, "Normal" },
 			{ ShaderDataType::Float3, "Translation", BufferElementUsage::PerInstance },
-			{ ShaderDataType::Float3, "EntityId", BufferElementUsage::PerInstance }
+			{ ShaderDataType::Float3, "EntityId", BufferElementUsage::PerInstance },
+			{ ShaderDataType::UInt, "MaterialIndex", BufferElementUsage::PerInstance }
 		};
 		AttributeBuffer attributeBuffers[] = {
-			positionBuffer, normalBuffer, translationInstanceBuffer, entityInstanceBuffer
+			positionBuffer, normalBuffer, translationInstanceBuffer, entityInstanceBuffer, materialInstanceBuffer
 		};
 		VertexBuffer vb = rcommand.createVertexBuffer(inputDescription, attributeBuffers);
 		IndexBuffer ib = rcommand.createIndexBuffer(cubeData::indices, static_cast<unsigned int>(std::size(cubeData::indices)), IndexBuffer::dataType::UNSIGNED_BYTE);
