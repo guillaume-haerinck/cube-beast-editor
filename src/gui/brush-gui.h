@@ -13,7 +13,7 @@ public:
     virtual void onEvent(GuiEvent e) override;
 
 private:
-    bool drawButton(const char* text, bool toggled = false);
+    bool drawButton(const char* text, const char* tooltip, bool toggled = false);
 
 private:
     Context& m_ctx;
