@@ -8,7 +8,8 @@ void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs) {
 
     // Geometry
     usedCbs = {
-        cbs.at(ConstantBufferIndex::PER_FRAME)
+        cbs.at(ConstantBufferIndex::PER_FRAME),
+        cbs.at(ConstantBufferIndex::PER_MATERIAL_CHANGE)
     };
     const char* VSGeo = 
         #include "graphics/shaders/geometry.vert"

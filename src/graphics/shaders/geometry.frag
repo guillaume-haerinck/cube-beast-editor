@@ -5,6 +5,11 @@ layout(location = 1) out vec4 g_normal;
 layout(location = 2) out vec4 g_worldPosition;
 layout(location = 3) out vec4 g_id;
 
+layout (std140) uniform perMaterialChange {
+	vec3 albedo;
+	float emissiveFactor;
+};
+
 in vec3 v_id;
 in vec3 v_normal;
 in vec3 v_worldPosition;
@@ -30,7 +35,7 @@ float getFaceNumber(vec3 normal) {
 void main() {
 	g_id = vec4(v_id, getFaceNumber(v_normal));
 	g_normal = vec4(v_normal, 1.0);
-	g_albedo = vec4(v_materialId, 0.5, 0.5, 1.0);
+	g_albedo = vec4(albedo, 1.0);
 	g_worldPosition = vec4(v_worldPosition, 0.0);
 }
 

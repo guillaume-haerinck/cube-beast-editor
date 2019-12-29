@@ -37,6 +37,19 @@ void RenderSystem::update() {
 		m_ctx.rcommand.updateConstantBuffer(perFrameCB, &cbData);
 	}
 
+    // Update per Material change constant buffer
+	{
+		cb::perMaterialChange cbData;
+        const ConstantBuffer& perMatChangeCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_MATERIAL_CHANGE);
+
+        // Set data
+        cbData.albedo = glm::vec3(1.0f, 1.0f, 0.0f);
+        cbData.emissiveFactor = 0.0f;
+
+        // Send data
+		m_ctx.rcommand.updateConstantBuffer(perMatChangeCB, &cbData);
+	}
+
     auto view = m_ctx.registry.view<comp::Material, comp::Transform>();
     unsigned int nbInstances = 0;
 
