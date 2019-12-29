@@ -39,17 +39,8 @@ void RenderSystem::update() {
 
     // Update per Material change constant buffer
 	{
-		cb::perMaterialChange cbData[5] = {
-            { glm::vec3(1.0f, 0.0f, 0.0f), 1.0f },
-            { glm::vec3(0.0f, 1.0f, 0.0f), 1.0f },
-            { glm::vec3(0.0f, 0.0f, 1.0f), 1.0f },
-            { glm::vec3(1.0f, 1.0f, 1.0f), 1.0f },
-            { glm::vec3(1.0f, 1.0f, 0.0f), 1.0f }
-        };
-
-        // Send data
         const ConstantBuffer& perMatChangeCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_MATERIAL_CHANGE);
-		m_ctx.rcommand.updateConstantBuffer(perMatChangeCB, &cbData, sizeof(cb::perMaterialChange) * 5);
+		m_ctx.rcommand.updateConstantBuffer(perMatChangeCB, m_scomps.materials.data(), sizeof(cb::perMaterialChange) * m_scomps.materials.size());
 	}
 
     auto view = m_ctx.registry.view<comp::Material, comp::Transform>();
@@ -61,7 +52,7 @@ void RenderSystem::update() {
         nbInstances++;
         m_tempTranslations.push_back(transform.position);
         m_tempEntityIds.push_back(voxmt::intToNormColor(entity));
-        m_tempMaterialIds.push_back(nbInstances - 1);
+        m_tempMaterialIds.push_back(material.sIndex);
 
         if (nbInstances >= view.size()) {
             // Update instance buffers

@@ -413,21 +413,21 @@ void RenderCommand::unbindVertexBuffer() const {
 ///////////////////////////////// UPDATING ////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-void RenderCommand::updateConstantBuffer(const ConstantBuffer& cb, void* data, unsigned int dataByteWidth) const {
+void RenderCommand::updateConstantBuffer(const ConstantBuffer& cb, const void* data, unsigned int dataByteWidth) const {
 	assert(dataByteWidth <= cb.byteWidth && "New attribute buffer data exceed the size of the allocated buffer");
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, cb.bufferId));
 	GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, dataByteWidth, data));
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 }
 
-void RenderCommand::updateAttributeBuffer(const AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const {
+void RenderCommand::updateAttributeBuffer(const AttributeBuffer& buffer, const void* data, unsigned int dataByteWidth) const {
 	assert(dataByteWidth < buffer.byteWidth && "New attribute buffer data exceed the size of the allocated buffer");
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer.bufferId));
 	GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, dataByteWidth, data));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
-void RenderCommand::updateAttributeBufferAnySize(AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const {
+void RenderCommand::updateAttributeBufferAnySize(AttributeBuffer& buffer, const void* data, unsigned int dataByteWidth) const {
 	if (dataByteWidth >= buffer.byteWidth) {
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer.bufferId));
 		GLCall(glBufferData(GL_ARRAY_BUFFER, dataByteWidth * 2, 0, attributeBufferUsageToOpenGLBaseType(buffer.usage)));

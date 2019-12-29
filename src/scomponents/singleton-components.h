@@ -7,6 +7,7 @@
 #include "scomponents/graphics/meshes.h"
 #include "scomponents/graphics/render-targets.h"
 #include "scomponents/graphics/textures.h"
+#include "scomponents/graphics/lights.h"
 
 #include "scomponents/io/inputs.h"
 #include "scomponents/io/hovered.h"
@@ -28,6 +29,7 @@ struct SingletonComponents {
 	RenderTargets renderTargets;
 	Textures textures;
 	Materials materials;
+	Lights lights;
 	Camera camera;
 	UIStyle uiStyle;
 	

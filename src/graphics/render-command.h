@@ -107,11 +107,11 @@ public:
 	///////////////////////////////// UPDATING ////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
-    void updateConstantBuffer(const ConstantBuffer& cb, void* data, unsigned int dataByteWidth) const;
+    void updateConstantBuffer(const ConstantBuffer& cb, const void* data, unsigned int dataByteWidth) const;
 
-	void updateAttributeBuffer(const AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const;
+	void updateAttributeBuffer(const AttributeBuffer& buffer, const void* data, unsigned int dataByteWidth) const;
 
-	void updateAttributeBufferAnySize(AttributeBuffer& buffer, void* data, unsigned int dataByteWidth) const;
+	void updateAttributeBufferAnySize(AttributeBuffer& buffer, const void* data, unsigned int dataByteWidth) const;
 
     ///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////// DRAWING /////////////////////////////////

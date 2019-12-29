@@ -4,6 +4,9 @@
 #include <string>
 #include <cassert>
 
+#include "scomponents/graphics/materials.h"
+#include "scomponents/graphics/lights.h"
+
 class RenderCommand; // Forward declaration to prevent circular inclusion
 
 /**
@@ -37,7 +40,7 @@ public:
 	}
 
 private:
-	void init(RenderCommand& rcommand);
+	void init(RenderCommand& rcommand, Materials& materials, Lights& lights);
 	void destroy(RenderCommand& rcommand);
 
 private:
