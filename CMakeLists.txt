@@ -1,6 +1,6 @@
 # Set standards
 cmake_minimum_required(VERSION 2.8)
-project(voxel-editor C CXX)
+project(cube-beast-editor C CXX)
 set(CMAKE_CXX_STANDARD 17)
 
 # Setup Wasm build
