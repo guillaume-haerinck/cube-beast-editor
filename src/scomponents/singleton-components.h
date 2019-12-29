@@ -12,6 +12,7 @@
 #include "scomponents/io/hovered.h"
 #include "scomponents/io/viewport.h"
 #include "scomponents/io/brush.h"
+#include "scomponents/graphics/ui-style.h"
 
 /**
  * @brief Global object used to store the state of the app. 
@@ -28,6 +29,7 @@ struct SingletonComponents {
 	Textures textures;
 	Materials materials;
 	Camera camera;
+	UIStyle uiStyle;
 	
 	// IO
 	Inputs inputs;

@@ -34,7 +34,7 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 	// Start application
 	spdlog::set_pattern("[%l] %^ %v %$");
 	initSDL();
-    initImgui();
+    m_scomps.uiStyle.m_fontIconLarge = initImgui();
 
 	// Order GUIs
     m_guis = {
@@ -223,7 +223,7 @@ void App::initSDL() {
 #endif	
 }
 
-void App::initImgui() const {
+ImFont* App::initImgui() const {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
     ImGui_ImplSDL2_InitForOpenGL(m_window, m_glContext);
@@ -238,7 +238,10 @@ void App::initImgui() const {
 	ImFontConfig icons_config;
 	icons_config.MergeMode = true;
 	icons_config.PixelSnapH = true;
-	io.Fonts->AddFontFromMemoryCompressedTTF(awesome_compressed_data, awesome_compressed_size, 16.0f, &icons_config, icons_ranges);
+	ImFont* iconSmall = io.Fonts->AddFontFromMemoryCompressedTTF(awesome_compressed_data, awesome_compressed_size, 14.0f, &icons_config, icons_ranges);
+	icons_config.MergeMode = false;
+	ImFont* iconLarge = io.Fonts->AddFontFromMemoryCompressedTTF(awesome_compressed_data, awesome_compressed_size, 40.0f, &icons_config, icons_ranges);
+	return iconLarge;
 }
 
 /////////////////////////////////////////////////////////////////////////////

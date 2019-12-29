@@ -22,7 +22,7 @@ public:
 
 private:
     void initSDL();
-    void initImgui() const;
+    ImFont* initImgui() const;
     void handleSDLEvents();
 
 private:
