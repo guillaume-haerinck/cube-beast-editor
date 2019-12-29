@@ -416,7 +416,7 @@ void RenderCommand::unbindVertexBuffer() const {
 void RenderCommand::updateConstantBuffer(const ConstantBuffer& cb, void* data, unsigned int dataByteWidth) const {
 	assert(dataByteWidth <= cb.byteWidth && "New attribute buffer data exceed the size of the allocated buffer");
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, cb.bufferId));
-	GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, cb.byteWidth, data));
+	GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, dataByteWidth, data));
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 }
 

@@ -40,9 +40,9 @@ void RenderSystem::update() {
     // Update per Material change constant buffer
 	{
 		cb::perMaterialChange cbData[5] = {
-            { glm::vec3(1.0f, 0.0f, 0.0f), 0.0f },
-            { glm::vec3(0.0f, 1.0f, 0.0f), 0.0f },
-            { glm::vec3(0.0f, 0.0f, 1.0f), 0.0f },
+            { glm::vec3(1.0f, 0.0f, 0.0f), 1.0f },
+            { glm::vec3(0.0f, 1.0f, 0.0f), 0.5f },
+            { glm::vec3(0.0f, 0.0f, 1.0f), 1.0f },
             { glm::vec3(1.0f, 1.0f, 1.0f), 0.0f },
             { glm::vec3(1.0f, 1.0f, 0.0f), 0.0f }
         };

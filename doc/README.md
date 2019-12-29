@@ -18,6 +18,9 @@ Sparse set might be way more efficient to store and access cube data, might ditc
 See if can store neightboring cubes as one rectangle, multiple is there is a hole. Render with instanced plane, but different model mats
 -> ECS might not be the best solution, but it's the one which will help me learn more for now (benchmarking, ecs use case, improving my lib)
 
+imgui imagebutton not working correctly when pressed, use font icon instead
+glVertexAttribPointer and glVertexAttribIPointer not to interpolate int values
+
 ## Planned (high to low priority)
 
 handle cube color

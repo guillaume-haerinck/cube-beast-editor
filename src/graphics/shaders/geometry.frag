@@ -5,9 +5,13 @@ layout(location = 1) out vec4 g_normal;
 layout(location = 2) out vec4 g_worldPosition;
 layout(location = 3) out vec4 g_id;
 
+struct Material {
+	vec3 albedo;
+	float emissiveFactor;
+};
+
 layout (std140) uniform perMaterialChange {
-	vec3 albedo[5];
-	float emissiveFactor[5];
+	Material materials[5];
 };
 
 in vec3 v_id;
@@ -35,7 +39,7 @@ float getFaceNumber(vec3 normal) {
 void main() {
 	g_id = vec4(v_id, getFaceNumber(v_normal));
 	g_normal = vec4(v_normal, 1.0);
-	g_albedo = vec4(albedo[v_materialId], 1.0);
+	g_albedo = vec4(materials[v_materialId].albedo, materials[v_materialId].emissiveFactor);
 	g_worldPosition = vec4(v_worldPosition, 0.0);
 }
 
