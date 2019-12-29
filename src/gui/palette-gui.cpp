@@ -10,7 +10,7 @@ PaletteGui::~PaletteGui() {}
 
 void PaletteGui::update() {
     ImGui::Begin(ICON_FA_PALETTE "  Palette", 0);
-        ImGui::Text("pick a color");
+        ImGui::Text("Available soon");
     ImGui::End();
 }
 

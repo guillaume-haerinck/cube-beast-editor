@@ -16,7 +16,7 @@ private:
     ImFont* m_fontIconLarge;
 
     ImVec2 m_largeButtonSize = ImVec2(50, 50);
-    float m_largeButtonRounding = 10.0f;
+    float m_largeButtonRounding = 5.0f;
     ImVec4 m_selectColor = ImVec4(0.18f, 0.46f, 0.80f, 1.00f);
 
 private:

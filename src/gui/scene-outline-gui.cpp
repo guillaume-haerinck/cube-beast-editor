@@ -10,7 +10,7 @@ SceneOutlineGui::~SceneOutlineGui() {}
 
 void SceneOutlineGui::update() {
     ImGui::Begin(ICON_FA_GLOBE_AMERICAS "  Scene Outline", 0);
-        ImGui::Text("chooose an object");
+        ImGui::Text("Available soon");
     ImGui::End();
 }
 

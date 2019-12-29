@@ -13,6 +13,9 @@ public:
     virtual void onEvent(GuiEvent e) override;
 
 private:
+    bool drawButton(const char* text, const char* tooltip);
+
+private:
     Context& m_ctx;
     SingletonComponents& m_scomps;
 };

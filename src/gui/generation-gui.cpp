@@ -10,7 +10,7 @@ GenerationGui::~GenerationGui() {}
 
 void GenerationGui::update() {
     ImGui::Begin(ICON_FA_SEEDLING "  Generation", 0);
-        ImGui::Text("generate procedural");
+        ImGui::Text("Available soon");
     ImGui::End();
 }
 

@@ -14,8 +14,6 @@ void BrushGui::update() {
     ImGui::Begin(ICON_FA_BRUSH "  Brush", 0);
     {
         ImGui::Text("  Usage");
-
-        
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, m_scomps.uiStyle.largeButtonRounding());
         {
             if (drawButton(ICON_FA_MOUSE_POINTER, "Select", m_scomps.brush.usage() == BrushUse::SELECT)) {
@@ -55,12 +53,14 @@ void BrushGui::update() {
         }
         ImGui::PopStyleVar(1);
 
+        /*
         ImGui::Spacing();
         ImGui::Spacing();
         ImGui::Separator();
         ImGui::Spacing();
 
         ImGui::Text("Options");   
+        */
     }
     ImGui::End();
 }

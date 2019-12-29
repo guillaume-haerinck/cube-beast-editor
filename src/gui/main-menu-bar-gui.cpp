@@ -93,11 +93,11 @@ void MainMenuBarGui::setDefaultLayout() {
 }
 
 void MainMenuBarGui::setDefaultStyle() {
-    ImGui::GetStyle().FrameRounding = 0.0f;
-    ImGui::GetStyle().GrabRounding = 0.0f;
-    ImGui::GetStyle().TabRounding = 0.0f;
-    ImGui::GetStyle().WindowRounding = 0.0f;
-    ImGui::GetStyle().ScrollbarRounding = 0.0f;
+    ImGui::GetStyle().FrameRounding = 3.0f;
+    ImGui::GetStyle().GrabRounding = 3.0f;
+    ImGui::GetStyle().TabRounding = 3.0f;
+    ImGui::GetStyle().WindowRounding = 3.0f;
+    ImGui::GetStyle().ScrollbarRounding = 3.0f;
 
     ImVec4* colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_Text] = ImVec4(0.95f, 0.96f, 0.98f, 1.00f);
