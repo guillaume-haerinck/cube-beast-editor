@@ -11,7 +11,7 @@ struct Material {
 };
 
 layout (std140) uniform perMaterialChange {
-	Material materials[5];
+	Material materials[MAX_COUNT_MATERIALS];
 };
 
 in vec3 v_id;
@@ -39,7 +39,7 @@ float getFaceNumber(vec3 normal) {
 void main() {
 	g_id = vec4(v_id, getFaceNumber(v_normal));
 	g_normal = vec4(v_normal, 1.0);
-	g_albedo = vec4(materials[v_materialId].albedo, materials[v_materialId].emissiveFactor);
+	g_albedo = vec4(materials[v_materialId].albedo, 1.0);
 	g_worldPosition = vec4(v_worldPosition, 0.0);
 }
 

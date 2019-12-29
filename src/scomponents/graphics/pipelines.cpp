@@ -14,10 +14,11 @@ void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs) {
     const char* VSGeo = 
         #include "graphics/shaders/geometry.vert"
     ;
-    const char* FSGeo =
+    std::string FSGeo =
         #include "graphics/shaders/geometry.frag"
     ;
-    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_GEOMETRY)) = rcommand.createPipeline(VSGeo, FSGeo, usedCbs);
+    replaceInString(FSGeo, "MAX_COUNT_MATERIALS", "5");
+    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_GEOMETRY)) = rcommand.createPipeline(VSGeo, FSGeo.c_str(), usedCbs);
 
     // Grid
     usedCbs = {
@@ -72,5 +73,13 @@ void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs) {
 void Pipelines::destroy(RenderCommand& rcommand) {
     for (auto& pip : m_pips) {
         rcommand.deletePipeline(pip);
+    }
+}
+
+void Pipelines::replaceInString(std::string& subject, const std::string& search, const std::string& replace) {
+    size_t pos = 0;
+    while ((pos = subject.find(search, pos)) != std::string::npos) {
+        subject.replace(pos, search.length(), replace);
+        pos += replace.length();
     }
 }

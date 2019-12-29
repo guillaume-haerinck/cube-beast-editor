@@ -52,6 +52,7 @@ public:
 private:
 	void init(RenderCommand& rcommand, const ConstantBuffers& cbs);
 	void destroy(RenderCommand& rcommand);
+	void replaceInString(std::string& subject, const std::string& search, const std::string& replace);
 
 private:
 	std::array<Pipeline, static_cast<unsigned int>(PipelineIndex::_PIP_MAX)> m_pips;
