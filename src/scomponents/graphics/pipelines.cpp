@@ -44,8 +44,8 @@ void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs) {
 
     // Gui
     usedCbs = {
-        cbs.at(ConstantBufferIndex::PER_FRAME),
-        cbs.at(ConstantBufferIndex::PER_NI_MESH)
+        cbs.at(ConstantBufferIndex::PER_NI_MESH),
+        cbs.at(ConstantBufferIndex::PER_FRAME)
     };
     const char* VSGui = 
         #include "graphics/shaders/gui.vert"
@@ -53,7 +53,6 @@ void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs) {
     const char* FSGui =
         #include "graphics/shaders/gui.frag"
     ;
-    // FIXME perNIMesh overrided by PerWindowChange
     m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_GUI)) = rcommand.createPipeline(VSGui, FSGui, usedCbs);
 
     // Lighting
@@ -66,7 +65,7 @@ void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs) {
     const char* FSLighting =
         #include "graphics/shaders/lighting.frag"
     ;
-    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_LIGHTING)) = rcommand.createPipeline(VSLighting, FSLighting, usedCbs, {"g_albedo", "g_normal", "g_worldPosition"});
+    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_LIGHTING)) = rcommand.createPipeline(VSLighting, FSLighting, usedCbs, {"g_albedo", "g_normal"});
 }
 
 void Pipelines::destroy(RenderCommand& rcommand) {

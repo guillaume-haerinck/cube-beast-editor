@@ -65,7 +65,7 @@ public:
 	 * @param byteWidth - The total size of the buffer. Allows to create an array of said type.
 	 * @param data
 	 */
-	ConstantBuffer createConstantBuffer(const char* name, unsigned int byteWidth, void* data = nullptr) const;
+	ConstantBuffer createConstantBuffer(const char* name, unsigned int bindingPoint, unsigned int byteWidth, void* data = nullptr) const;
 
 	/**
 	 * @brief Create a shader pipeline

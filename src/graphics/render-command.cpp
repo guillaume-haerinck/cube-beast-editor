@@ -109,7 +109,7 @@ IndexBuffer RenderCommand::createIndexBuffer(const void* indices, unsigned int c
 	return buffer;
 }
 
-ConstantBuffer RenderCommand::createConstantBuffer(const char* name, unsigned int byteWidth, void* data) const {
+ConstantBuffer RenderCommand::createConstantBuffer(const char* name, unsigned int bindingPoint, unsigned int byteWidth, void* data) const {
     assert(byteWidth % 16 == 0 && "Constant Buffer byteWidth must be a multiple of 16 !");
 	
 	unsigned int cbId = 0;
@@ -121,6 +121,7 @@ ConstantBuffer RenderCommand::createConstantBuffer(const char* name, unsigned in
 	ConstantBuffer cb = {};
 	cb.bufferId = cbId;
 	cb.byteWidth = byteWidth;
+	cb.bindingPoint = bindingPoint;
 	cb.name = name;
 	return cb;
 }
@@ -176,17 +177,13 @@ Pipeline RenderCommand::createPipeline(const char* vsSrc, const char* fsSrc, con
 	}
 
 	// Link constant buffers
-	// FIXME problems when assigning multiple pipelines next to each other
-	// the associated cb are not correct
 	GLCall(glUseProgram(programId));
 	Pipeline sPipeline = {};
-	unsigned int index = 0;
 	for (const ConstantBuffer& cb : cbs) {
 		unsigned int blockIndex = glGetUniformBlockIndex(programId, cb.name.c_str());
-		GLCall(glUniformBlockBinding(programId, blockIndex, index));
-		GLCall(glBindBufferBase(GL_UNIFORM_BUFFER, index, cb.bufferId));
+		GLCall(glUniformBlockBinding(programId, blockIndex, cb.bindingPoint));
+		GLCall(glBindBufferBase(GL_UNIFORM_BUFFER, cb.bindingPoint, cb.bufferId));
 		sPipeline.cbNames.push_back(cb.name);
-		index++;
 	}
 
 	// Set samplers texture units to the order they were declared

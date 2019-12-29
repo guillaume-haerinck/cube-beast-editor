@@ -22,6 +22,7 @@ enum class ConstantBufferIndex {
  */
 struct ConstantBuffer {
 	unsigned int bufferId;
+	unsigned int bindingPoint;
 	unsigned int byteWidth = 0;
 	std::string name;
 };
