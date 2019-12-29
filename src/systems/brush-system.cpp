@@ -53,11 +53,17 @@ void BrushSystem::voxelBrush() {
         break;
     }
         
-    case BrushUse::REMOVE: {
+    case BrushUse::REMOVE:
         if (m_scomps.hovered.isCube())
             m_ctx.registry.destroy(m_scomps.hovered.id());
         break;
-    }
+
+    case BrushUse::PAINT:
+        if (m_scomps.hovered.isCube()) {
+            auto& material = m_ctx.registry.get<comp::Material>(m_scomps.hovered.id());
+            material.sIndex = m_scomps.materials.selectedIndex();
+        }
+        break;
 
     default: break;
     }

@@ -18,6 +18,7 @@ public:
 	size_t size() const { return m_materials.size(); }
 	size_t capacity() const { return m_maxSize; }
 	const cb::perMaterialChange* data() const { return m_materials.data(); }
+	unsigned int selectedIndex() const { return m_selectedIndex; }
 
 private:
 	void push_back(const cb::perMaterialChange& material) {
@@ -35,6 +36,7 @@ private:
 private:
 	std::vector<cb::perMaterialChange> m_materials;
 	unsigned int m_maxSize = 20;
+	unsigned int m_selectedIndex = 0;
 
 private:
 	friend class PaletteGui;
