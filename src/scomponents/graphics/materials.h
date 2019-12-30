@@ -13,12 +13,14 @@ public:
 	}
 
 	const cb::perMaterialChange& at(unsigned int index) const { return m_materials.at(index); }
+	const cb::perMaterialChange& getSelected() const { return m_materials.at(m_selectedIndex); }
 	std::vector<cb::perMaterialChange>::const_iterator begin() const { return m_materials.begin(); }
 	std::vector<cb::perMaterialChange>::const_iterator end() const { return m_materials.end(); }
 	size_t size() const { return m_materials.size(); }
 	size_t capacity() const { return m_maxSize; }
 	const cb::perMaterialChange* data() const { return m_materials.data(); }
 	unsigned int selectedIndex() const { return m_selectedIndex; }
+
 
 private:
 	void push_back(const cb::perMaterialChange& material) {
