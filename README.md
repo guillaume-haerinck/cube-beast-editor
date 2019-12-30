@@ -1,5 +1,6 @@
 [![Actions Status](https://github.com/guillaume-haerinck/voxel-editor/workflows/cpp/badge.svg)](https://github.com/guillaume-haerinck/voxel-editor/actions)
 [![Actions Status](https://github.com/guillaume-haerinck/voxel-editor/workflows/wasm/badge.svg)](https://github.com/guillaume-haerinck/voxel-editor/actions)
+[![Actions Status](https://github.com/guillaume-haerinck/voxel-editor/workflows/unit-test/badge.svg)](https://github.com/guillaume-haerinck/voxel-editor/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 <p align="center">
