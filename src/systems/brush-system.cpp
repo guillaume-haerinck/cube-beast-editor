@@ -21,7 +21,6 @@ void BrushSystem::update() {
 
 void BrushSystem::voxelBrush() {
     comp::Transform trans;
-    comp::Material material;
     trans.position = m_scomps.hovered.position();
 
     for (const glm::ivec3& pos : m_tempAddedPos) {
@@ -47,6 +46,8 @@ void BrushSystem::voxelBrush() {
     switch (m_scomps.brush.usage()) {
     case BrushUse::ADD: {
         met::entity entity = m_ctx.registry.create();
+        comp::Material material;
+        material.sIndex = m_scomps.materials.selectedIndex();
         m_ctx.registry.assign<comp::Material>(entity, material);
         m_ctx.registry.assign<comp::Transform>(entity, trans);
         m_tempAddedPos.push_back(trans.position);

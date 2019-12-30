@@ -13,7 +13,14 @@ PaletteGui::~PaletteGui() {}
 
 void PaletteGui::update() {
     ImGui::Begin(ICON_FA_PALETTE "  Palette", 0);
-        ImGuiColorEditFlags misc_flags = ImGuiColorEditFlags_NoAlpha;
+        ImGuiColorEditFlags misc_flags = ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview;
+        ImGui::ColorPicker3(
+            "##picker", 
+            &m_scomps.materials.m_materials.at(m_scomps.materials.m_selectedIndex).albedo.r,
+            misc_flags 
+        );
+        
+        misc_flags = ImGuiColorEditFlags_NoAlpha;
         unsigned int i = 0;
         for (auto& material : m_scomps.materials) {
             const ImVec4 color = ImVec4(material.albedo.r, material.albedo.g, material.albedo.b, 1.0f);
