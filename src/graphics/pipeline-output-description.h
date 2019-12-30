@@ -16,7 +16,7 @@ enum class RenderTargetChannels {
 };
 
 enum class RenderTargetDataType {
-    FLOAT = 0, UCHAR = 1
+    FLOAT = 0, UCHAR, UINT
 };
 
 struct RenderTargetDescription {

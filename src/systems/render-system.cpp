@@ -53,6 +53,21 @@ void RenderSystem::update() {
         // TODO other lights with buffer update offset
 
         m_scomps.lights.m_hasToBeUpdated = false;
+
+        // Update per Shadow Pass constant buffer
+        {
+            cb::perLightChange::perShadowPass cbData;
+            const ConstantBuffer& perShadowPassCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_SHADOW_PASS);
+
+            // Set data
+            const glm::vec3 lightDir = m_scomps.lights.directionals(0).direction;
+            glm::mat4 lightProj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -20.0f, 20.0f);
+            glm::mat4 lightView = glm::lookAt(-lightDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+            cbData.matViewProj_lightSpace = lightProj * lightView;
+
+            // Send data
+            m_ctx.rcommand.updateConstantBuffer(perShadowPassCB, &cbData, sizeof(cb::perLightChange::perShadowPass));
+        }
 	}
 
     auto view = m_ctx.registry.view<comp::Material, comp::Transform>();
@@ -101,6 +116,14 @@ void RenderSystem::update() {
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(PipelineIndex::PIP_GEOMETRY));
         m_ctx.rcommand.drawIndexedInstances(m_scomps.meshes.cube().ib.count, m_scomps.meshes.cube().ib.type, nbInstances);
     }
+
+    // Shadow map pass
+    {
+        m_ctx.rcommand.bindRenderTarget(m_scomps.renderTargets.at(RenderTargetIndex::RTT_SHADOW_MAP));
+        m_ctx.rcommand.clear();
+        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(PipelineIndex::PIP_SHADOW_MAP));
+        m_ctx.rcommand.drawIndexedInstances(m_scomps.meshes.cube().ib.count, m_scomps.meshes.cube().ib.type, nbInstances);
+    }
     
     // Lighting pass
     {
@@ -109,7 +132,9 @@ void RenderSystem::update() {
         m_ctx.rcommand.bindRenderTarget(m_scomps.renderTargets.at(RenderTargetIndex::RTT_FINAL));
         m_ctx.rcommand.clear();
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(PipelineIndex::PIP_LIGHTING));
-        m_ctx.rcommand.bindTextureIds(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY).textureIds);
+        std::vector<unsigned int> textureIds = m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY).textureIds;
+        textureIds.push_back(m_scomps.renderTargets.at(RenderTargetIndex::RTT_SHADOW_MAP).textureIds.at(0));
+        m_ctx.rcommand.bindTextureIds(textureIds);
         m_ctx.rcommand.drawIndexed(m_scomps.meshes.plane().ib.count, m_scomps.meshes.plane().ib.type);
     }
 

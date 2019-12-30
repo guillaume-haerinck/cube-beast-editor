@@ -28,6 +28,7 @@ struct FragmentShader {
 enum class PipelineIndex {
 	PIP_GEOMETRY = 0,
 	PIP_LIGHTING,
+	PIP_SHADOW_MAP,
 	PIP_GRID,
 	PIP_GUI,
 	PIP_DDRAW,

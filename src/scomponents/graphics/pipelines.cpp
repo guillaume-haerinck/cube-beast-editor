@@ -9,7 +9,8 @@ void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs, const 
     // Geometry
     usedCbs = {
         cbs.at(ConstantBufferIndex::PER_FRAME),
-        cbs.at(ConstantBufferIndex::PER_MATERIAL_CHANGE)
+        cbs.at(ConstantBufferIndex::PER_MATERIAL_CHANGE),
+        cbs.at(ConstantBufferIndex::PER_SHADOW_PASS)
     };
     const char* VSGeo = 
         #include "graphics/shaders/geometry.vert"
@@ -19,6 +20,18 @@ void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs, const 
     ;
     replaceInString(FSGeo, "MAX_COUNT_MATERIALS", std::to_string(mats.capacity()).c_str());
     m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_GEOMETRY)) = rcommand.createPipeline(VSGeo, FSGeo.c_str(), usedCbs);
+
+    // Shadow map
+    usedCbs = {
+        cbs.at(ConstantBufferIndex::PER_SHADOW_PASS)
+    };
+    const char* VSShadowMap = 
+        #include "graphics/shaders/shadow-map.vert"
+    ;
+    const char* FSShadowMap =
+        #include "graphics/shaders/shadow-map.frag"
+    ;
+    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_SHADOW_MAP)) = rcommand.createPipeline(VSShadowMap, FSShadowMap, usedCbs);
 
     // Grid
     usedCbs = {
@@ -71,7 +84,8 @@ void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs, const 
     replaceInString(FSLighting, "MAX_COUNT_DIR_LIGHTS", std::to_string(lights.directionalsCapacity()).c_str());
     replaceInString(FSLighting, "MAX_COUNT_POINT_LIGHTS", std::to_string(lights.pointsCapacity()).c_str());
     replaceInString(FSLighting, "MAX_COUNT_SPOT_LIGHTS", std::to_string(lights.spotsCapacity()).c_str());
-    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_LIGHTING)) = rcommand.createPipeline(VSLighting, FSLighting.c_str(), usedCbs, {"g_albedo", "g_normal"});
+    // TODO add shadow map and lightSpacePosition samplers 
+    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_LIGHTING)) = rcommand.createPipeline(VSLighting, FSLighting.c_str(), usedCbs, {"g_albedo", "g_normal", "g_lightSpacePosition", "shadowMap"});
 }
 
 void Pipelines::destroy(RenderCommand& rcommand) {

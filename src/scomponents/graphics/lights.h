@@ -10,6 +10,10 @@ public:
         loadDefaults();
     };
 
+    const cb::perLightChange::DirectionalLight& directionals(unsigned int index) { return m_directionals.at(index); }
+    const cb::perLightChange::PointLight& points(unsigned int index) { return m_points.at(index); }
+    const cb::perLightChange::SpotLight& spots(unsigned int index) { return m_spots.at(index); }
+
     size_t directionalsCapacity() const { return m_directionalsMaxSize; }
     size_t pointsCapacity() const { return m_pointsMaxSize; }
     size_t spotsCapacity() const { return m_spotsMaxSize; }

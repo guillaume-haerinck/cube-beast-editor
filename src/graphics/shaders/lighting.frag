@@ -37,18 +37,29 @@ layout (std140) uniform perLightChange {
 
 uniform sampler2D g_albedo;
 uniform sampler2D g_normal;
+uniform sampler2D g_lightSpacePosition;
+uniform sampler2D shadowMap;
 
 in vec2 v_texCoord;
 
 void main() {
 	vec4 albedo = texture(g_albedo, v_texCoord);
     vec3 normal = texture(g_normal, v_texCoord).rgb;
+	vec4 lightSpacePos = texture(g_lightSpacePosition, v_texCoord);
 
 	if (albedo.a < 0.1)
     	discard;
 
+	// Shadows
+	vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
+    projCoords = projCoords * 0.5 + 0.5;
+    float closestDepth = texture(shadowMap, projCoords.xy).r; 
+    float currentDepth = projCoords.z;
+    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+	shadow = 1.0 - shadow;
+	
 	// Ambient
-	float ambientStrength = 0.4f;
+	float ambientStrength = 0.15 * albedo;
     vec3 ambient = dirLights[0].color * ambientStrength;
 
     // Diffuse
@@ -58,7 +69,8 @@ void main() {
         diffuse = dirLights[0].color * diffuseFactor;
 	}
 
-	color = albedo * vec4(ambient + diffuse, 1.0f) * dirLights[0].intensity;
+	vec3 lighting = (ambient + shadow) * diffuse * albedo.rgb;
+	color = vec4(lighting, 1.0);
 }
 
 )"
