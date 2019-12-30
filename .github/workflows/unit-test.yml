@@ -1,0 +1,21 @@
+name: unit-test
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: deps
+      run: |
+        sudo apt-get update
+        sudo apt-get install libsdl2-dev libglu1-mesa-dev mesa-common-dev
+    - name: cmake
+      run: cmake .
+    - name: make
+      run: make
+    - name: launch
+      run: ./build/bin/debug/cube-beast-editor-tests
