@@ -11,7 +11,7 @@ SCENARIO("Casting operation allows to retrieve the same value accross different 
             glm::vec3 myCast = voxmt::intToNormColor(myVal);
 
             THEN("I should retrieve it when I cast back") {
-                
+                // TODO
 
                 REQUIRE(true);
             }

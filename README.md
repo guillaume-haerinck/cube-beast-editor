@@ -2,11 +2,19 @@
 [![Actions Status](https://github.com/guillaume-haerinck/voxel-editor/workflows/wasm/badge.svg)](https://github.com/guillaume-haerinck/voxel-editor/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+<p align="center">
+<img src="doc/readme-img/logo-black.png?raw=true" alt="Screenshot">
+</p>
+
 # Cube Beast Editor
 
 Small voxel map editor with an Entity Component System (ECS) architecture.
 
 Supports WASM build so it can be played on any web-browser like Chrome, Firefox or Safari. Just run the content of the `www` folder on a web server.
+
+<p align="center">
+<img src="doc/changelog-img/v0-5-0.png?raw=true" width="800px" alt="Screenshot">
+</p>
 
 ## Table of Contents
 

@@ -1,9 +1,9 @@
 #include <catch2/catch.hpp>
 #include <glm/glm.hpp>
 
-#include "maths/rbf.h"
+#include "maths/intersection.h"
 
-SCENARIO("Radial basis functions should allow to create custom 3D functions which goes through set points", "[rbf]") {
+SCENARIO("Intersection functions should say when an object intersect another and give the point of intersection", "[intersection]") {
     GIVEN("Blabla") {
 
         WHEN("blabla") {
