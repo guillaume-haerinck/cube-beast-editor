@@ -38,14 +38,30 @@ namespace cb {
 
 	/**
 	 * @brief Constant buffer updated when a light is changed
-	 * @note Is sent as an array.
+	 * @note Each components is sent as an array
 	 */
-	struct perLightChange {
-		glm::vec3 color;
-		float intensity;
-		glm::vec3 position;
-		float spotAngle;
-		glm::vec3 direction;
-		float attenuationRadius;
-	};
+	namespace perLightChange {
+		struct DirectionalLight {
+			glm::vec3 direction;
+			float intensity;
+			glm::vec3 color;
+			char padding[4];
+		};
+
+		struct PointLight {
+			glm::vec3 position;
+			float intensity;
+			glm::vec3 color;
+			float attenuationRadius;
+		};
+
+		struct SpotLight {
+			glm::vec3 direction;
+			float intensity;
+			glm::vec3 position;
+			float spotAngle;
+			glm::vec3 color;
+			float attenuationRadius;
+		};
+	}
 }

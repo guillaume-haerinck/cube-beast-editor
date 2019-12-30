@@ -60,7 +60,7 @@ namespace voxmt {
 			}
 		}
 
-		return D.colPivHouseholderQr().solve(controlPointWeights);;
+		return D.colPivHouseholderQr().solve(controlPointWeights);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////

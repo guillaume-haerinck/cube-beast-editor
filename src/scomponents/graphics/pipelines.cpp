@@ -3,7 +3,7 @@
 #include "graphics/render-command.h"
 #include "graphics/constant-buffer.h"
 
-void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs) {
+void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs, const Materials& mats, const Lights& lights) {
     std::vector<ConstantBuffer> usedCbs;
 
     // Geometry
@@ -17,7 +17,7 @@ void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs) {
     std::string FSGeo =
         #include "graphics/shaders/geometry.frag"
     ;
-    replaceInString(FSGeo, "MAX_COUNT_MATERIALS", "5");
+    replaceInString(FSGeo, "MAX_COUNT_MATERIALS", std::to_string(mats.capacity()).c_str());
     m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_GEOMETRY)) = rcommand.createPipeline(VSGeo, FSGeo.c_str(), usedCbs);
 
     // Grid
@@ -59,15 +59,19 @@ void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs) {
 
     // Lighting
     usedCbs = {
-        cbs.at(ConstantBufferIndex::PER_FRAME)
+        cbs.at(ConstantBufferIndex::PER_FRAME),
+        cbs.at(ConstantBufferIndex::PER_LIGHT_CHANGE)
     };
     const char* VSLighting = 
         #include "graphics/shaders/lighting.vert"
     ;
-    const char* FSLighting =
+    std::string FSLighting =
         #include "graphics/shaders/lighting.frag"
     ;
-    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_LIGHTING)) = rcommand.createPipeline(VSLighting, FSLighting, usedCbs, {"g_albedo", "g_normal"});
+    replaceInString(FSLighting, "MAX_COUNT_DIR_LIGHTS", std::to_string(lights.directionalsCapacity()).c_str());
+    replaceInString(FSLighting, "MAX_COUNT_POINT_LIGHTS", std::to_string(lights.pointsCapacity()).c_str());
+    replaceInString(FSLighting, "MAX_COUNT_SPOT_LIGHTS", std::to_string(lights.spotsCapacity()).c_str());
+    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_LIGHTING)) = rcommand.createPipeline(VSLighting, FSLighting.c_str(), usedCbs, {"g_albedo", "g_normal"});
 }
 
 void Pipelines::destroy(RenderCommand& rcommand) {

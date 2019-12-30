@@ -51,7 +51,7 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 
 	// Init graphics objects
 	m_scomps.constantBuffers.init(m_ctx.rcommand, m_scomps.materials, m_scomps.lights);
-	m_scomps.pipelines.init(m_ctx.rcommand, m_scomps.constantBuffers);
+	m_scomps.pipelines.init(m_ctx.rcommand, m_scomps.constantBuffers, m_scomps.materials, m_scomps.lights);
 	m_scomps.meshes.init(m_ctx.rcommand);
 	m_scomps.renderTargets.init(m_ctx.rcommand, m_scomps.viewport);
 	m_scomps.textures.init(m_ctx.rcommand);

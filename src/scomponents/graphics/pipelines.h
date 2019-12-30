@@ -6,6 +6,8 @@
 #include <string>
 
 #include "scomponents/graphics/constant-buffers.h"
+#include "scomponents/graphics/materials.h"
+#include "scomponents/graphics/lights.h"
 
 class RenderCommand; // Forward declaration to prevent circular inclusion
 
@@ -50,7 +52,7 @@ public:
 	}
 
 private:
-	void init(RenderCommand& rcommand, const ConstantBuffers& cbs);
+	void init(RenderCommand& rcommand, const ConstantBuffers& cbs, const Materials& mats, const Lights& lights);
 	void destroy(RenderCommand& rcommand);
 	void replaceInString(std::string& subject, const std::string& search, const std::string& replace);
 

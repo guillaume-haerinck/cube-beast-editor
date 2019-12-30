@@ -43,6 +43,15 @@ void RenderSystem::update() {
 		m_ctx.rcommand.updateConstantBuffer(perMatChangeCB, m_scomps.materials.data(), sizeof(cb::perMaterialChange) * m_scomps.materials.size());
 	}
 
+    // Update per Light change constant buffer
+	{
+        // Directionnal lights
+        const ConstantBuffer& perLightChangeCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_LIGHT_CHANGE);
+		m_ctx.rcommand.updateConstantBuffer(perLightChangeCB, m_scomps.lights.directionalsData(), m_scomps.lights.directionalsByteWidth());
+
+        // TODO other lights with offset
+	}
+
     auto view = m_ctx.registry.view<comp::Material, comp::Transform>();
     unsigned int nbInstances = 0;
 

@@ -20,7 +20,7 @@ public:
 	size_t capacity() const { return m_maxSize; }
 	const cb::perMaterialChange* data() const { return m_materials.data(); }
 	unsigned int selectedIndex() const { return m_selectedIndex; }
-
+	unsigned int byteWidth() const { return sizeof(cb::perMaterialChange) * m_maxSize; }
 
 private:
 	void push_back(const cb::perMaterialChange& material) {
