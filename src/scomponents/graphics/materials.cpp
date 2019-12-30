@@ -1,5 +1,3 @@
-#pragma once
-
 #include "materials.h"
 
 void Materials::loadDefaultPalette1() {
