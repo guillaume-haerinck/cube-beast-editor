@@ -1,9 +1,10 @@
 #include "rbf.h"
-#include <glm/glm.hpp>
+
 #include <algorithm>
 #include <math.h>
 
 namespace voxmt {
+
 	unsigned int linear(int x) {
 		return x;
 	}
@@ -24,78 +25,74 @@ namespace voxmt {
 		return exp(-(eps * x) * (eps * x));
 	}
 
-	unsigned int distance(glm::ivec3 point1, glm::ivec3 point2) {
-		return sqrt((point2[1] - point1[1]) * (point2[1] - point1[1]) + (point2[2] - point1[2]) * (point2[2] - point1[2]) + (point2[3] - point1[3]) * (point2[3] - point1[3]));
-
+	unsigned int distance(const glm::ivec3& point1, const glm::ivec3& point2) {
+		return sqrt((point2.x - point1.x) * (point2.x - point1.x) + (point2.y - point1.y) * (point2.y - point1.y) + (point2.z - point1.z) * (point2.z - point1.z));
 	}
 
-    /*
-	Eigen::VectorXd VectorWi(const Eigen::VectorXd& weight, std::vector<glm::ivec3>& listepoints, RBFType RBF, const float eps) {
+	Eigen::VectorXd vectorWi(const Eigen::VectorXd& weight, const std::vector<glm::ivec3>& listepoints, RBFType RBF, const float eps) {
 		Eigen::MatrixXd D(listepoints.size(), listepoints.size());
-		for (int i = 0; i < listepoints.size(); i++) {
-			for (int j = 0; j < listepoints.size();j++) {
+		
+		for (int i = 0; i < D.rows(); i++) {
+			for (int j = 0; j < D.cols(); j++) {
 				switch (RBF) {
 				case RBFType::LINEAR:
-					D(i, j) = voxmt::distance(listepoints[i], listepoints[j]);
-
+					D(i, j) = voxmt::distance(listepoints.at(i), listepoints.at(j));
+					break;
 				case RBFType::MULTIQUADRATIC:
-					D(i, j) = voxmt::multiquadratic(voxmt::distance(listepoints[i], listepoints[j]), eps);
-
+					D(i, j) = voxmt::multiquadratic(voxmt::distance(listepoints.at(i), listepoints.at(j)), eps);
+					break;
 				case RBFType::INVERSEQUADRATIC:
-					D(i, j) = voxmt::inverseQuadratic(voxmt::distance(listepoints[i], listepoints[j]), eps);
-
-				case  RBFType::INVERSEMULTIQUAD:
-					D(i, j) = voxmt::inverseMultiquadratic(voxmt::distance(listepoints[i], listepoints[j]), eps);
-
+					D(i, j) = voxmt::inverseQuadratic(voxmt::distance(listepoints.at(i), listepoints.at(j)), eps);
+					break;
+				case RBFType::INVERSEMULTIQUAD:
+					D(i, j) = voxmt::inverseMultiquadratic(voxmt::distance(listepoints.at(i), listepoints.at(j)), eps);
+					break;
 				case RBFType::GAUSSIAN:
-					D(i, j) = voxmt::gaussian(voxmt::distance(listepoints[i], listepoints[j]), eps);
-
+					D(i, j) = voxmt::gaussian(voxmt::distance(listepoints.at(i), listepoints.at(j)), eps);
+					break;
+				default:break;
 				}
-
-
 			}
-
-
 		}
 
 		Eigen::VectorXd W = D.colPivHouseholderQr().solve(weight);
 		return W;
 	}
-	std::vector<glm::ivec3> interpolation(std::vector<glm::ivec3>& values, std::vector<glm::ivec3>& listepoints, RBFType RBF, const float eps, const Eigen::VectorXd W) {
 
-		std::vector<glm::ivec3> FunctionValues(values.size());
+	std::vector<glm::ivec3> interpolation(const std::vector<glm::ivec3>& values, const std::vector<glm::ivec3>& listepoints, RBFType RBF, const float eps, const Eigen::VectorXd& W) {
+		std::vector<glm::ivec3> functionValues;
+		functionValues.resize(values.size());
 		double sum = 0;
-		int phi;
+		int phi = 0;
+
 		for (int l = 0; l < values.size(); l++) {
 			sum = 0;
-			FunctionValues[l] = values[l];
+			functionValues.at(l) = values.at(l);
 
-			
-			for (int k = 0;k < W.size();k++) {
+			for (int k = 0; k < W.size(); k++) {
 				switch (RBF) {
 				case RBFType::LINEAR:
-					phi = voxmt::distance(values[l], listepoints[k]);
-
+					phi = voxmt::distance(values.at(l), listepoints.at(k));
+					break;
 				case RBFType::MULTIQUADRATIC:
-					phi = voxmt::multiquadratic(voxmt::distance(values[l], listepoints[k]), eps);
-
+					phi = voxmt::multiquadratic(voxmt::distance(values.at(l), listepoints.at(k)), eps);
+					break;
 				case RBFType::INVERSEQUADRATIC:
-					phi = voxmt::inverseQuadratic(voxmt::distance(values[l], listepoints[k]), eps);
-
-				case  RBFType::INVERSEMULTIQUAD:
-					phi = voxmt::inverseMultiquadratic(voxmt::distance(values[l], listepoints[k]), eps);
-
+					phi = voxmt::inverseQuadratic(voxmt::distance(values.at(l), listepoints.at(k)), eps);
+					break;
+				case RBFType::INVERSEMULTIQUAD:
+					phi = voxmt::inverseMultiquadratic(voxmt::distance(values.at(l), listepoints.at(k)), eps);
+					break;
 				case RBFType::GAUSSIAN:
-					phi = voxmt::gaussian(voxmt::distance(values[l], listepoints[k]), eps);
+					phi = voxmt::gaussian(voxmt::distance(values.at(l), listepoints.at(k)), eps);
+					break;
+				default: break;
 				}
 				sum += W[k] * phi;
 			}
 
-
-			FunctionValues[l][3] = sum;
+			functionValues.at(l).z = sum;
 		}
-		return FunctionValues;
-
+		return functionValues;
 	}
-    */
 }

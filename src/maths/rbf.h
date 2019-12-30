@@ -2,8 +2,8 @@
 
 #include <Eigen/Dense>
 #include <glm/glm.hpp>
-#include <algorithm>
-#include <math.h>
+#include <vector>
+
 namespace voxmt {
 
     enum class RBFType { LINEAR = 0, MULTIQUADRATIC, INVERSEQUADRATIC, INVERSEMULTIQUAD, GAUSSIAN };
@@ -14,8 +14,8 @@ namespace voxmt {
     unsigned int inverseMultiquadratic(int x, float eps);
     unsigned int gaussian(int x, float eps);
 
-    Eigen::VectorXd VectorWi(const Eigen::VectorXd& weight, std::vector<glm::ivec3>& listepoints, RBFType RBF, const float eps);
-    std::vector<glm::ivec3> interpolation(std::vector<glm::ivec3>& values, std::vector<glm::ivec3>& listepoints, RBFType RBF, const float eps, const Eigen::VectorXd W);
+    Eigen::VectorXd vectorWi(const Eigen::VectorXd& weight, const std::vector<glm::ivec3>& listepoints, RBFType RBF, const float eps);
+    std::vector<glm::ivec3> interpolation(const std::vector<glm::ivec3>& values, const std::vector<glm::ivec3>& listepoints, RBFType RBF, const float eps, const Eigen::VectorXd& W);
 
 }
   
