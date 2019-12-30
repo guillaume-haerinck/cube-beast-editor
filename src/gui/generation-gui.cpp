@@ -18,24 +18,23 @@ void GenerationGui::update() {
     ImGui::Begin(ICON_FA_SEEDLING "  Generation", 0);
         if (ImGui::Button("Generate")) {
              std::vector<glm::ivec3> controlPointsXYZ = {
-                glm::ivec3(1, 1, 3),
-                glm::ivec3(0, 0, 8),
-                glm::ivec3(2, 2, 2)
+                glm::ivec3(5, 5, 5),
+                glm::ivec3(0, 0, 0)
             };
             Eigen::VectorXd controlPointWeights(controlPointsXYZ.size());
-            controlPointWeights << 1.0f, 1.0f, 1.0f;
+            controlPointWeights << 1.0f, 10.0f;
 
-            std::vector<glm::ivec3> coordWhereToFindZ;
-            std::vector<met::entity> entitiesToChange;
+            std::vector<glm::ivec3> coordWithYtoFind;
+            std::vector<met::entity> entityToChange;
             m_ctx.registry.view<comp::Transform>().each([&](met::entity id, comp::Transform& transform){
-                coordWhereToFindZ.push_back(transform.position);
-                entitiesToChange.push_back(id);
+                coordWithYtoFind.push_back(transform.position);
+                entityToChange.push_back(id);
             });
-            voxmt::rbfInterpolate(coordWhereToFindZ, controlPointsXYZ, controlPointWeights, voxmt::RBFType::LINEAR, 0.5f);
+            voxmt::rbfInterpolate(coordWithYtoFind, controlPointsXYZ, controlPointWeights, voxmt::RBFType::LINEAR, 0.5f, voxmt::RBFTransformAxis::Y);
 
-            for (size_t i = 0; i < entitiesToChange.size(); i++) {
-                comp::Transform& trans = m_ctx.registry.get<comp::Transform>(entitiesToChange.at(i));
-                trans.position = coordWhereToFindZ.at(i);
+            for (size_t i = 0; i < coordWithYtoFind.size(); i++) {
+                comp::Transform& trans =  m_ctx.registry.get<comp::Transform>(entityToChange.at(i));
+                trans.position = coordWithYtoFind.at(i);
             }
             
         }

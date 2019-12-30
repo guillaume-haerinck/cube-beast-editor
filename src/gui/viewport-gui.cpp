@@ -18,9 +18,18 @@
 ViewportGui::ViewportGui(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx), m_scomps(scomps) {
     comp::Material material;
 
-    met::entity entity = m_ctx.registry.create();
-    m_ctx.registry.assign<comp::Material>(entity, material);
-    m_ctx.registry.assign<comp::Transform>(entity, glm::ivec3(1, 0, 0));
+    for (size_t x = 0; x < 10; x++)
+    {
+        for (size_t z = 0; z < 10; z++)
+        {
+            met::entity entity = m_ctx.registry.create();
+            m_ctx.registry.assign<comp::Material>(entity, material);
+            m_ctx.registry.assign<comp::Transform>(entity, glm::ivec3(x, 0, z));
+        }
+        
+    }
+    
+    
 }
 
 ViewportGui::~ViewportGui() {}

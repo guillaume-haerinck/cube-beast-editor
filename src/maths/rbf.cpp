@@ -67,37 +67,44 @@ namespace voxmt {
 	////////////////////////////// PUBLIC METHODS ///////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
 
-	void rbfInterpolate(std::vector<glm::ivec3>& coordXYwheretoGetZ, const std::vector<glm::ivec3>& controlPointCoords, const Eigen::VectorXd& controlPointWeights, const RBFType type, const float epsilon) {
+	void rbfInterpolate(std::vector<glm::ivec3>& coordWithOneAxisToFind, const std::vector<glm::ivec3>& controlPointCoords, const Eigen::VectorXd& controlPointWeights, const RBFType type, const float epsilon, const RBFTransformAxis axis) {
 		assert(controlPointCoords.size() == controlPointWeights.size() && "Control points coordinates and weights do not have the same number of elements !");
 		const Eigen::VectorXd& W = vectorWi(controlPointCoords, controlPointWeights, type, epsilon);
 
-		for (int l = 0; l < coordXYwheretoGetZ.size(); l++) {
+		for (int l = 0; l < coordWithOneAxisToFind.size(); l++) {
 			double sum = 0;
 			float phi = 0;
 
 			for (int k = 0; k < W.size(); k++) {
 				switch (type) {
 				case RBFType::LINEAR:
-					phi = distance(coordXYwheretoGetZ.at(l), controlPointCoords.at(k));
+					phi = distance(coordWithOneAxisToFind.at(l), controlPointCoords.at(k));
 					break;
 				case RBFType::MULTIQUADRATIC:
-					phi = multiquadratic(distance(coordXYwheretoGetZ.at(l), controlPointCoords.at(k)), epsilon);
+					phi = multiquadratic(distance(coordWithOneAxisToFind.at(l), controlPointCoords.at(k)), epsilon);
 					break;
 				case RBFType::INVERSEQUADRATIC:
-					phi = inverseQuadratic(distance(coordXYwheretoGetZ.at(l), controlPointCoords.at(k)), epsilon);
+					phi = inverseQuadratic(distance(coordWithOneAxisToFind.at(l), controlPointCoords.at(k)), epsilon);
 					break;
 				case RBFType::INVERSEMULTIQUAD:
-					phi = inverseMultiquadratic(distance(coordXYwheretoGetZ.at(l), controlPointCoords.at(k)), epsilon);
+					phi = inverseMultiquadratic(distance(coordWithOneAxisToFind.at(l), controlPointCoords.at(k)), epsilon);
 					break;
 				case RBFType::GAUSSIAN:
-					phi = gaussian(distance(coordXYwheretoGetZ.at(l), controlPointCoords.at(k)), epsilon);
+					phi = gaussian(distance(coordWithOneAxisToFind.at(l), controlPointCoords.at(k)), epsilon);
 					break;
 				default: break;
 				}
 	
 				sum += W[k] * phi;
 			}
-			coordXYwheretoGetZ.at(l).z = static_cast<int>(sum);
+
+			switch (axis) {
+				case RBFTransformAxis::X: coordWithOneAxisToFind.at(l).x = static_cast<int>(sum); break;
+				case RBFTransformAxis::Y: coordWithOneAxisToFind.at(l).y = static_cast<int>(sum); break;
+				case RBFTransformAxis::Z: coordWithOneAxisToFind.at(l).z = static_cast<int>(sum); break;
+				default: break;
+			}
+			
 		}
 	}
 }

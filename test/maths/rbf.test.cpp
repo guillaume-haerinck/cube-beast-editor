@@ -24,7 +24,7 @@ SCENARIO("Radial basis functions should allow to create custom 3D functions whic
             };
             std::vector<glm::ivec3> backup = coordWhereToFindZ;
 
-            voxmt::rbfInterpolate(coordWhereToFindZ, controlPointsXYZ, controlPointWeights, voxmt::RBFType::LINEAR, eps);
+            voxmt::rbfInterpolate(coordWhereToFindZ, controlPointsXYZ, controlPointWeights, voxmt::RBFType::LINEAR, eps, voxmt::RBFTransformAxis::Z);
 
             THEN("It should keep the same x and y values") {
                 for (size_t i = 0; i < coordWhereToFindZ.size(); i++) {

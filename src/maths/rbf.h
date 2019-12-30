@@ -7,17 +7,19 @@
 namespace voxmt {
 
     enum class RBFType { LINEAR = 0, MULTIQUADRATIC, INVERSEQUADRATIC, INVERSEMULTIQUAD, GAUSSIAN };
+    enum class RBFTransformAxis { X = 0, Y, Z };
 
     /**
      * @brief 
      * 
-     * @param coordXYwheretoGetZ - 
+     * @param coordWithOneAxisToFind - 
      * @param controlPointCoords - 
-     * @param controlPointWeights - (Optionnal)
+     * @param controlPointWeights -
      * @param type - (Optionnal)
      * @param epsilon - (Optionnal) Must be between 0.0f and 1.0f
+     * @param axis - 
      */
-    void rbfInterpolate(std::vector<glm::ivec3>& coordXYwheretoGetZ, const std::vector<glm::ivec3>& controlPointCoords, const Eigen::VectorXd& controlPointWeights, const RBFType type, const float epsilon);
+    void rbfInterpolate(std::vector<glm::ivec3>& coordWithOneAxisToFind, const std::vector<glm::ivec3>& controlPointCoords, const Eigen::VectorXd& controlPointWeights, const RBFType type = RBFType::LINEAR, const float epsilon = 0.5f, const RBFTransformAxis axis = RBFTransformAxis::Y);
 
 }
   
