@@ -13,7 +13,7 @@ void RenderTargets::init(RenderCommand& rcommand, const Viewport& viewport) {
     m_rts.at(static_cast<unsigned int>(RenderTargetIndex::RTT_GEOMETRY)) = rcommand.createRenderTarget(outputDescription, viewport.size());
 
     outputDescription = {
-        { RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetDataType::FLOAT, RenderTargetChannels::R, "ShadowMap" }
+        { RenderTargetUsage::Depth, RenderTargetType::Texture, RenderTargetDataType::UINT, RenderTargetChannels::R, "ShadowMap" }
     };
     m_rts.at(static_cast<unsigned int>(RenderTargetIndex::RTT_SHADOW_MAP)) = rcommand.createRenderTarget(outputDescription, viewport.size());
 

@@ -37,17 +37,24 @@ layout (std140) uniform perLightChange {
 
 uniform sampler2D g_albedo;
 uniform sampler2D g_normal;
-// uniform sampler2D g_lightSpacePosition;
-// uniform sampler2D shadowMap;
+uniform sampler2D g_lightSpacePosition;
+uniform sampler2D shadowMap;
 
 in vec2 v_texCoord;
 
 void main() {
 	vec4 albedo = texture(g_albedo, v_texCoord);
     vec3 normal = texture(g_normal, v_texCoord).rgb;
+	vec3 shadowCoord = texture(g_lightSpacePosition, v_texCoord).rgb;
 
 	if (albedo.a < 0.1)
     	discard;
+
+	// Shadows
+	float visibility = 1.0;
+	if (texture(shadowMap, shadowCoord.xy).z < shadowCoord.z) {
+		visibility = 0.5;
+	}
 
 	// Ambient
 	float ambientStrength = 0.4f;
@@ -60,7 +67,7 @@ void main() {
         diffuse = dirLights[0].color * diffuseFactor;
 	}
 
-	color = albedo * vec4(ambient + diffuse, 1.0f) * dirLights[0].intensity;
+	color = albedo * vec4(ambient + diffuse, 1.0f) * dirLights[0].intensity * visibility;
 }
 
 )"

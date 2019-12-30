@@ -619,6 +619,7 @@ GLenum RenderCommand::renderTargetChannelsToOpenGLBaseFormat(RenderTargetChannel
 GLenum RenderCommand::renderTargetDataTypeToOpenGLBaseType(RenderTargetDataType dataType) const {
 	switch (dataType) {
 		case RenderTargetDataType::UCHAR : return GL_UNSIGNED_BYTE;
+		case RenderTargetDataType::UINT : return GL_UNSIGNED_INT;
 		case RenderTargetDataType::FLOAT : return GL_FLOAT;
 		default: break;
 	}

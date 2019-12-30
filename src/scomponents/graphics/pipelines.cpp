@@ -85,7 +85,7 @@ void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs, const 
     replaceInString(FSLighting, "MAX_COUNT_POINT_LIGHTS", std::to_string(lights.pointsCapacity()).c_str());
     replaceInString(FSLighting, "MAX_COUNT_SPOT_LIGHTS", std::to_string(lights.spotsCapacity()).c_str());
     // TODO add shadow map and lightSpacePosition samplers 
-    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_LIGHTING)) = rcommand.createPipeline(VSLighting, FSLighting.c_str(), usedCbs, {"g_albedo", "g_normal"});
+    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_LIGHTING)) = rcommand.createPipeline(VSLighting, FSLighting.c_str(), usedCbs, {"g_albedo", "g_normal", "g_lightSpacePosition", "shadowMap"});
 }
 
 void Pipelines::destroy(RenderCommand& rcommand) {
