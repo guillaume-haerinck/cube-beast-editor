@@ -18,4 +18,4 @@ jobs:
     - name: make
       run: make
     - name: launch
-      run: ./build/bin/debug/cube-beast-editor-tests
+      run: ./bin/cube-beast-editor-tests
