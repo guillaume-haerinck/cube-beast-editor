@@ -20,6 +20,18 @@ void Pipelines::init(RenderCommand& rcommand, const ConstantBuffers& cbs, const 
     replaceInString(FSGeo, "MAX_COUNT_MATERIALS", std::to_string(mats.capacity()).c_str());
     m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_GEOMETRY)) = rcommand.createPipeline(VSGeo, FSGeo.c_str(), usedCbs);
 
+    // Shadow map
+    usedCbs = {
+        cbs.at(ConstantBufferIndex::PER_SHADOW_PASS)
+    };
+    const char* VSShadowMap = 
+        #include "graphics/shaders/shadow-map.vert"
+    ;
+    const char* FSShadowMap =
+        #include "graphics/shaders/shadow-map.frag"
+    ;
+    m_pips.at(static_cast<unsigned int>(PipelineIndex::PIP_SHADOW_MAP)) = rcommand.createPipeline(VSShadowMap, FSShadowMap, usedCbs);
+
     // Grid
     usedCbs = {
         cbs.at(ConstantBufferIndex::PER_FRAME)

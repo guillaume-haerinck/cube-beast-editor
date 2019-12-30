@@ -53,6 +53,21 @@ void RenderSystem::update() {
         // TODO other lights with buffer update offset
 
         m_scomps.lights.m_hasToBeUpdated = false;
+
+        // Update per Shadow Pass constant buffer
+        {
+            cb::perLightChange::perShadowPass cbData;
+            const ConstantBuffer& perShadowPassCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_SHADOW_PASS);
+
+            // Set data
+            // TODO FIXME lookat first arg must take light inv dir
+            glm::mat4 lightProj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 7.5f);
+            glm::mat4 lightView = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+            cbData.matViewProj =  lightProj * lightView;
+
+            // Send data
+            m_ctx.rcommand.updateConstantBuffer(perShadowPassCB, &cbData, sizeof(cb::perLightChange::perShadowPass));
+        }
 	}
 
     auto view = m_ctx.registry.view<comp::Material, comp::Transform>();
@@ -99,6 +114,14 @@ void RenderSystem::update() {
         m_ctx.rcommand.bindRenderTarget(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY));
         m_ctx.rcommand.clear();
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(PipelineIndex::PIP_GEOMETRY));
+        m_ctx.rcommand.drawIndexedInstances(m_scomps.meshes.cube().ib.count, m_scomps.meshes.cube().ib.type, nbInstances);
+    }
+
+    // Shadow map pass
+    {
+        m_ctx.rcommand.bindRenderTarget(m_scomps.renderTargets.at(RenderTargetIndex::RTT_SHADOW_MAP));
+        m_ctx.rcommand.clear();
+        m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(PipelineIndex::PIP_SHADOW_MAP));
         m_ctx.rcommand.drawIndexedInstances(m_scomps.meshes.cube().ib.count, m_scomps.meshes.cube().ib.type, nbInstances);
     }
     

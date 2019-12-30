@@ -38,9 +38,12 @@ namespace cb {
 
 	/**
 	 * @brief Constant buffer updated when a light is changed
-	 * @note Each components is sent as an array
 	 */
 	namespace perLightChange {
+		struct perShadowPass {
+			glm::mat4x4 matViewProj;
+		};
+
 		struct DirectionalLight {
 			glm::vec3 direction;
 			float intensity;

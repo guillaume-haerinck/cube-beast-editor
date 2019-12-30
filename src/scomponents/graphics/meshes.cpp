@@ -43,13 +43,13 @@ void Meshes::init(RenderCommand& rcommand) {
 		// Vertex & Index buffers
 		PipelineInputDescription inputDescription = {
 			{ ShaderDataType::Float3, "Position" },
-			{ ShaderDataType::Float3, "Normal" },
 			{ ShaderDataType::Float3, "Translation", BufferElementUsage::PerInstance },
+			{ ShaderDataType::Float3, "Normal" },
 			{ ShaderDataType::Float3, "EntityId", BufferElementUsage::PerInstance },
 			{ ShaderDataType::UInt, "MaterialIndex", BufferElementUsage::PerInstance }
 		};
 		AttributeBuffer attributeBuffers[] = {
-			positionBuffer, normalBuffer, translationInstanceBuffer, entityInstanceBuffer, materialInstanceBuffer
+			positionBuffer, translationInstanceBuffer, normalBuffer, entityInstanceBuffer, materialInstanceBuffer
 		};
 		VertexBuffer vb = rcommand.createVertexBuffer(inputDescription, attributeBuffers);
 		IndexBuffer ib = rcommand.createIndexBuffer(cubeData::indices, static_cast<unsigned int>(std::size(cubeData::indices)), IndexBuffer::dataType::UNSIGNED_BYTE);

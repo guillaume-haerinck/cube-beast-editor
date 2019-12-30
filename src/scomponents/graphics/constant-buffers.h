@@ -17,6 +17,7 @@ enum class ConstantBufferIndex {
 	PER_FRAME,
 	PER_MATERIAL_CHANGE,
 	PER_LIGHT_CHANGE,
+	PER_SHADOW_PASS,
 	_CB_MAX
 };
 

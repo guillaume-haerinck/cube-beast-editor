@@ -10,6 +10,7 @@ class RenderCommand; // Forward declaration to prevent circular inclusion
 
 enum class RenderTargetIndex {
 	RTT_GEOMETRY = 0,
+	RTT_SHADOW_MAP,
 	RTT_FINAL,
 	_RTT_MAX
 };
