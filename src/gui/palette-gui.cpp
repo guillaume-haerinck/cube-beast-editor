@@ -20,14 +20,26 @@ void PaletteGui::update() {
             misc_flags 
         );
         
+        ImGuiStyle& style = ImGui::GetStyle();
         misc_flags = ImGuiColorEditFlags_NoAlpha;
-        unsigned int i = 0;
-        for (auto& material : m_scomps.materials) {
-            const ImVec4 color = ImVec4(material.albedo.r, material.albedo.g, material.albedo.b, 1.0f);
-            if (ImGui::ColorButton("Material" + i, color, misc_flags, ImVec2(40, 40))) {
+        float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
+        ImVec2 button_sz = ImVec2(40, 40);
+
+        for (unsigned int i = 0; i <  m_scomps.materials.size(); i++) {
+            const auto& albedo = m_scomps.materials.at(i).albedo;
+            const ImVec4 color = ImVec4(albedo.r, albedo.g, albedo.b, 1.0f);
+
+            ImGui::PushID(i);
+            if (ImGui::ColorButton("Material" + i, color, misc_flags, button_sz)) {
                 m_scomps.materials.m_selectedIndex = i;
             }
-            i++;
+            
+            float last_button_x2 = ImGui::GetItemRectMax().x;
+            float next_button_x2 = last_button_x2 + style.ItemSpacing.x + button_sz.x;
+            if (i + 1 < m_scomps.materials.size() && next_button_x2 < window_visible_x2)
+                ImGui::SameLine();
+
+            ImGui::PopID();
         }
 
         // ImGui::ColorEdit3("MyColor##1", glm::value_ptr(myval));
