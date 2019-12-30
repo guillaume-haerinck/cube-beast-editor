@@ -24,6 +24,7 @@ void PaletteGui::update() {
             if (ImGui::ColorButton("##previous", backup, ImGuiColorEditFlags_NoPicker, ImVec2(20, 20))) {
                 m_scomps.materials.m_materials.at(m_scomps.materials.selectedIndex()).albedo = m_backupColor;
                 m_backupColor = selected;
+                m_scomps.materials.m_hasToBeUpdated = true;
             }
         }
         ImGui::EndGroup();
@@ -36,6 +37,9 @@ void PaletteGui::update() {
             &m_scomps.materials.m_materials.at(m_scomps.materials.m_selectedIndex).albedo.r,
             ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview
         );
+        if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+            m_scomps.materials.m_hasToBeUpdated = true;
+        }
 
         ImGui::Spacing();
         ImGui::Separator();
@@ -43,8 +47,6 @@ void PaletteGui::update() {
         
         ImGuiStyle& style = ImGui::GetStyle();
         float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
-
-        // TODO button outline when selected
 
         for (unsigned int i = 0; i < m_scomps.materials.size(); i++) {
             const auto& albedo = m_scomps.materials.at(i).albedo;

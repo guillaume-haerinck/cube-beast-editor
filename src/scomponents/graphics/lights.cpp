@@ -9,6 +9,8 @@ void Lights::loadDefaults() {
     dirLight.intensity = 1;
     m_directionals.push_back(dirLight);
 
+    m_hasToBeUpdated = true;
+
     assert(m_directionals.size() <= m_directionalsMaxSize);
     assert(m_points.size() <= m_pointsMaxSize);
     assert(m_spots.size() <= m_spotsMaxSize);

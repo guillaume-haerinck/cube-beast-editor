@@ -23,6 +23,8 @@ public:
     const cb::perLightChange::PointLight* const pointsData() { return m_points.data(); }
     const cb::perLightChange::SpotLight* const spotsData() { return m_spots.data(); }
 
+    bool hasToBeUpdated() const { return m_hasToBeUpdated; }
+
 private:
     void loadDefaults();
 
@@ -34,4 +36,9 @@ private:
     unsigned int m_directionalsMaxSize = 1;
     unsigned int m_pointsMaxSize = 0;
     unsigned int m_spotsMaxSize = 0;
+
+    bool m_hasToBeUpdated = true;
+
+private:
+    friend class RenderSystem;
 };

@@ -19,5 +19,7 @@ void Materials::loadDefaultPalette1() {
         { glm::vec3(0.0f, 0.0f, 0.0f), 0.0f }
     };
 
+    m_hasToBeUpdated = true;
+
     assert(m_materials.size() < m_maxSize && "Palette1 exceed max size");
 };

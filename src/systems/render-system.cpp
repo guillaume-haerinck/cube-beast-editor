@@ -38,18 +38,21 @@ void RenderSystem::update() {
 	}
 
     // Update per Material change constant buffer
-	{
+	if (m_scomps.materials.hasToBeUpdated()) {
         const ConstantBuffer& perMatChangeCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_MATERIAL_CHANGE);
 		m_ctx.rcommand.updateConstantBuffer(perMatChangeCB, m_scomps.materials.data(), sizeof(cb::perMaterialChange) * m_scomps.materials.size());
-	}
+        m_scomps.materials.m_hasToBeUpdated = false;
+    }
 
     // Update per Light change constant buffer
-	{
+	if (m_scomps.lights.hasToBeUpdated()) {
         // Directionnal lights
         const ConstantBuffer& perLightChangeCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_LIGHT_CHANGE);
 		m_ctx.rcommand.updateConstantBuffer(perLightChangeCB, m_scomps.lights.directionalsData(), m_scomps.lights.directionalsByteWidth());
 
-        // TODO other lights with offset
+        // TODO other lights with buffer update offset
+
+        m_scomps.lights.m_hasToBeUpdated = false;
 	}
 
     auto view = m_ctx.registry.view<comp::Material, comp::Transform>();
