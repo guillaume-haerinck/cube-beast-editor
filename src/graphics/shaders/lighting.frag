@@ -56,9 +56,10 @@ void main() {
     float closestDepth = texture(shadowMap, projCoords.xy).r; 
     float currentDepth = projCoords.z;
     float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
-
+	shadow = 1.0 - shadow;
+	
 	// Ambient
-	float ambientStrength = 0.4f;
+	float ambientStrength = 0.15 * albedo;
     vec3 ambient = dirLights[0].color * ambientStrength;
 
     // Diffuse
@@ -68,7 +69,8 @@ void main() {
         diffuse = dirLights[0].color * diffuseFactor;
 	}
 
-	color = albedo * vec4(ambient + diffuse, 1.0f) * dirLights[0].intensity + (1.0 - shadow);
+	vec3 lighting = (ambient + shadow) * diffuse * albedo.rgb;
+	color = vec4(lighting, 1.0);
 }
 
 )"
