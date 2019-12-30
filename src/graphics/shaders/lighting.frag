@@ -70,6 +70,11 @@ void main() {
 	}
 
 	vec3 lighting = (ambient + shadow) * diffuse * albedo.rgb;
+	
+	// Gamma correction
+    float gamma = 2.2;
+    lighting.rgb = pow(lighting.rgb, vec3(1.0 / gamma));
+	
 	color = vec4(lighting, 1.0);
 }
 
