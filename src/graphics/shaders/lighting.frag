@@ -45,16 +45,17 @@ in vec2 v_texCoord;
 void main() {
 	vec4 albedo = texture(g_albedo, v_texCoord);
     vec3 normal = texture(g_normal, v_texCoord).rgb;
-	vec3 shadowCoord = texture(g_lightSpacePosition, v_texCoord).rgb;
+	vec4 lightSpacePos = texture(g_lightSpacePosition, v_texCoord);
 
 	if (albedo.a < 0.1)
     	discard;
 
 	// Shadows
-	float visibility = 1.0;
-	if (texture(shadowMap, shadowCoord.xy).z < shadowCoord.z) {
-		visibility = 0.5;
-	}
+	vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
+    projCoords = projCoords * 0.5 + 0.5;
+    float closestDepth = texture(shadowMap, projCoords.xy).r; 
+    float currentDepth = projCoords.z;
+    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
 
 	// Ambient
 	float ambientStrength = 0.4f;
@@ -67,7 +68,7 @@ void main() {
         diffuse = dirLights[0].color * diffuseFactor;
 	}
 
-	color = albedo * vec4(ambient + diffuse, 1.0f) * dirLights[0].intensity * visibility;
+	color = albedo * vec4(ambient + diffuse, 1.0f) * dirLights[0].intensity + (1.0 - shadow);
 }
 
 )"
