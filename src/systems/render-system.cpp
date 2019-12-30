@@ -60,10 +60,10 @@ void RenderSystem::update() {
             const ConstantBuffer& perShadowPassCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_SHADOW_PASS);
 
             // Set data
-            // TODO FIXME lookat first arg must take light inv dir
-            glm::mat4 lightProj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 7.5f);
-            glm::mat4 lightView = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-            cbData.matViewProj =  lightProj * lightView;
+            const glm::vec3 lightDir = m_scomps.lights.directionals(0).direction;
+            glm::mat4 lightProj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -20.0f, 20.0f);
+            glm::mat4 lightView = glm::lookAt(-lightDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+            cbData.matViewProj_lightSpace = lightProj * lightView;
 
             // Send data
             m_ctx.rcommand.updateConstantBuffer(perShadowPassCB, &cbData, sizeof(cb::perLightChange::perShadowPass));

@@ -37,6 +37,8 @@ layout (std140) uniform perLightChange {
 
 uniform sampler2D g_albedo;
 uniform sampler2D g_normal;
+// uniform sampler2D g_lightSpacePosition;
+// uniform sampler2D shadowMap;
 
 in vec2 v_texCoord;
 

@@ -11,16 +11,20 @@ layout (std140) uniform perFrame {
 	vec3 cameraPos;
 };
 
+layout (std140) uniform perShadowPass {
+    mat4 matViewProj_lightSpace;
+};
+
 out vec3 v_id;
 out vec3 v_normal;
-out vec3 v_worldPosition;
+out vec4 v_lightSpacePosition;
 flat out uint v_materialId;
 
 void main() {
 	v_id = entityId;
 	v_normal = normal;
-	v_worldPosition = position + translation;
 	v_materialId = materialId;
+	v_lightSpacePosition = matViewProj_lightSpace * vec4(position + translation, 1.0);
 	gl_Position = matViewProj * vec4(position + translation, 1.0);
 }
 

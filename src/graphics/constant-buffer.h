@@ -41,7 +41,7 @@ namespace cb {
 	 */
 	namespace perLightChange {
 		struct perShadowPass {
-			glm::mat4x4 matViewProj;
+			glm::mat4x4 matViewProj_lightSpace;
 		};
 
 		struct DirectionalLight {
