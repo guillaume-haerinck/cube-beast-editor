@@ -12,8 +12,8 @@ SCENARIO("Radial basis functions should allow to create custom 3D functions whic
             glm::ivec3(0, 0, 8),
             glm::ivec3(2, 2, 2)
         };
-        Eigen::VectorXd weights(controlPointsXYZ.size());
-        weights << 1.0f, 1.0f, 1.0f;
+        Eigen::VectorXd controlPointWeights(controlPointsXYZ.size());
+        controlPointWeights << 1.0f, 1.0f, 1.0f;
         const float eps = 1.0f;
 
         WHEN("We ask for z coordinates for a list of points on the horizontal plane") {
@@ -22,13 +22,15 @@ SCENARIO("Radial basis functions should allow to create custom 3D functions whic
                 glm::ivec3(3, 2, 0),
                 glm::ivec3(5, 8, 0)
             };
+             std::vector<glm::ivec3> backup = coordWhereToFindZ;
 
-            Eigen::VectorXd wi = voxmt::vectorWi(weights, controlPointsXYZ, voxmt::RBFType::LINEAR, eps);
-            std::vector<glm::ivec3> result = voxmt::interpolation(coordWhereToFindZ, controlPointsXYZ, voxmt::RBFType::LINEAR, eps, wi);
+            voxmt::rbfInterpolate(coordWhereToFindZ, controlPointsXYZ, controlPointWeights, voxmt::RBFType::LINEAR, eps);
 
-            THEN("It should give us the right values") {
-                spdlog::info("map at 0,0,0 : {} {} {}", result.at(0).x, result.at(0).y, result.at(0).z);
-                REQUIRE(true);
+            THEN("It should keep the same x and y values") {
+                for (size_t i = 0; i < coordWhereToFindZ.size(); i++) {
+                    REQUIRE(coordWhereToFindZ.at(i).x == backup.at(i).x);
+                    REQUIRE(coordWhereToFindZ.at(i).y == backup.at(i).y);
+                }
             }
         }
     }

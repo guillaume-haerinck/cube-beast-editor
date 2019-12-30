@@ -8,15 +8,16 @@ namespace voxmt {
 
     enum class RBFType { LINEAR = 0, MULTIQUADRATIC, INVERSEQUADRATIC, INVERSEMULTIQUAD, GAUSSIAN };
 
-    float linear(float x);
-    float multiquadratic(float x, float eps);
-    float inverseQuadratic(float x, float eps);
-    float inverseMultiquadratic(float x, float eps);
-    float gaussian(float x, float eps);
-    float distance(const glm::ivec3& point1, const glm::ivec3& point2);
-
-    Eigen::VectorXd vectorWi(const Eigen::VectorXd& weight, const std::vector<glm::ivec3>& listepoints, RBFType RBF, const float eps);
-    std::vector<glm::ivec3> interpolation(const std::vector<glm::ivec3>& values, const std::vector<glm::ivec3>& listepoints, RBFType RBF, const float eps, const Eigen::VectorXd& W);
+    /**
+     * @brief 
+     * 
+     * @param coordXYwheretoGetZ - 
+     * @param controlPointCoords - 
+     * @param controlPointWeights - (Optionnal)
+     * @param type - (Optionnal)
+     * @param epsilon - (Optionnal) Must be between 0.0f and 1.0f
+     */
+    void rbfInterpolate(std::vector<glm::ivec3>& coordXYwheretoGetZ, const std::vector<glm::ivec3>& controlPointCoords, const Eigen::VectorXd& controlPointWeights, RBFType type, const float epsilon);
 
 }
   
