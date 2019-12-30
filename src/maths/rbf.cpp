@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <math.h>
+#include <cassert>
 
 namespace voxmt {
 
@@ -33,7 +34,7 @@ namespace voxmt {
 		return static_cast<float>(sqrt((point2.x - point1.x) * (point2.x - point1.x) + (point2.y - point1.y) * (point2.y - point1.y) + (point2.z - point1.z) * (point2.z - point1.z)));
 	}
 
-	Eigen::VectorXd vectorWi(const std::vector<glm::ivec3>& controlPointCoords, const Eigen::VectorXd& controlPointWeights, RBFType type, const float eps) {
+	Eigen::VectorXd vectorWi(const std::vector<glm::ivec3>& controlPointCoords, const Eigen::VectorXd& controlPointWeights, const RBFType type, const float eps) {
 		Eigen::MatrixXd D(controlPointCoords.size(), controlPointCoords.size());
 		
 		for (int i = 0; i < D.rows(); i++) {
@@ -66,7 +67,8 @@ namespace voxmt {
 	////////////////////////////// PUBLIC METHODS ///////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
 
-	void rbfInterpolate(std::vector<glm::ivec3>& coordXYwheretoGetZ, const std::vector<glm::ivec3>& controlPointCoords, const Eigen::VectorXd& controlPointWeights, RBFType type, const float epsilon) {
+	void rbfInterpolate(std::vector<glm::ivec3>& coordXYwheretoGetZ, const std::vector<glm::ivec3>& controlPointCoords, const Eigen::VectorXd& controlPointWeights, const RBFType type, const float epsilon) {
+		assert(controlPointCoords.size() == controlPointWeights.size() && "Control points coordinates and weights do not have the same number of elements !");
 		const Eigen::VectorXd& W = vectorWi(controlPointCoords, controlPointWeights, type, epsilon);
 
 		for (int l = 0; l < coordXYwheretoGetZ.size(); l++) {

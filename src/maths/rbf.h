@@ -17,7 +17,7 @@ namespace voxmt {
      * @param type - (Optionnal)
      * @param epsilon - (Optionnal) Must be between 0.0f and 1.0f
      */
-    void rbfInterpolate(std::vector<glm::ivec3>& coordXYwheretoGetZ, const std::vector<glm::ivec3>& controlPointCoords, const Eigen::VectorXd& controlPointWeights, RBFType type, const float epsilon);
+    void rbfInterpolate(std::vector<glm::ivec3>& coordXYwheretoGetZ, const std::vector<glm::ivec3>& controlPointCoords, const Eigen::VectorXd& controlPointWeights, const RBFType type, const float epsilon);
 
 }
   

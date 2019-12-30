@@ -22,7 +22,7 @@ SCENARIO("Radial basis functions should allow to create custom 3D functions whic
                 glm::ivec3(3, 2, 0),
                 glm::ivec3(5, 8, 0)
             };
-             std::vector<glm::ivec3> backup = coordWhereToFindZ;
+            std::vector<glm::ivec3> backup = coordWhereToFindZ;
 
             voxmt::rbfInterpolate(coordWhereToFindZ, controlPointsXYZ, controlPointWeights, voxmt::RBFType::LINEAR, eps);
 
