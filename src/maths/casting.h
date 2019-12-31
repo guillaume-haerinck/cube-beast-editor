@@ -10,4 +10,6 @@ namespace voxmt {
     int colorToInt(unsigned char r, unsigned char g, unsigned char b);
 
     glm::ivec3 roundUpFloat3(const glm::vec3& values);
+
+    unsigned int roundUpToNextPowOf2(unsigned int value);
 }
