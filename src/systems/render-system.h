@@ -15,6 +15,10 @@ public:
 	void update() override;
 
 private:
+	void updateCBperNiMesh_facePlane();
+	void updateCBperNiMesh(glm::vec3 translation, float scale);
+
+private:
 	Context& m_ctx;
 	SingletonComponents& m_scomps;
 	std::vector<glm::vec3> m_tempTranslations;

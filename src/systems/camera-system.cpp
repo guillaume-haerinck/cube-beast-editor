@@ -80,6 +80,5 @@ void CameraSystem::update() {
         glm::vec3 up = glm::vec3(0, m_scomps.camera.m_up, 0);
 
         m_scomps.camera.m_view = glm::lookAtLH(eye, target, up);
-		m_scomps.camera.m_hasToBeUpdated = false;
 	}
 }

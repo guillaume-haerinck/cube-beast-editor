@@ -33,5 +33,6 @@ private:
 
 private:
 	friend class CameraSystem;
+	friend class RenderSystem;
 	friend class ViewportGui; // temp
 };
