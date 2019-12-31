@@ -38,15 +38,12 @@ void CameraSystem::update() {
 		m_scomps.camera.m_hasToBeUpdated = true;
 	}
 
-	// Move target and camera position from their local coordinate system
-	// https://stackoverflow.com/questions/46978948/move-a-vertex-along-a-plane-given-the-plane-normal
-	// https://stackoverflow.com/questions/35285289/translate-3d-points-along-arbitrary-plane
-	// https://www.youtube.com/watch?v=-Fn4atv2NsQ
-	// https://www.khanacademy.org/math/linear-algebra/alternate-bases/change-of-basis/v/lin-alg-changing-coordinate-systems-to-help-find-a-transformation-matrix
+	// Move target from camera coordinate system
 	if (m_scomps.inputs.isEnabled(InputAction::CAM_PAN)) {
-	 	glm::vec4 col0 = glm::normalize(glm::column<glm::mat4x4>(m_scomps.camera.m_view, 0));
-		glm::vec4 col1 = glm::normalize(glm::column<glm::mat4x4>(m_scomps.camera.m_view, 1));
-		glm::vec4 movement = col0 * m_scomps.inputs.posDelta().x + col1 * m_scomps.inputs.posDelta().y;
+		glm::mat4x4 invView = glm::inverse(m_scomps.camera.m_view);
+	 	glm::vec4 col0 = glm::normalize(glm::column<glm::mat4x4>(invView, 0));
+		glm::vec4 col1 = glm::normalize(glm::column<glm::mat4x4>(invView, 1));
+		glm::vec4 movement = col0 * m_scomps.inputs.posDelta().x + col1 * -m_scomps.inputs.posDelta().y;
 
 		m_scomps.camera.m_target += glm::vec3(movement.x, movement.y, movement.z) * 0.02f;
 
