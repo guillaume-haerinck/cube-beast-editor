@@ -24,10 +24,7 @@ void RenderSystem::update() {
         // Set data
         cbData.cameraPos = m_scomps.camera.position();
         cbData.matViewProj =  m_scomps.camera.proj() * m_scomps.camera.view();
-        if (m_scomps.inputs.isEnabled(InputAction::CAM_PAN))
-            cbData.debug = 1.0f;
-        else
-            cbData.debug = 0.0f;
+        cbData.debug2 = 0;
 
         // Send data
 		m_ctx.rcommand.updateConstantBuffer(perFrameCB, &cbData, sizeof(cb::perFrame));
@@ -167,17 +164,18 @@ void RenderSystem::update() {
         // Camera target
         m_ctx.rcommand.bindVertexBuffer(m_scomps.meshes.cube().vb);
         m_ctx.rcommand.bindIndexBuffer(m_scomps.meshes.cube().ib);
-        updateCBperNiMesh(m_scomps.camera.m_target, 0.5f);
+        updateCBperNiMesh(m_scomps.camera.m_target, 0.5f, glm::vec3(1, 0, 0));
         m_ctx.rcommand.drawIndexed(m_scomps.meshes.cube().ib.count, m_scomps.meshes.cube().ib.type);
     }
 }
 
-void RenderSystem::updateCBperNiMesh(glm::vec3 translation, float scale) {
+void RenderSystem::updateCBperNiMesh(glm::vec3 translation, float scale, glm::vec3 albedo) {
     cb::perNiMesh cbData;
     const ConstantBuffer& perNiMeshCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_NI_MESH);
 
     cbData.matWorld = glm::translate(glm::mat4(1), translation);
     cbData.matWorld = glm::scale(cbData.matWorld, glm::vec3(scale));
+    cbData.albedo = albedo;
 
     m_ctx.rcommand.updateConstantBuffer(perNiMeshCB, &cbData, sizeof(cb::perNiMesh));
 }
@@ -238,6 +236,7 @@ void RenderSystem::updateCBperNiMesh_facePlane() {
     } else {
         cbData.matWorld = glm::scale(glm::mat4(1), glm::vec3(0));
     }
+    cbData.albedo = glm::vec3(1, 0.5, 0.5);
 
     m_ctx.rcommand.updateConstantBuffer(perNiMeshCB, &cbData, sizeof(cb::perNiMesh));
 }

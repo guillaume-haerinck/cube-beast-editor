@@ -16,7 +16,7 @@ public:
 
 private:
 	void updateCBperNiMesh_facePlane();
-	void updateCBperNiMesh(glm::vec3 translation, float scale);
+	void updateCBperNiMesh(glm::vec3 translation, float scale, glm::vec3 albedo);
 
 private:
 	Context& m_ctx;

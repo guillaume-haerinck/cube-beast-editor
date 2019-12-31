@@ -27,7 +27,7 @@ struct SpotLight {
 layout (std140) uniform perFrame {
     mat4 matViewProj;
 	vec3 cameraPos;
-	float debug;
+	float debug2;
 };
 
 layout (std140) uniform perLightChange {

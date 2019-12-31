@@ -6,6 +6,7 @@ layout(location = 1) in vec2 texCoord;
 layout (std140) uniform perFrame {
     mat4 matViewProj;
 	vec3 cameraPos;
+    float debug2;
 };
 
 out vec2 v_texCoord;

@@ -16,6 +16,8 @@ namespace cb {
 	 */
 	struct perNiMesh {
 		glm::mat4x4 matWorld;
+		glm::vec3 albedo;
+		float debug1;
 	};
 
 	/**
@@ -24,7 +26,7 @@ namespace cb {
 	struct perFrame {
 		glm::mat4x4 matViewProj;
 		glm::vec3 cameraPos;
-		float debug;
+		float debug2;
 	};
 
 	/**

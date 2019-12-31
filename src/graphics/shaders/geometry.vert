@@ -9,6 +9,7 @@ layout(location = 4) in uint materialId;
 layout (std140) uniform perFrame {
     mat4 matViewProj;
 	vec3 cameraPos;
+	float debug2;
 };
 
 layout (std140) uniform perShadowPass {
