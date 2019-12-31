@@ -24,7 +24,7 @@ namespace cb {
 	struct perFrame {
 		glm::mat4x4 matViewProj;
 		glm::vec3 cameraPos;
-		char padding[4];
+		float debug;
 	};
 
 	/**

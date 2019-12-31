@@ -21,7 +21,7 @@ public:
 		m_actionState.fill(false);
 	}
 
-	bool actionState(InputAction action) const {
+	bool isEnabled(InputAction action) const {
 		assert(action != InputAction::_ACTION_MAX && "Invalid InputAction !");
 		return m_actionState.at(static_cast<unsigned int>(action)); 
 	}

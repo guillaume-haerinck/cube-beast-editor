@@ -7,14 +7,6 @@
 #include "components/physics/transform.h"
 #include "maths/casting.h"
 
-// Temp
-#ifdef __EMSCRIPTEN__
-	#include <GLES3/gl3.h>
-#else
-	#include <glad/gles2.h>
-#endif
-#include "graphics/gl-exception.h"
-
 RenderSystem::RenderSystem(Context& context, SingletonComponents& scomps) : m_ctx(context), m_scomps(scomps) {
     m_tempTranslations.reserve(15);
     m_tempEntityIds.reserve(15);
@@ -32,6 +24,10 @@ void RenderSystem::update() {
         // Set data
         cbData.cameraPos = m_scomps.camera.position();
         cbData.matViewProj =  m_scomps.camera.proj() * m_scomps.camera.view();
+        if (m_scomps.inputs.isEnabled(InputAction::CAM_PAN))
+            cbData.debug = 1.0f;
+        else
+            cbData.debug = 0.0f;
 
         // Send data
 		m_ctx.rcommand.updateConstantBuffer(perFrameCB, &cbData, sizeof(cb::perFrame));

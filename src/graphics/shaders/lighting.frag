@@ -27,6 +27,7 @@ struct SpotLight {
 layout (std140) uniform perFrame {
     mat4 matViewProj;
 	vec3 cameraPos;
+	float debug;
 };
 
 layout (std140) uniform perLightChange {
@@ -73,8 +74,9 @@ void main() {
 	
 	// Gamma correction
     float gamma = 2.2;
-    lighting.rgb = pow(lighting.rgb, vec3(1.0 / gamma));
-	
+	if (debug > 0.5)
+    	lighting.rgb = pow(lighting.rgb, vec3(1.0 / gamma));
+
 	color = vec4(lighting, 1.0);
 }
 
