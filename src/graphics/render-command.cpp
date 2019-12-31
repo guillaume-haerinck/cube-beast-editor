@@ -236,6 +236,8 @@ RenderTarget RenderCommand::createRenderTarget(const PipelineOutputDescription& 
             GLCall(glBindTexture(GL_TEXTURE_2D, textureId));
             GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
             GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+			GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+ 			GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 			rt.textureIds.push_back(textureId);
             break;
 
@@ -293,11 +295,15 @@ RenderTarget RenderCommand::createRenderTarget(const PipelineOutputDescription& 
     }
 
 	// Attach color targets to framebuffer
-	std::vector<unsigned int> attachments(slot);
-	for (unsigned int i = 0; i < slot; i++) {
-		attachments.at(i) = GL_COLOR_ATTACHMENT0 +  i;
+	if (slot == 0) {
+		GLCall(glDrawBuffers(0, GL_NONE)); 
+	} else {
+		std::vector<unsigned int> attachments(slot);
+		for (unsigned int i = 0; i < slot; i++) {
+			attachments.at(i) = GL_COLOR_ATTACHMENT0 +  i;
+		}
+		GLCall(glDrawBuffers(slot, attachments.data()));
 	}
-	GLCall(glDrawBuffers(slot, attachments.data()));
 	
 	// Check for errors
 	auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -619,6 +625,7 @@ GLenum RenderCommand::renderTargetChannelsToOpenGLBaseFormat(RenderTargetChannel
 GLenum RenderCommand::renderTargetDataTypeToOpenGLBaseType(RenderTargetDataType dataType) const {
 	switch (dataType) {
 		case RenderTargetDataType::UCHAR : return GL_UNSIGNED_BYTE;
+		case RenderTargetDataType::USHORT : return GL_UNSIGNED_SHORT;
 		case RenderTargetDataType::UINT : return GL_UNSIGNED_INT;
 		case RenderTargetDataType::FLOAT : return GL_FLOAT;
 		default: break;

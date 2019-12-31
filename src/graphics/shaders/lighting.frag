@@ -60,8 +60,8 @@ void main() {
 	shadow = 1.0 - shadow;
 	
 	// Ambient
-	float ambientStrength = 0.15 * albedo;
-    vec3 ambient = dirLights[0].color * ambientStrength;
+	float ambientStrength = 0.15;
+    vec3 ambient = dirLights[0].color * albedo.rgb * ambientStrength;
 
     // Diffuse
 	vec3 diffuse = vec3(0.0, 0.0, 0.0);
