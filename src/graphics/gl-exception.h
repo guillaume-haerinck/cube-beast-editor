@@ -11,19 +11,25 @@
 /**
  * @brief Assertion and logger handling for opengl functions
  */
-#ifndef NDEBUG
+#if defined(NDEBUG)
+    #define GLCall(x) x
+#else
     #define break_assert(x) if (!x) { debug_break(); assert(false); }
     #define GLCall(x) glexp::clear(); x; break_assert(glexp::doesFunctionWorks(#x, __FILE__, __LINE__))
-#else
-    #define GLCall(x) x
 #endif
 
-#ifndef NDEBUG && __EMSCRIPTEN__
-    #define startDebugEvent(x) glPushDebugGroupKHR(GL_DEBUG_SOURCE_APPLICATION_KHR, 0, -1, x)
-    #define endDebugEvent() glPopDebugGroupKHR()
-#else
+/**
+ * @brief Send event to group openGl calls
+ */
+#if defined(NDEBUG)
     #define startDebugEvent(x)
     #define endDebugEvent()
+#elif defined(__EMSCRIPTEN__)
+    #define startDebugEvent(x)
+    #define endDebugEvent()
+#else
+    #define startDebugEvent(x) glPushDebugGroupKHR(GL_DEBUG_SOURCE_APPLICATION_KHR, 0, -1, x)
+    #define endDebugEvent() glPopDebugGroupKHR()
 #endif
 
 namespace glexp {
