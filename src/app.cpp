@@ -258,6 +258,10 @@ void App::initSDL() {
 		spdlog::critical("[Glad] Glad not init");
 		debug_break();
 	}
+
+	if (GLAD_GL_KHR_debug) {
+		spdlog::info("[Glad] KHR Debug extension supported !");
+	}
 #endif	
 }
 
