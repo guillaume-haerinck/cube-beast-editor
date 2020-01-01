@@ -21,10 +21,7 @@
 /**
  * @brief Send event to group openGl calls
  */
-#if defined(NDEBUG)
-    #define startDebugEvent(x)
-    #define endDebugEvent()
-#elif defined(__EMSCRIPTEN__)
+#if defined(NDEBUG) || defined(__EMSCRIPTEN__)
     #define startDebugEvent(x)
     #define endDebugEvent()
 #else
