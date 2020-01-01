@@ -53,6 +53,8 @@ namespace glexp {
      * @param message 
      * @param user_param 
      */
+#ifndef __EMSCRIPTEN__
     void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* userParam);
+#endif
 
 }

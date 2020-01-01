@@ -32,6 +32,7 @@ void RenderCommand::enableFaceCulling() const {
 }
 
 void RenderCommand::enableDebugOutput() const {
+#ifndef __EMSCRIPTEN__
 	if (GLAD_GL_KHR_debug) {
 		GLCall(glEnable(GL_DEBUG_OUTPUT_KHR));
 		GLCall(glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_KHR));
@@ -42,6 +43,7 @@ void RenderCommand::enableDebugOutput() const {
 	} else {
 		spdlog::warn("[Glad] KHR_debug extension not supported. OpenGL debug info disabled");
 	}
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////
