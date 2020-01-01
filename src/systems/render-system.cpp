@@ -3,6 +3,7 @@
 #include <debug_break/debug_break.h>
 
 #include "graphics/constant-buffer.h"
+#include "graphics/gl-exception.h"
 #include "components/graphics/material.h"
 #include "components/physics/transform.h"
 #include "maths/casting.h"
@@ -16,7 +17,7 @@ RenderSystem::~RenderSystem() {
 }
 
 void RenderSystem::update() {
-    // Update per frame constant buffer
+    startDebugEvent("Update perFrame constant buffer");
 	{
 		cb::perFrame cbData;
         const ConstantBuffer& perFrameCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_FRAME);
@@ -30,16 +31,21 @@ void RenderSystem::update() {
 		m_ctx.rcommand.updateConstantBuffer(perFrameCB, &cbData, sizeof(cb::perFrame));
         m_scomps.camera.m_hasToBeUpdated = false;
 	}
+    endDebugEvent();
 
     // Update per Material change constant buffer
 	if (m_scomps.materials.hasToBeUpdated()) {
-        const ConstantBuffer& perMatChangeCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_MATERIAL_CHANGE);
-		m_ctx.rcommand.updateConstantBuffer(perMatChangeCB, m_scomps.materials.data(), sizeof(cb::perMaterialChange) * m_scomps.materials.size());
-        m_scomps.materials.m_hasToBeUpdated = false;
+        startDebugEvent("Update perMatChange constant buffer");
+            const ConstantBuffer& perMatChangeCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_MATERIAL_CHANGE);
+            m_ctx.rcommand.updateConstantBuffer(perMatChangeCB, m_scomps.materials.data(), sizeof(cb::perMaterialChange) * m_scomps.materials.size());
+            m_scomps.materials.m_hasToBeUpdated = false;
+        endDebugEvent();
     }
 
     // Update per Light change constant buffer
 	if (m_scomps.lights.hasToBeUpdated()) {
+        startDebugEvent("Update perLightChange constant buffer");
+
         // Directionnal lights
         const ConstantBuffer& perLightChangeCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_LIGHT_CHANGE);
 		m_ctx.rcommand.updateConstantBuffer(perLightChangeCB, m_scomps.lights.directionalsData(), m_scomps.lights.directionalsByteWidth());
@@ -48,7 +54,7 @@ void RenderSystem::update() {
 
         m_scomps.lights.m_hasToBeUpdated = false;
 
-        // Update per Shadow Pass constant buffer
+        startDebugEvent("Update perLightChange -> perShadowPass constant buffer");
         {
             cb::perLightChange::perShadowPass cbData;
             const ConstantBuffer& perShadowPassCB = m_scomps.constantBuffers.at(ConstantBufferIndex::PER_SHADOW_PASS);
@@ -62,6 +68,9 @@ void RenderSystem::update() {
             // Send data
             m_ctx.rcommand.updateConstantBuffer(perShadowPassCB, &cbData, sizeof(cb::perLightChange::perShadowPass));
         }
+        endDebugEvent();
+
+        endDebugEvent();
 	}
 
     auto view = m_ctx.registry.view<comp::Material, comp::Transform>();
@@ -80,18 +89,24 @@ void RenderSystem::update() {
             for (auto& buffer : m_scomps.meshes.m_cube.vb.buffers) {
                 switch (buffer.type) {
                 case AttributeBufferType::PER_INSTANCE_TRANSLATION:
+                    startDebugEvent("Update perInstanceTranslation attribute buffer");
                     m_ctx.rcommand.updateAttributeBufferAnySize(buffer, m_tempTranslations.data(), sizeof(glm::vec3) * nbInstances);
                     m_tempTranslations.clear();
+                    endDebugEvent();
                     break;
 
                 case AttributeBufferType::PER_INSTANCE_ENTITY_ID:
+                    startDebugEvent("Update perInstanceEntityId attribute buffer");
                     m_ctx.rcommand.updateAttributeBufferAnySize(buffer, m_tempEntityIds.data(), sizeof(glm::vec3) * nbInstances);
                     m_tempEntityIds.clear();
+                    endDebugEvent();
                     break;
 
                 case AttributeBufferType::PER_INSTANCE_MATERIAL:
+                    startDebugEvent("Update perInstanceMaterial attribute buffer");
                     m_ctx.rcommand.updateAttributeBufferAnySize(buffer, m_tempMaterialIds.data(), sizeof(unsigned int) * nbInstances);
                     m_tempMaterialIds.clear();
+                    endDebugEvent();
                     break;
 
                 default: break;
@@ -100,7 +115,7 @@ void RenderSystem::update() {
         }
     });
 
-    // Geometry pass
+    startDebugEvent("Geometry pass");
     {
         m_ctx.rcommand.enableDepthTest();
         m_ctx.rcommand.bindVertexBuffer(m_scomps.meshes.cube().vb);
@@ -110,16 +125,18 @@ void RenderSystem::update() {
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(PipelineIndex::PIP_GEOMETRY));
         m_ctx.rcommand.drawIndexedInstances(m_scomps.meshes.cube().ib.count, m_scomps.meshes.cube().ib.type, nbInstances);
     }
+    endDebugEvent();
 
-    // Shadow map pass
+    startDebugEvent("Shadow map pass");
     {
         m_ctx.rcommand.bindRenderTarget(m_scomps.renderTargets.at(RenderTargetIndex::RTT_SHADOW_MAP));
         m_ctx.rcommand.clear();
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(PipelineIndex::PIP_SHADOW_MAP));
         m_ctx.rcommand.drawIndexedInstances(m_scomps.meshes.cube().ib.count, m_scomps.meshes.cube().ib.type, nbInstances);
     }
+    endDebugEvent();
     
-    // Lighting pass
+    startDebugEvent("Lighting pass");
     {
         m_ctx.rcommand.bindVertexBuffer(m_scomps.meshes.plane().vb);
         m_ctx.rcommand.bindIndexBuffer(m_scomps.meshes.plane().ib);
@@ -131,14 +148,16 @@ void RenderSystem::update() {
         m_ctx.rcommand.bindTextureIds(textureIds);
         m_ctx.rcommand.drawIndexed(m_scomps.meshes.plane().ib.count, m_scomps.meshes.plane().ib.type);
     }
+    endDebugEvent();
 
-    // Grid pass
+    startDebugEvent("Grid pass");
     {
         m_ctx.rcommand.bindVertexBuffer(m_scomps.meshes.invertCube().vb);
         m_ctx.rcommand.bindIndexBuffer(m_scomps.meshes.invertCube().ib);
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(PipelineIndex::PIP_GRID));
         m_ctx.rcommand.drawIndexed(m_scomps.meshes.invertCube().ib.count, m_scomps.meshes.invertCube().ib.type);
     }
+    endDebugEvent();
 
     // Debug draw pass
     /*
@@ -150,23 +169,19 @@ void RenderSystem::update() {
     }
     */
 
-    // Gui pass
+    startDebugEvent("GUI pass");
     {
         m_ctx.rcommand.disableDepthTest();
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(PipelineIndex::PIP_GUI));
 
-        // Selection plane
-        m_ctx.rcommand.bindVertexBuffer(m_scomps.meshes.plane().vb);
-        m_ctx.rcommand.bindIndexBuffer(m_scomps.meshes.plane().ib);
-        updateCBperNiMesh_facePlane();
-        m_ctx.rcommand.drawIndexed(m_scomps.meshes.plane().ib.count, m_scomps.meshes.plane().ib.type);
-
-        // Camera target
-        m_ctx.rcommand.bindVertexBuffer(m_scomps.meshes.cube().vb);
-        m_ctx.rcommand.bindIndexBuffer(m_scomps.meshes.cube().ib);
-        updateCBperNiMesh(m_scomps.camera.m_target, 0.5f, glm::vec3(1, 0, 0));
-        m_ctx.rcommand.drawIndexed(m_scomps.meshes.cube().ib.count, m_scomps.meshes.cube().ib.type);
+        startDebugEvent("Selection plane");
+            m_ctx.rcommand.bindVertexBuffer(m_scomps.meshes.plane().vb);
+            m_ctx.rcommand.bindIndexBuffer(m_scomps.meshes.plane().ib);
+            updateCBperNiMesh_facePlane();
+            m_ctx.rcommand.drawIndexed(m_scomps.meshes.plane().ib.count, m_scomps.meshes.plane().ib.type);
+        endDebugEvent();
     }
+    endDebugEvent();
 }
 
 void RenderSystem::updateCBperNiMesh(glm::vec3 translation, float scale, glm::vec3 albedo) {

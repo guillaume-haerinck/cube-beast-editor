@@ -18,6 +18,14 @@
     #define GLCall(x) x
 #endif
 
+#ifndef NDEBUG && __EMSCRIPTEN__
+    #define startDebugEvent(x) glPushDebugGroupKHR(GL_DEBUG_SOURCE_APPLICATION_KHR, 0, -1, x)
+    #define endDebugEvent() glPopDebugGroupKHR()
+#else
+    #define startDebugEvent(x)
+    #define endDebugEvent()
+#endif
+
 namespace glexp {
     /**
      * @brief Empty the OpenGl error buffer

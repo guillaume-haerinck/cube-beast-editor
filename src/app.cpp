@@ -7,6 +7,8 @@
 #include <imgui/imgui_impl_opengl3.h>
 #include <stb_image/stb_image.h>
 
+#include "graphics/gl-exception.h"
+
 #include "systems/render-system.h"
 #include "systems/camera-system.h"
 #include "systems/selection-system.h"
@@ -41,6 +43,7 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 	m_ctx.rcommand.enableFaceCulling();
 #ifndef NDEBUG
 	m_ctx.rcommand.enableDebugOutput();
+	spdlog::info("Debug mode enabled. Performances will be impacted.");
 #endif
 
 	// Order GUIs
@@ -110,16 +113,20 @@ void App::update() {
 	}
 	
 	// Update imgui
+	startDebugEvent("Update ImGUI");
     m_ctx.rcommand.unbindVertexBuffer();
 	m_ctx.rcommand.unbindRenderTargets();
 	for (IGui* gui : m_guis) {
 		gui->update();
 	}
 	ImGui::ShowDemoWindow(); // Temp
+	endDebugEvent();
 	
 	// Render imgui
+	startDebugEvent("Render ImGUI");
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	endDebugEvent();
 
 	// Reset input deltas
 	m_scomps.inputs.m_posDelta = glm::vec2(0.0f);

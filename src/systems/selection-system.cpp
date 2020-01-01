@@ -43,10 +43,12 @@ SelectionSystem::~SelectionSystem() {}
 void SelectionSystem::update() {
     m_ctx.rcommand.bindRenderTarget(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY));
 
-    // TODO abstract
+    // TODO abstract & use pixel buffer object to improve performance
+    startDebugEvent("Read Framebuffer for selection");
     unsigned char pixel[] = { 0, 0, 0, 0 };
     GLCall(glReadBuffer(GL_COLOR_ATTACHMENT3));
     GLCall(glReadPixels(m_scomps.inputs.mousePos().x, m_scomps.viewport.size().y - m_scomps.inputs.mousePos().y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel));
+    endDebugEvent();
 
     // FIXME intersection point take value "-+4.76837e-07" instead of 0.0 sometimes which causes flicker
     m_scomps.hovered.m_exist = false;
