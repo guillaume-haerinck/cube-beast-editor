@@ -40,4 +40,19 @@ namespace glexp {
      * @return char const* - Text corresponding to OpenGl error
      */
     char const* glErrorString(GLenum const err);
+
+    /**
+     * @brief Detailed log of open gl
+     * @note You must have the GL_KHR_debug extension, and use glEnable(GL_DEBUG_OUTPUT_KHR) and glDebugMessageCallback(debugCallback, nullptr) to get it working.
+     * 
+     * @param source 
+     * @param type 
+     * @param id 
+     * @param severity 
+     * @param length 
+     * @param message 
+     * @param user_param 
+     */
+    void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* userParam);
+
 }

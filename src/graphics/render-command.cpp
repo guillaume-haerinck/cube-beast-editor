@@ -31,6 +31,19 @@ void RenderCommand::enableFaceCulling() const {
 	GLCall(glEnable(GL_CULL_FACE));
 }
 
+void RenderCommand::enableDebugOutput() const {
+	if (GLAD_GL_KHR_debug) {
+		GLCall(glEnable(GL_DEBUG_OUTPUT_KHR));
+		GLCall(glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_KHR));
+		GLCall(glDebugMessageCallbackKHR(glexp::messageCallback, 0));
+
+		// Disable notifications. Harmless messages about what is bound
+		GLCall(glDebugMessageControlKHR(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION_KHR, 0, nullptr, GL_FALSE));
+	} else {
+		spdlog::warn("[Glad] KHR_debug extension not supported. OpenGL debug info disabled");
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// CREATION ////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////

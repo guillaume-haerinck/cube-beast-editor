@@ -37,6 +37,12 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 	initSDL();
     m_scomps.uiStyle.m_fontIconLarge = initImgui();
 
+	// Init renderer static states
+	m_ctx.rcommand.enableFaceCulling();
+#ifndef NDEBUG
+	m_ctx.rcommand.enableDebugOutput();
+#endif
+
 	// Order GUIs
     m_guis = {
 		new MainMenuBarGui(m_ctx, m_scomps),
@@ -55,9 +61,6 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 	m_scomps.meshes.init(m_ctx.rcommand);
 	m_scomps.renderTargets.init(m_ctx.rcommand, m_scomps.viewport);
 	m_scomps.textures.init(m_ctx.rcommand);
-
-	// Init renderer static states
-	m_ctx.rcommand.enableFaceCulling();
 
 	// Order system updates
 	m_systems = {
@@ -186,7 +189,9 @@ void App::initSDL() {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-
+#ifndef NDEBUG
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+#endif
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -258,11 +263,7 @@ void App::initSDL() {
 		spdlog::critical("[Glad] Glad not init");
 		debug_break();
 	}
-
-	if (GLAD_GL_KHR_debug) {
-		spdlog::info("[Glad] KHR Debug extension supported !");
-	}
-#endif	
+#endif
 }
 
 ImFont* App::initImgui() const {
