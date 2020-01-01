@@ -83,5 +83,5 @@ void GLAPIENTRY glexp::messageCallback(GLenum source, GLenum type, GLuint id, GL
 			spdlog::critical("[{} {}] {} : {}", sourceString, typeString, id, message);
 			break;
 	}
-#endif // __EMSCRIPTEN__
 }
+#endif // __EMSCRIPTEN__
