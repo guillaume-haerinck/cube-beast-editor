@@ -489,12 +489,9 @@ void RenderCommand::prepareReadPixelBuffer(PixelBuffer& buffer, const glm::ivec2
 	GLCall(glBindBuffer(GL_PIXEL_PACK_BUFFER, 0));
 }
 
-glm::ivec4 RenderCommand::readPixelBuffer(const PixelBuffer& buffer) const {
-	
-	unsigned char pixel[4] = {0, 0, 0, 0};
+unsigned char* RenderCommand::readPixelBuffer(const PixelBuffer& buffer) const {
+	static unsigned char pixel[4] = {0, 0, 0, 0};
 	unsigned char* ptr;
-
-	// FIXME bug on linux with a large number of cubes
 
 #ifndef __EMSCRIPTEN__
 	GLCall(glBindBuffer(GL_PIXEL_PACK_BUFFER, buffer.bufferId));
@@ -512,8 +509,7 @@ glm::ivec4 RenderCommand::readPixelBuffer(const PixelBuffer& buffer) const {
 	GLCall(glReadBuffer(GL_NONE));
 #endif
 
-	// FIXME RenderDoc crashes when "Verify buffer access" enabled
-	return glm::ivec4(pixel[0], pixel[1], pixel[2], pixel[3]);
+	return pixel;
 }
 
 ///////////////////////////////////////////////////////////////////////////

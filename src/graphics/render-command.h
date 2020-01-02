@@ -121,7 +121,7 @@ public:
 
 	void prepareReadPixelBuffer(PixelBuffer& buffer, const glm::ivec2& pixelPos) const;
 
-	glm::ivec4 readPixelBuffer(const PixelBuffer& buffer) const;
+	unsigned char* readPixelBuffer(const PixelBuffer& buffer) const;
 
     ///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////// DRAWING /////////////////////////////////

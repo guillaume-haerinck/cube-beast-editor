@@ -39,7 +39,7 @@ void SelectionSystem::update() {
     PROFILE_SCOPE("SelectionSystem update");
 
     m_ctx.rcommand.bindRenderTarget(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY));
-    glm::ivec4 pixel;
+    unsigned char* pixel;
     {
         OGL_SCOPE("Read framebuffer for selection");
         pixel = m_ctx.rcommand.readPixelBuffer(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY).pixelBuffer);
@@ -47,13 +47,13 @@ void SelectionSystem::update() {
 
     // FIXME intersection point take value "-+4.76837e-07" instead of 0.0 sometimes which causes flicker
     m_scomps.hovered.m_exist = false;
-    const met::entity hoveredCube = voxmt::colorToInt(pixel.r, pixel.b, pixel.b);
+    const met::entity hoveredCube = voxmt::colorToInt(pixel[0], pixel[1], pixel[2]);
 
     // Check existing cubes with framebuffer
     if (hoveredCube != met::null) {
         m_scomps.hovered.m_exist = true;
         m_scomps.hovered.m_isCube = true;
-        m_scomps.hovered.m_face = colorToFace(pixel.a);
+        m_scomps.hovered.m_face = colorToFace(pixel[3]);
         const comp::Transform trans = m_ctx.registry.get<comp::Transform>(hoveredCube);
         m_scomps.hovered.m_position = trans.position;
         m_scomps.hovered.m_id = hoveredCube;
