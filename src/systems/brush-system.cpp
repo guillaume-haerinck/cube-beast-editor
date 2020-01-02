@@ -1,5 +1,7 @@
 #include "brush-system.h"
 
+#include <profiling/instrumentor.h>
+
 #include "components/physics/transform.h"
 #include "components/graphics/material.h"
 
@@ -20,6 +22,8 @@ void BrushSystem::update() {
 }
 
 void BrushSystem::voxelBrush() {
+    PROFILE_SCOPE("BrushSystem update");
+
     comp::Transform trans;
     trans.position = m_scomps.hovered.position();
 

@@ -44,3 +44,6 @@ out
 .vs
 .vscode
 imgui.ini
+
+# Profiling
+bve-profiling.json

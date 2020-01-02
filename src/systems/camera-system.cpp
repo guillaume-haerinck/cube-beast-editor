@@ -4,6 +4,7 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_access.hpp>
+#include <profiling/instrumentor.h>
 
 #include <spdlog/spdlog.h>
 
@@ -16,6 +17,8 @@ CameraSystem::~CameraSystem()
 }
 
 void CameraSystem::update() {
+	PROFILE_SCOPE("CameraSystem update");
+
 	// ArcBall rotation
 	if (m_scomps.inputs.isEnabled(InputAction::CAM_ORBIT)) {
 		m_scomps.camera.m_theta -= m_scomps.inputs.posDelta().x * 0.01f;

@@ -11,16 +11,19 @@
 // Open Google chrome and go to chrome://tracing/
 // Then you just have to drag'drop the json file generated
 
+// #define BVE_PROFILE
+
+#define CONCAT_(x,y) x##y
+#define CONCAT(x,y) CONCAT_(x,y)
+
 #ifdef BVE_PROFILE
     #define PROFILE_BEGIN_SESSION(name, filepath) Instrumentor::get().beginSession(name, filepath)
     #define PROFILE_END_SESSION() Instrumentor::get().endSession()
-    #define PROFILE_PUSH(name) InstrumentationTimer timer##__FILE__##__LINE__(name)
-    #define PROFILE_POP() timer##__FILE__##__LINE__.stop()
+    #define PROFILE_SCOPE(name) InstrumentationTimer CONCAT(timer, __LINE__)(name)
 #else
     #define PROFILE_BEGIN_SESSION(name, filepath)
     #define PROFILE_END_SESSION()
-    #define PROFILE_PUSH(x)
-    #define PROFILE_POP()
+    #define PROFILE_SCOPE(name)
 #endif
 
 struct ProfileResult {

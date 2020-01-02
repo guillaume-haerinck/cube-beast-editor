@@ -8,6 +8,9 @@
 	#include <glad/gles2.h>
 #endif
 
+#define CONCAT_(x,y) x##y
+#define CONCAT(x,y) CONCAT_(x,y)
+
 /**
  * @brief Assertion and logger handling for opengl functions
  */
@@ -22,14 +25,26 @@
  * @brief Send event to group openGl calls
  */
 #if defined(NDEBUG) || defined(__EMSCRIPTEN__)
-    #define startDebugEvent(x)
-    #define endDebugEvent()
+    #define OGL_SCOPE(x)
 #else
-    #define startDebugEvent(x) glPushDebugGroupKHR(GL_DEBUG_SOURCE_APPLICATION_KHR, 0, -1, x)
-    #define endDebugEvent() glPopDebugGroupKHR()
+    #define OGL_SCOPE(name) glexp::DebugGroup CONCAT(dgroup, __LINE__)(name)
 #endif
 
 namespace glexp {
+    /**
+     * @brief Groups next glCalls inside a name to help debugging.
+     */
+    class DebugGroup {
+    public:
+        DebugGroup(const char* name) {
+            glPushDebugGroupKHR(GL_DEBUG_SOURCE_APPLICATION_KHR, 0, -1, name);
+        }
+
+        ~DebugGroup() {
+            glPopDebugGroupKHR();
+        }
+    };
+
     /**
      * @brief Empty the OpenGl error buffer
      */

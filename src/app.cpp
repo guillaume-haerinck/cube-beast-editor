@@ -6,6 +6,7 @@
 #include <imgui/imgui_impl_sdl.h>
 #include <imgui/imgui_impl_opengl3.h>
 #include <stb_image/stb_image.h>
+#include <profiling/instrumentor.h>
 
 #include "graphics/gl-exception.h"
 
@@ -36,6 +37,8 @@ App::App() : m_running(true), m_ctx(m_scomps) {
     
 	// Start application
 	spdlog::set_pattern("[%l] %^ %v %$");
+	PROFILE_BEGIN_SESSION("Beast voxel editor", "bve-profiling.json");
+	PROFILE_SCOPE("Init application");
 	initSDL();
     m_scomps.uiStyle.m_fontIconLarge = initImgui();
 
@@ -93,6 +96,8 @@ App::~App() {
 	ImGui::DestroyContext();
     SDL_DestroyWindow(m_window);
 	SDL_Quit();
+
+	PROFILE_END_SESSION();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -101,6 +106,8 @@ App::~App() {
 
 
 void App::update() {
+	PROFILE_SCOPE("Update application");
+
 	// Feed inputs
 	handleSDLEvents();
 	ImGui_ImplOpenGL3_NewFrame();
@@ -113,20 +120,24 @@ void App::update() {
 	}
 	
 	// Update imgui
-	startDebugEvent("Update ImGUI");
-    m_ctx.rcommand.unbindVertexBuffer();
-	m_ctx.rcommand.unbindRenderTargets();
-	for (IGui* gui : m_guis) {
-		gui->update();
+	{
+		PROFILE_SCOPE("Update ImGui");
+		OGL_SCOPE("Update ImGUI");
+		m_ctx.rcommand.unbindVertexBuffer();
+		m_ctx.rcommand.unbindRenderTargets();
+		for (IGui* gui : m_guis) {
+			gui->update();
+		}
+		ImGui::ShowDemoWindow(); // Temp
 	}
-	ImGui::ShowDemoWindow(); // Temp
-	endDebugEvent();
 	
 	// Render imgui
-	startDebugEvent("Render ImGUI");
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	endDebugEvent();
+	{
+		PROFILE_SCOPE("Render ImGui");
+		OGL_SCOPE("Render ImGUI");
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	}
 
 	// Reset input deltas
 	m_scomps.inputs.m_posDelta = glm::vec2(0.0f);
