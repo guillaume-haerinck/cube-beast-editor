@@ -111,7 +111,7 @@ Free software, it has been made in Java, and targets younger artist with a simpl
 | Rigging and animation support | Cannot customize controls |
 
 </p>
-</detail>
+</details>
 
 <br>
 
