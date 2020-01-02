@@ -36,7 +36,7 @@ void RenderCommand::enableDebugOutput() const {
 	if (GLAD_GL_KHR_debug) {
 		GLCall(glEnable(GL_DEBUG_OUTPUT_KHR));
 		GLCall(glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_KHR));
-		GLCall(glDebugMessageCallbackKHR(glexp::messageCallback, 0));
+		GLCall(glDebugMessageCallbackKHR(glexp::messageCallback, 0)); // FIXME NvidiaNsight crashes if this function is called
 
 		// Disable notifications. Harmless messages about what is bound
 		GLCall(glDebugMessageControlKHR(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION_KHR, 0, nullptr, GL_FALSE));
