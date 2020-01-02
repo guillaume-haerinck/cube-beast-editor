@@ -38,7 +38,7 @@ SelectionSystem::~SelectionSystem() {}
 void SelectionSystem::update() {
     PROFILE_SCOPE("SelectionSystem update");
 
-    m_ctx.rcommand.bindRenderTarget(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY));
+    m_ctx.rcommand.bindRenderTarget(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY)); // Needed for wasm
     unsigned char* pixel;
     {
         OGL_SCOPE("Read framebuffer for selection");

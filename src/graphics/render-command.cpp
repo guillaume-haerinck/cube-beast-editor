@@ -509,6 +509,7 @@ unsigned char* RenderCommand::readPixelBuffer(const PixelBuffer& buffer) const {
 	GLCall(glReadBuffer(GL_NONE));
 #endif
 
+	// FIXME RenderDoc crashes with "Verify Buffer Access" enabled if pixel != {0, 0, 0, 0};
 	return pixel;
 }
 
