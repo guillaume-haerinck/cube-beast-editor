@@ -123,7 +123,7 @@ void RenderSystem::update() {
         m_ctx.rcommand.bindPipeline(m_scomps.pipelines.at(PipelineIndex::PIP_GEOMETRY));
         m_ctx.rcommand.drawIndexedInstances(m_scomps.meshes.cube().ib.count, m_scomps.meshes.cube().ib.type, nbInstances);
         const glm::ivec2 pixelToRead = glm::ivec2(m_scomps.inputs.mousePos().x, m_scomps.viewport.size().y - m_scomps.inputs.mousePos().y);
-        m_ctx.rcommand.prepareReadPixelBuffer(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY).pixelBuffer, pixelToRead);
+        m_ctx.rcommand.prepareReadPixelBuffer(m_scomps.renderTargets.m_rts.at(static_cast<unsigned int>(RenderTargetIndex::RTT_GEOMETRY)).pixelBuffer, pixelToRead);
     }
 
     {

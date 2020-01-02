@@ -119,7 +119,7 @@ public:
 	////////////////////////////////// READING ////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
-	void prepareReadPixelBuffer(const PixelBuffer& buffer, const glm::ivec2& pixelPos) const;
+	void prepareReadPixelBuffer(PixelBuffer& buffer, const glm::ivec2& pixelPos) const;
 
 	glm::ivec4 readPixelBuffer(const PixelBuffer& buffer) const;
 

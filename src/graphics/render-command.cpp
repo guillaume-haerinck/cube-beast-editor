@@ -479,7 +479,8 @@ void RenderCommand::updateAttributeBufferAnySize(AttributeBuffer& buffer, const 
 ///////////////////////////////// READING /////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-void RenderCommand::prepareReadPixelBuffer(const PixelBuffer& buffer, const glm::ivec2& pixelPos) const {
+void RenderCommand::prepareReadPixelBuffer(PixelBuffer& buffer, const glm::ivec2& pixelPos) const {
+	buffer.pixelPos = pixelPos; // Temp time to fix wasm
 	GLCall(glBindBuffer(GL_PIXEL_PACK_BUFFER, buffer.bufferId));
     GLCall(glReadBuffer(GL_COLOR_ATTACHMENT0 + buffer.readBufferSlot));
 	// TODO abstract GL_RGBA and UNSIGNED BYTE into pixelbuffer member data
@@ -489,11 +490,27 @@ void RenderCommand::prepareReadPixelBuffer(const PixelBuffer& buffer, const glm:
 }
 
 glm::ivec4 RenderCommand::readPixelBuffer(const PixelBuffer& buffer) const {
+	
+	unsigned char pixel[4] = {0, 0, 0, 0};
+	unsigned char* ptr;
+
+	// FIXME bug on linux with a large number of cubes
+
+#ifndef __EMSCRIPTEN__
 	GLCall(glBindBuffer(GL_PIXEL_PACK_BUFFER, buffer.bufferId));
-	unsigned char* pixel;
-	pixel = static_cast<unsigned char*>(glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, sizeof(unsigned char) * 4, GL_MAP_READ_BIT));
+	ptr = (unsigned char*) (glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, sizeof(unsigned char) * 4, GL_MAP_READ_BIT));
 	GLCall(glUnmapBuffer(GL_PIXEL_PACK_BUFFER));
+	if (ptr != nullptr) {
+		memcpy(pixel, ptr, sizeof(unsigned char) * 4);
+	}
 	GLCall(glBindBuffer(GL_PIXEL_PACK_BUFFER, 0));
+#else
+	// TODO use getBufferSubData
+	// glGetBufferSubData(GL_PIXEL_PACK_BUFFER, 0, &pixel, 0, sizeof(unsigned char) * 4);
+	GLCall(glReadBuffer(GL_COLOR_ATTACHMENT0 + buffer.readBufferSlot));
+	GLCall(glReadPixels(buffer.pixelPos.x, buffer.pixelPos.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel));
+	GLCall(glReadBuffer(GL_NONE));
+#endif
 
 	// FIXME RenderDoc crashes when "Verify buffer access" enabled
 	return glm::ivec4(pixel[0], pixel[1], pixel[2], pixel[3]);

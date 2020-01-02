@@ -3,6 +3,7 @@
 #include <array>
 #include <vector>
 #include <cassert>
+#include <glm/glm.hpp>
 
 #include "scomponents/io/viewport.h"
 
@@ -11,6 +12,7 @@ class RenderCommand; // Forward declaration to prevent circular inclusion
 struct PixelBuffer {
 	unsigned int bufferId;
 	unsigned int readBufferSlot;
+	glm::ivec2 pixelPos;
 };
 
 enum class RenderTargetIndex {
@@ -51,5 +53,6 @@ private:
 
 private:
 	friend class App;
+	friend class RenderSystem; // temp
 	friend class ViewportGui; // temp
 };
