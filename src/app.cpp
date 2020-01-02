@@ -121,7 +121,6 @@ void App::update() {
 	
 	// Update imgui
 	{
-		PROFILE_SCOPE("Update ImGui");
 		OGL_SCOPE("Update ImGUI");
 		m_ctx.rcommand.unbindVertexBuffer();
 		m_ctx.rcommand.unbindRenderTargets();
@@ -133,7 +132,6 @@ void App::update() {
 	
 	// Render imgui
 	{
-		PROFILE_SCOPE("Render ImGui");
 		OGL_SCOPE("Render ImGUI");
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

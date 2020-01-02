@@ -44,14 +44,16 @@ SelectionSystem::~SelectionSystem() {}
 
 void SelectionSystem::update() {
     PROFILE_SCOPE("SelectionSystem update");
-    OGL_SCOPE("Read Framebuffer for selection");
 
     m_ctx.rcommand.bindRenderTarget(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY));
 
     // TODO abstract & use pixel buffer object to improve performance
     unsigned char pixel[] = { 0, 0, 0, 0 };
-    GLCall(glReadBuffer(GL_COLOR_ATTACHMENT3));
-    GLCall(glReadPixels(m_scomps.inputs.mousePos().x, m_scomps.viewport.size().y - m_scomps.inputs.mousePos().y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel));
+    {
+        OGL_SCOPE("Read Framebuffer for selection");
+        GLCall(glReadBuffer(GL_COLOR_ATTACHMENT3));
+        GLCall(glReadPixels(m_scomps.inputs.mousePos().x, m_scomps.viewport.size().y - m_scomps.inputs.mousePos().y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel));
+    }
 
     // FIXME intersection point take value "-+4.76837e-07" instead of 0.0 sometimes which causes flicker
     m_scomps.hovered.m_exist = false;
@@ -59,6 +61,7 @@ void SelectionSystem::update() {
     
     // Check existing cubes with framebuffer
     if (hoveredCube != met::null) {
+        PROFILE_SCOPE("Color to face");
         m_scomps.hovered.m_exist = true;
         m_scomps.hovered.m_isCube = true;
         m_scomps.hovered.m_face = colorToFace(pixel[3]);
@@ -67,6 +70,7 @@ void SelectionSystem::update() {
         m_scomps.hovered.m_id = hoveredCube;
         
     } else {
+        PROFILE_SCOPE("Raycasting");
         m_scomps.hovered.m_id = met::null;
 
         // Check grid with raycast

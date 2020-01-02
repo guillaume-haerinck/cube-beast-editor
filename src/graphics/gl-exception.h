@@ -2,14 +2,12 @@
 
 #include <assert.h>
 #include <debug_break/debug_break.h>
+#include <profiling/instrumentor.h>
 #ifdef __EMSCRIPTEN__
 	#include <GLES3/gl3.h>
 #else
 	#include <glad/gles2.h>
 #endif
-
-#define CONCAT_(x,y) x##y
-#define CONCAT(x,y) CONCAT_(x,y)
 
 /**
  * @brief Assertion and logger handling for opengl functions
@@ -27,7 +25,7 @@
 #if defined(NDEBUG) || defined(__EMSCRIPTEN__)
     #define OGL_SCOPE(x)
 #else
-    #define OGL_SCOPE(name) glexp::DebugGroup CONCAT(dgroup, __LINE__)(name)
+    #define OGL_SCOPE(name) PROFILE_SCOPE(name); glexp::DebugGroup CONCAT(dgroup, __LINE__)(name)
 #endif
 
 namespace glexp {

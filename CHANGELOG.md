@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+TODO set profiling stats when there is an impact
+
 ## 2019-12-07
 
 ### Added
