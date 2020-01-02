@@ -1,6 +1,7 @@
 # Beast Voxel Editor post-mortem
 
-## Table of Content
+<details><summary>Table of Content</summary>
+<p>
 
 [**Specifications**](#specifications)
 
@@ -11,11 +12,17 @@
 
 [**Conclusion**](#conclusion)
 
+</p>
+</details>
+
 ## Specifications
 
 Beast Voxel Editor is a software which allows you to easily generate, visualize and edit 3D scenes. It has been started as a class project for the [IMAC engineering school](https://www.ingenieur-imac.fr/), and had some requirement to meet in order to be evaluated by our teachers. The original specifications can be found [here](https://docs.google.com/document/d/1aDahRcA8aeTSNqdqXv5i8FGPoVUmYzQ-k4z49wlu1K0/edit?usp=sharing), and we made a summary of these features below. 
 
-The *D* column means *Done ?* and the *O* column means *Required ?*
+<details><summary>Show Specifications</summary>
+<p>
+
+The *D* column means *Done* and the *O* column means *Required*
 
 | D | R | Description | Comments | Part |
 | --- | --- | --- | --- | --- |
@@ -36,7 +43,13 @@ The *D* column means *Done ?* and the *O* column means *Required ?*
 | | | Change grid size | |
 | | | Textured cubes | |
 
-Additionaly, we added features not mentionned in the specifications
+</p>
+</details>
+
+Additionaly, we added features not mentionned in the specifications.
+
+<details><summary>Show Additionnal features</summary>
+<p>
 
 | Description | Comments | Part |
 | --- | --- | --- |
@@ -48,6 +61,9 @@ Additionaly, we added features not mentionned in the specifications
 | WASM build support | | |
 | ImGui Docking branch | | |
 | SSAO | TODO | |
+
+</p>
+</details>
 
 ## Introduction
 
@@ -70,6 +86,8 @@ ___
 
 We put 5 well-known softwares under our microscopes. Both in terms of user-interface, functionalities and render pipelines. Most of the time it was difficult to get more information on the rendering part, but we did get some usefull insights.
 
+<br>
+
 <p align="left">
 <img width="80" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/voxedit/logo.png?raw=true" alt="Goxel logo"/>
 </p>
@@ -82,12 +100,20 @@ Free software, it has been made in Java, and targets younger artist with a simpl
 <img width="600" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/voxedit/final.jpg?raw=true" alt="VoxEdit interface"/>
 </p>
 
+<details><summary>Show VoxEdit Summary</summary>
+<p>
+
 | Pluses | Downsides
-| --- | --- |
+| :----: | :---: |
 | Easy to get onboard | Cannot move interface blocs |
 | Accessible palette and Picker | No layers |
 | Good communication and target | Too much visual feedback when using tools |
 | Rigging and animation support | Cannot customize controls |
+
+</p>
+</detail>
+
+<br>
 
 <p align="left">
 <img width="80" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/goxel/logo.png?raw=true" alt="Goxel logo"/>
@@ -110,6 +136,9 @@ As a C software, with a modern OpenGL context, it is possible to analyse its ren
 | <img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/goxel/pass-3.jpg?raw=true" alt="Goxel pass 3"/> | We skipped the GUI drawing to get to the cube part. As before, they are splits in smaller areas drawn with successive non-instanced draw calls. Lighting is done on this pass. |
 | <img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/goxel/pass-4.jpg?raw=true" alt="Goxel pass 4"/> | The grid is rendererred in one pass with a big inverted cube. That's a great optimisation to use this instead of many planes. |
 
+<details><summary>Show VoxEdit Summary</summary>
+<p>
+
 | Pluses | Downsides
 | --- | --- |
 | Open source | Not great UI |
@@ -117,6 +146,11 @@ As a C software, with a modern OpenGL context, it is possible to analyse its ren
 | Cross platform and online | A pain to build on Windows (Lots of things to install) |
 | Easy to debug | No longer in active development |
 |  | Codebase not that easy to enter |
+
+</details>
+</p>
+
+<br>
 
 <p align="left">
 <img width="80" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/qubicle/logo.png?raw=true" alt="Cubicle logo"/>
