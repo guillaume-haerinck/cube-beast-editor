@@ -104,7 +104,7 @@ Free software, it has been made in Java, and targets younger artist with a simpl
 <p>
 
 | Pluses | Downsides
-| :----: | :---: |
+| ---- | --- |
 | Easy to get onboard | Cannot move interface blocs |
 | Accessible palette and Picker | No layers |
 | Good communication and target | Too much visual feedback when using tools |
@@ -129,12 +129,20 @@ Goxel is a free and [Open-Source](https://github.com/guillaumechereau/goxel) sof
 
 As a C software, with a modern OpenGL context, it is possible to analyse its rendering pipeline. With took [RenderDoc](https://renderdoc.org/) to get the job done and this is what we got :
 
+<details><summary>Show Goxel Analysis</summary>
+<p>
+
 | Capture | Description |
 | --- | --- |
 | <img width="1000" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/goxel/pass-1.jpg?raw=true" alt="Goxel pass 1"/> |  There is a first pass done for color picking with framebuffer. Each cube as an unique IDs which allows for mouse selection. The voxels are separated on different smaller blocs (the current one is in yellow wireframe). It is a strange choice as it makes more draw calls and the cubes are not instanced. |
 | <img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/goxel/pass-2.jpg?raw=true" alt="Goxel pass 2"/> | A shadow map is generated for the directional light. We see the scene from the light point of view, in orthogonal projection. There is only deepth information. |
 | <img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/goxel/pass-3.jpg?raw=true" alt="Goxel pass 3"/> | We skipped the GUI drawing to get to the cube part. As before, they are splits in smaller areas drawn with successive non-instanced draw calls. Lighting is done on this pass. |
 | <img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/goxel/pass-4.jpg?raw=true" alt="Goxel pass 4"/> | The grid is rendererred in one pass with a big inverted cube. That's a great optimisation to use this instead of many planes. |
+
+</p>
+</details>
+
+From the [dev. blog](https://blog.noctua-software.com/goxel-internals-part2-data-structure.html), we can read that the voxels are stored in larger structures and that a scene is made of multiple of those structs. We have an explanation about why the cubes on screens are rendered with different sub-groups.
 
 <details><summary>Show VoxEdit Summary</summary>
 <p>
@@ -156,23 +164,98 @@ As a C software, with a modern OpenGL context, it is possible to analyse its ren
 <img width="80" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/qubicle/logo.png?raw=true" alt="Cubicle logo"/>
 </p>
 
-#### Qubicle
+#### [Qubicle](https://www.minddesk.com/)
+
+Qubicle is a paid-software (from 75$ to 175$ for the pro version) which was used by a few well-known voxel games to create their models. It can handle large scenes and separate objects to place them in the world. It is filled with features and has a quite a great interface (but not that intuitive when you open it for the first time).
+
+<p align="center">
+<img width="600" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/qubicle/final.jpg?raw=true" alt="Goxel logo"/>
+</p>
+
+It cannot be analysed by renderdoc as the OpenGL context created is legacy, but it kind-of works with [Nvidia Nsight](https://developer.nvidia.com/nsight-visual-studio-edition). And that when we have a surprise, "An unknown objet as been sent to the API". *mmmh, m'ok*. So let's capture a frame and see what we get.
+
+<details><summary>See what we get</summary>
+<p>
+
+<details><summary>Almost there</summary>
+<p>
+
+<p align="center">
+<img width="600" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/qubicle/pass-1.jpg?raw=true" alt="Goxel logo"/>
+</p>
+
+</details>
+</p>
+
+</details>
+</p>
+
+We get that the rendering is done - maybe done by this unknown object - and then the result is split into smaller textures that are rendered by OpenGL. That's an interesting design, but I have no clue about how it works.
+
+<details><summary>Show Qubicle Summary</summary>
+<p>
+
+| Pluses | Downsides
+| --- | --- |
+| Full of features | Paid |
+| Some tools have a really great feeling | Strange to get onboard (must create a matrix first) |
+| Great documentation | Strange behavior of some tools (difficult to un-select, must press enter a lot, etc...) |
+| Used by many projects | |
+
+</details>
+</p>
+
+<br>
 
 <p align="left">
 <img width="80" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/magica-voxel/logo.png?raw=true" alt="Magicavoxel logo"/>
 </p>
 
-#### MagicaVoxel
+#### [MagicaVoxel](https://ephtracy.github.io/)
 
-- Cannot get something out of voxedit, and magicavoxel is opaque. Need nsight
+MagicaVoxel is, without contest, the most known and used Voxel Editor out there. It might not be open-source, but it's free (*for how long ?*). It has a lot of features (but some are a bit hidden), and slick interface (which could be made more intuitive). Tools have a really great feeling, maybe the best amongst all voxel editors. It can handle large scene, group objects and move them in the world, but it does have a limit on number of objects. I also like a lot its renderrer and the viewport options (show outlines, disable shadows, etc...)
+
+<p align="center">
+<img width="600" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/magica-voxel/final.jpg?raw=true" alt="Magica voxel"/>
+</p>
+
+The OpenGL context created being inferior to 3.2, we need to use NvidiaNsight to get some information about its rendering pipeline.
+
+<details><summary>Show MagicaVoxel Analysis</summary>
+<p>
+
+| Capture | Description |
+| --- | --- |
+| | |
+
+</p>
+</detail>
+
+It might be interesting to delve deeper into its rendering structure, as the project seemed to have been open source at a time.
+
+<details><summary>Show MagicaVoxel Summary</summary>
+<p>
+
+| Pluses | Downsides
+| --- | --- |
+| Free | Not open source |
+| Used by a lot of artists| Many hidden gems in the interface |
+| Overflowing with features | Powerfull but not intuitive enough |
+| Great interface | |
+| Tools have an amazing feeling | |
+
+</details>
+</p>
+
+<br>
 
 <p align="left">
 <img width="70" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/blender/logo.png?raw=true" alt="Blender logo"/>
 </p>
 
-#### Blender
+#### [Blender](https://www.blender.org/)
 
-- Stops to render if there is no move
+Who still needs to present Blender ? It's not a voxel editor but started as we have, we might also take a look at its rendering architecture as we might learn something interesting.
 
 ### B - Architecture and Data Structure
 
