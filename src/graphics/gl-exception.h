@@ -32,20 +32,6 @@
 
 namespace glexp {
     /**
-     * @brief Groups next glCalls inside a name to help debugging.
-     */
-    class DebugGroup {
-    public:
-        DebugGroup(const char* name) {
-            glPushDebugGroupKHR(GL_DEBUG_SOURCE_APPLICATION_KHR, 0, -1, name);
-        }
-
-        ~DebugGroup() {
-            glPopDebugGroupKHR();
-        }
-    };
-
-    /**
      * @brief Empty the OpenGl error buffer
      */
     void clear();
@@ -67,6 +53,7 @@ namespace glexp {
      */
     char const* glErrorString(GLenum const err);
 
+#ifndef __EMSCRIPTEN__
     /**
      * @brief Detailed log of open gl
      * @note You must have the GL_KHR_debug extension, and use glEnable(GL_DEBUG_OUTPUT_KHR) and glDebugMessageCallback(debugCallback, nullptr) to get it working.
@@ -79,8 +66,21 @@ namespace glexp {
      * @param message 
      * @param user_param 
      */
-#ifndef __EMSCRIPTEN__
     void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* userParam);
+
+    /**
+     * @brief Groups next glCalls inside a name to help debugging.
+     */
+    class DebugGroup {
+    public:
+        DebugGroup(const char* name) {
+            glPushDebugGroupKHR(GL_DEBUG_SOURCE_APPLICATION_KHR, 0, -1, name);
+        }
+
+        ~DebugGroup() {
+            glPopDebugGroupKHR();
+        }
+    };
 #endif
 
 }
