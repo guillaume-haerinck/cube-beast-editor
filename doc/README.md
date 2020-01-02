@@ -84,7 +84,7 @@ ___
 
 ### A - Voxel editors analysis
 
-We put 5 well-known softwares under our microscopes. Both in terms of user-interface, functionalities and render pipelines. Most of the time it was difficult to get more information on the rendering part, but we did get some usefull insights.
+We put 4 softwares under our microscopes. Both in terms of user-interface, functionalities and render pipelines. Most of the time it was difficult to get more information on the rendering part, but we did get some usefull insights.
 
 <br>
 
@@ -226,12 +226,14 @@ The OpenGL context created being inferior to 3.2, we need to use NvidiaNsight to
 
 | Capture | Description |
 | --- | --- |
-| | |
+| <img width="1000" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/magica-voxel/pass-1.jpg?raw=true" alt="MagicaVoxel pass 1"/> | We skipped the interface to get to the cube. There we can seen that the grid is rendered in one pass like with Goxel. |
+| <img width="1000" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/magica-voxel/pass-2.jpg?raw=true" alt="MagicaVoxel pass 2"/> | We see that only the top of the surfaces are drawn. It is not instanced, and is using a plane for each cube. We do not see a shadow map pass, or a pass that fill the sides which is really strange. |
+| <img width="1000" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/magica-voxel/hdri.jpg?raw=true" alt="MagicaVoxel pass 2"/> | Looking at the bound ressources, we can see that there is an HDRI texture used for lighting on PBR pipelines, and that the color palette is sent as one texture. |
 
 </p>
-</detail>
+</details>
 
-It might be interesting to delve deeper into its rendering structure, as the project seemed to have been open source at a time.
+It might be interesting to delve deeper into its rendering structure, as the project seemed to have been open source at a time, and that the viewport is only rendered with 2 draw calls.
 
 <details><summary>Show MagicaVoxel Summary</summary>
 <p>
@@ -247,15 +249,14 @@ It might be interesting to delve deeper into its rendering structure, as the pro
 </details>
 </p>
 
-<br>
+#### What can we get from this ?
 
-<p align="left">
-<img width="70" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/blender/logo.png?raw=true" alt="Blender logo"/>
-</p>
-
-#### [Blender](https://www.blender.org/)
-
-Who still needs to present Blender ? It's not a voxel editor but started as we have, we might also take a look at its rendering architecture as we might learn something interesting.
+- There are already a lot of great and free voxel editor availables
+- VoxEdit simple UI is a charm when you discover it for the first time
+- MagicaVoxel set of Tools have the best feeling and usages
+- There is no viable online version for now (Goxel online is only a prototype)
+- MagicaVoxel would be the perfect tool if the interface was a bit more intuitive
+- There is not a one-go solution when it comes to rendering
 
 ### B - Architecture and Data Structure
 
