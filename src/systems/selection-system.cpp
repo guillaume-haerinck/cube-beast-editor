@@ -7,13 +7,6 @@
 #include "maths/intersection.h"
 #include "maths/casting.h"
 #include "components/physics/transform.h"
-
-// Temp
-#ifdef __EMSCRIPTEN__
-	#include <GLES3/gl3.h>
-#else
-	#include <glad/gles2.h>
-#endif
 #include "graphics/gl-exception.h"
 
 SelectionSystem::SelectionSystem(Context& ctx, SingletonComponents& scomps) 
@@ -46,25 +39,21 @@ void SelectionSystem::update() {
     PROFILE_SCOPE("SelectionSystem update");
 
     m_ctx.rcommand.bindRenderTarget(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY));
-
-    // TODO abstract & use pixel buffer object to improve performance
-    unsigned char pixel[] = { 0, 0, 0, 0 };
+    glm::ivec4 pixel;
     {
-        OGL_SCOPE("Read Framebuffer for selection");
-        GLCall(glReadBuffer(GL_COLOR_ATTACHMENT3));
-        GLCall(glReadPixels(m_scomps.inputs.mousePos().x, m_scomps.viewport.size().y - m_scomps.inputs.mousePos().y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel));
+        OGL_SCOPE("Read framebuffer for selection");
+        pixel = m_ctx.rcommand.readPixelBuffer(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY).pixelBuffer);
     }
 
     // FIXME intersection point take value "-+4.76837e-07" instead of 0.0 sometimes which causes flicker
     m_scomps.hovered.m_exist = false;
-    const met::entity hoveredCube = voxmt::colorToInt(pixel[0], pixel[1], pixel[2]);
-    
+    const met::entity hoveredCube = voxmt::colorToInt(pixel.r, pixel.b, pixel.b);
+
     // Check existing cubes with framebuffer
     if (hoveredCube != met::null) {
-        PROFILE_SCOPE("Color to face");
         m_scomps.hovered.m_exist = true;
         m_scomps.hovered.m_isCube = true;
-        m_scomps.hovered.m_face = colorToFace(pixel[3]);
+        m_scomps.hovered.m_face = colorToFace(pixel.a);
         const comp::Transform trans = m_ctx.registry.get<comp::Transform>(hoveredCube);
         m_scomps.hovered.m_position = trans.position;
         m_scomps.hovered.m_id = hoveredCube;

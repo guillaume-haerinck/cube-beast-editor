@@ -339,6 +339,23 @@ RenderTarget RenderCommand::createRenderTarget(const PipelineOutputDescription& 
 		assert(false);
 	}
 
+	// Create pixel buffer object if there is one
+	PixelBuffer pb;
+	pb.bufferId = 0;
+	unsigned int readBufferSlot = 0;
+	for (const auto& item : description) {
+		if (item.operation == RenderTargetOperation::ReadPixel) {
+			pb.readBufferSlot = readBufferSlot;
+			GLCall(glGenBuffers(1, &pb.bufferId));
+			GLCall(glBindBuffer(GL_PIXEL_PACK_BUFFER, pb.bufferId));
+			GLCall(glBufferData(GL_PIXEL_PACK_BUFFER, sizeof(unsigned char) * 4, nullptr, GL_DYNAMIC_READ));
+			GLCall(glBindBuffer(GL_PIXEL_PACK_BUFFER, 0));
+			break;
+		}
+		readBufferSlot++;
+	}
+	rt.pixelBuffer = pb;
+
 	// Unbind
 	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
     GLCall(glBindTexture(GL_TEXTURE_2D, 0));
@@ -422,7 +439,7 @@ void RenderCommand::bindRenderTarget(const RenderTarget rt) const {
 ///////////////////////////////// UNBINDING ///////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-void RenderCommand::unbindRenderTargets() const {
+void RenderCommand::unbindRenderTarget() const {
     GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
@@ -454,8 +471,32 @@ void RenderCommand::updateAttributeBufferAnySize(AttributeBuffer& buffer, const 
 		GLCall(glBufferData(GL_ARRAY_BUFFER, dataByteWidth * 2, 0, attributeBufferUsageToOpenGLBaseType(buffer.usage)));
 		buffer.byteWidth = dataByteWidth * 2;
 	}
-	
+
 	updateAttributeBuffer(buffer, data, dataByteWidth);
+}
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////// READING /////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+void RenderCommand::prepareReadPixelBuffer(const PixelBuffer& buffer, const glm::ivec2& pixelPos) const {
+	GLCall(glBindBuffer(GL_PIXEL_PACK_BUFFER, buffer.bufferId));
+    GLCall(glReadBuffer(GL_COLOR_ATTACHMENT0 + buffer.readBufferSlot));
+	// TODO abstract GL_RGBA and UNSIGNED BYTE into pixelbuffer member data
+    GLCall(glReadPixels(pixelPos.x, pixelPos.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, 0));
+	GLCall(glReadBuffer(GL_NONE));
+	GLCall(glBindBuffer(GL_PIXEL_PACK_BUFFER, 0));
+}
+
+glm::ivec4 RenderCommand::readPixelBuffer(const PixelBuffer& buffer) const {
+	GLCall(glBindBuffer(GL_PIXEL_PACK_BUFFER, buffer.bufferId));
+	unsigned char* pixel;
+	pixel = static_cast<unsigned char*>(glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, sizeof(unsigned char) * 4, GL_MAP_READ_BIT));
+	GLCall(glUnmapBuffer(GL_PIXEL_PACK_BUFFER));
+	GLCall(glBindBuffer(GL_PIXEL_PACK_BUFFER, 0));
+
+	// FIXME RenderDoc crashes when "Verify buffer access" enabled
+	return glm::ivec4(pixel[0], pixel[1], pixel[2], pixel[3]);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -479,6 +520,9 @@ void RenderCommand::drawIndexedInstances(unsigned int indexCount, IndexBuffer::d
 ///////////////////////////////////////////////////////////////////////////
 
 void RenderCommand::deleteRenderTarget(RenderTarget& rt) const {
+	if (rt.pixelBuffer.bufferId != 0)
+		GLCall(glDeleteBuffers(1, &rt.pixelBuffer.bufferId));
+
 	GLCall(glDeleteFramebuffers(1, &rt.frameBufferId));
 	GLCall(glDeleteRenderbuffers(rt.renderBufferIds.size(), rt.renderBufferIds.data()));
 	GLCall(glDeleteTextures(rt.textureIds.size(), rt.textureIds.data()));

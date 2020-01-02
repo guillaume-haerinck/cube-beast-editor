@@ -3,6 +3,10 @@
 #include <vector>
 #include <string>
 
+enum class RenderTargetOperation {
+    None = 0, ReadPixel
+};
+
 enum class RenderTargetType {
     Texture = 0, RenderBuffer
 };
@@ -12,7 +16,7 @@ enum class RenderTargetUsage {
 };
 
 enum class RenderTargetChannels {
-    R = 0, RG, RGB, RGBA
+    R = 1, RG = 2, RGB = 3, RGBA = 4
 };
 
 enum class RenderTargetDataType {
@@ -25,11 +29,12 @@ struct RenderTargetDescription {
     RenderTargetUsage usage;
     RenderTargetChannels channels;
     std::string name;
+    RenderTargetOperation operation;
 
     RenderTargetDescription() {}
 
-    RenderTargetDescription(RenderTargetUsage usage, RenderTargetType type, RenderTargetDataType dataType, RenderTargetChannels channels, std::string name) 
-        : usage(usage), type(type), dataType(dataType), channels(channels), name(name)
+    RenderTargetDescription(RenderTargetUsage usage, RenderTargetType type, RenderTargetDataType dataType, RenderTargetChannels channels, std::string name, RenderTargetOperation operation = RenderTargetOperation::None) 
+        : usage(usage), type(type), dataType(dataType), channels(channels), name(name), operation(operation)
     {}
 };
 

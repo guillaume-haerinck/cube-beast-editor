@@ -123,7 +123,7 @@ void App::update() {
 	{
 		OGL_SCOPE("Update ImGUI");
 		m_ctx.rcommand.unbindVertexBuffer();
-		m_ctx.rcommand.unbindRenderTargets();
+		m_ctx.rcommand.unbindRenderTarget();
 		for (IGui* gui : m_guis) {
 			gui->update();
 		}

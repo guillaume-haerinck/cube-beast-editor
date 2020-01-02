@@ -8,6 +8,11 @@
 
 class RenderCommand; // Forward declaration to prevent circular inclusion
 
+struct PixelBuffer {
+	unsigned int bufferId;
+	unsigned int readBufferSlot;
+};
+
 enum class RenderTargetIndex {
 	RTT_GEOMETRY = 0,
 	RTT_SHADOW_MAP,
@@ -22,6 +27,7 @@ struct RenderTarget {
 	unsigned int frameBufferId;
 	std::vector<unsigned int> textureIds;
 	std::vector<unsigned int> renderBufferIds;
+	PixelBuffer pixelBuffer;
 };
 
 /**
