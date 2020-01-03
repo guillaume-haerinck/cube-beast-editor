@@ -394,18 +394,12 @@ For this project, we decided to use the OpenGL ES 3.0 specification. It has enou
 
 With DirectX 11, when you send data to your graphic card you have describe it with an array of struct called [InputElementDesc](https://docs.microsoft.com/en-us/windows/win32/api/d3d11/ns-d3d11-d3d11_input_element_desc). You assign assign this array to your vertex shader right after its creation, and everyone is happy.
 
-<details><summary>Show code example</summary>
-<p>
-
 ```C++
 // My buffer will be holding Float3 position. Not-instanced.
 const D3D11_INPUT_ELEMENT_DESC VertexPosition::InputElements[] = {
 	{ "SV_Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 };
 ```
-
-</p>
-</details>
 
 It's OpenGL counterpart is not so easy to use.  
 
@@ -418,6 +412,18 @@ const PipelineInputDescription inputDescription = {
 	{ ShaderDataType::Float3, "Position" },
 	{ ShaderDataType::Float3, "Translation", BufferElementUsage::PerInstance }
 };
+```
+
+As we are not huge fans of the concept of *Vertex Arrays*, we've hidden it in our abstraction and renamed it *Vertex Buffer*. The idea is that to create a *Vertex Buffer*, you need 2 things :
+
+1. A *Pipeline Input Description*
+2. One or more *Attribute Buffers*
+
+These attributes buffers, are nothing more than OpenGL original vertex buffers, with the specific need that these **buffers are not interleaved** : They only contains one type of data, for one specific usage. That's a requirement to load `.gltf` models easily (even though we don't have that right now), and for our instanced rendering (more details on part II).
+
+```
+INTERLEAVED BUFFER (not used) : [XYZXYZXYZXYZXYZXYZ]
+SEPARATE BUFFER (used) : [XXXX] [YYYY] [ZZZZ]
 ```
 
 #### Pipeline output description
@@ -436,19 +442,66 @@ const PipelineOutputDescription outputDescription = {
 
 #### Constant buffers
 
-DirectX11 doesn't have any notion of uniforms. To set a shader variable value from the application, it uses the concept of Constant Buffers, similar but not exactly the same.
+DirectX 11 doesn't have any notion of uniforms. To set a shader variable value from the application, it uses the concept of Constant Buffers, similar but not exactly the same. Where uniforms where used to modify one variable, **constant buffers are describing a struct**. Moreover, ConstantBuffers are **shared between different pipelines**, limiting the number of calls to make to the API.
+
+Traditionnaly, these struct are named by their update frequency. *PerFrame*, *PerLightChange*, etc, it's up to the developer to decide how to handle them. Their equivalent in OpenGL are called [**Uniform Buffer Objects**](https://www.khronos.org/opengl/wiki/Uniform_Buffer_Object), and they are very similar.
+
+We decided to use them early on to improve our data-management. We have a few sets of pre-defined constant buffers, and when we create a pipeline (a vertex shader + a fragment shader), the developer has to indicate which Constant Buffer its pipeline uses so that the constant buffers can be associated with the pipeline.
+
+```C++
+// Constant buffer app-side
+struct perFrame {
+	glm::mat4x4 matViewProj;
+	glm::vec3 cameraPos;
+	char padding[4];
+};
+
+// Constant buffer shader-side
+layout (std140) uniform perFrame {
+	mat4 matViewProj;
+	vec3 cameraPos;
+};
+```
+
+You might have noticed the `char padding[4]`, this is because the byteWidth of a constant buffer must always be a multiple of 16, so we simply fill the gap.
 
 #### Render command
 
-[https://ourmachinery.com/post/ecs-and-rendering/](https://ourmachinery.com/post/ecs-and-rendering/)
+We explained how we abstracted our data for OpenGL, but we still haven't say much about the way we interact with the API. Spoiler alert, it's in the title. We use an object caller *RenderCommand* - stateless for now - which **regroups every call made to OpenGL**. There is not a single glXXX outside of this class in our entire application.
+
+Why this choice ? There are a few reasons actually.
+
+1. OOP for OpenGL Object creation and destruction hasn't worked well for us in the past with an ECS architecture. The destructor would be called when assigning components, so we had to move the glDeleteXXX elsewhere. Moreover components are not supposed to have any logics inside of them.
+
+2. We are not using a whole lot of functionnalities from the API. So our calls could be contained in one file without being too gigantic (we tops at 700 lines in the .ccp. It is important but still managable as function are grouped by types like creation, deletion, updates, etc)
+
+3. Reusability and portability. Because when your whole use of an API is contained in only 1 file, you know where to look for when there is a bug or if you need a specific feature inside another project.
+
+4. Multi-API support. This one is not nescessarly true as we do not plan to do it, but using an interface for the RenderCommand and the Strategy pattern, and we can almost switch from OpenGL to DirectX in real time. It would be really cool to make, but not that usefull for now.
+
+We took a look at different data-oriented way to make a renderer. These people building "Our Machinery" have interesting [blog posts](https://ourmachinery.com/post/ecs-and-rendering/) about their architecture, and a talk at the GDC 2015 about the [rendering structure of Destiny](https://www.youtube.com/watch?v=0nTDFLMLX9k) is interesting as well. But all of these architecture were overkill to say the least for our needs, so we simply stick to a simple and managable solution.
 
 #### Debug draw
 
+<p align="center">
+<img width="700" src="https://raw.githubusercontent.com/glampert/debug-draw/master/samples/images/shapes.png" alt="UML"/>
+</p>
 
+> Capture of the *Debug Draw* library by [glampert](https://github.com/glampert/debug-draw). (not used by our project)
+
+We knew that we would also need a class to render debug primitives while developing. We wanted to have the ability to **visualize a raycast with one line of code**, or to draw a bounding box to check collisions. The idea came from the book [Game Engine Architecture](https://www.gameenginebook.com/) by Jason Gregory in the chapter where he talks about the debug tools used at Naughty Dog.
+
+This class needed to be available everywhere, handle any kind of data, draw a specific primitive for any amount of time, and be rendered in our RenderSystem to be in sync with the other passes. We started to work on it, enough to visualize a raycast which was our need, but it hasn't came back yet so **we commented its render code out**.
+
+Render command and Debug draw are two objects which needed to be available everywhere, like the registry. So instead of passing the 3 inside many constructors, **we simply put those 3 in a struct called Context that is passed around instead**.
+
+<br>
 
 <p align="center">
 <img width="700" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/uml-4.png?raw=true" alt="UML"/>
 </p>
+
+<br>
 
 ___
 
