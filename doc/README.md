@@ -507,11 +507,58 @@ ___
 
 ### D - Laying out the tasks
 
+To get to this first version on time, we knew we had follow a planning. While some priorities where obvious, like rendering a cube on a scene, it remained difficult to make a choice about which optional features to support rapidly. We knew what the other voxel editors had, but **what was used the most often, what was the core ?** To awnser this question, we simply took a look on youtube to see how artists works.
+
+#### Artist work analysis
+
+[Anna Lepeshkina - Island](https://www.youtube.com/watch?v=yKO1Q5QRZic)
+
+<details><summary>Show work</summary>
+<p>
+
+| <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/anna-lepeshkina-island/1.jpg?raw=true" alt="Island voxel"/> | <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/anna-lepeshkina-island/2.jpg?raw=true" alt="Island voxel"/> |
+| :---: | :---: |
+| Quick drawing | Block-Out with Box brush |
+| <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/anna-lepeshkina-island/3.jpg?raw=true" alt="Island voxel"/> | <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/anna-lepeshkina-island/4.jpg?raw=true" alt="Island voxel"/> |
+| Add details with Box brush | Paint faces |
+| <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/anna-lepeshkina-island/5.jpg?raw=true" alt="Island voxel"/> | <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/anna-lepeshkina-island/6.jpg?raw=true" alt="Island voxel"/> |
+| Paint voxel & faces | Paint details voxel & Voxel brush |
+| <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/anna-lepeshkina-island/7.jpg?raw=true" alt="Island voxel"/> | <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/anna-lepeshkina-island/8.jpg?raw=true" alt="Island voxel"/> |
+| Copy and Paste object groups. Ereaser by voxel | Block brush |
+| <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/anna-lepeshkina-island/9.jpg?raw=true" alt="Island voxel"/> | |
+| Select all & extrude face | |
+
+</p>
+</details>
+
+[Elliot GK - Tiny Canyon](https://www.youtube.com/watch?v=I-VxX0Ks_ZM)
+
+<details><summary>Show work</summary>
+<p>
+
+| <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/elliot-gk-tiny-canyon/1.jpg?raw=true" alt="Canyon voxel"/> | <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/elliot-gk-tiny-canyon/2.jpg?raw=true" alt="Canyon voxel"/> |
+| :---: | :---: |
+| Top view pixel brush | Fill area and extrude face |
+| <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/elliot-gk-tiny-canyon/3.jpg?raw=true" alt="Canyon voxel"/> | <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/elliot-gk-tiny-canyon/4.jpg?raw=true" alt="Canyon voxel"/> |
+| Fill area and extrude face | Box brush |
+| <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/elliot-gk-tiny-canyon/5.jpg?raw=true" alt="Canyon voxel"/> | <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/elliot-gk-tiny-canyon/6.jpg?raw=true" alt="Canyon voxel"/> |
+| Eraser cube & paint area | Paint cube & add voxel |
+| <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/elliot-gk-tiny-canyon/7.jpg?raw=true" alt="Canyon voxel"/> | <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/elliot-gk-tiny-canyon/8.jpg?raw=true" alt="Canyon voxel"/> |
+| Object mode| Brush voxel mode & Paint voxel |
+| <img width="450" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/elliot-gk-tiny-canyon/9.jpg?raw=true" alt="Canyon voxel"/> | |
+| Erase area | |
+
+</p>
+</details>
+
+We see that the box brush is heavily used to block out shapes, then they went to pixel mode. There is also the face selection here and there. We will start with the pixel brush, then the box. The line brush and sphere brush are secondary.
+
+#### Development start & Code guidelines
+
 - Continuous integration
 - Trello calender
 - Unit test
 - Automatic deploy
-- Artists speed modeling
 
 ## II - Core features
 
