@@ -281,6 +281,10 @@ All of this orchestra is handled in our library by an object called **Registry**
 
 This gave us a **starting point to structure our application**. We knew that we would need of folder with all sorts of components, another for all systems (RenderSystem, SelectionSystem, etc) and an **App** class to order all of this.
 
+<p align="center">
+<img width="800" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/uml-1.png?raw=true" alt="UML"/>
+</p>
+
 #### The case of static data
 
 One problem that comes after starting to develop in ECS is **how to store,  get and where to modify static data**. By static data, we mean global states of the app, the sort of things that are needed but not modified by our systems. We are talking about input handling, user preferences, graphic objects like shaders and framebuffers, etc.
@@ -299,9 +303,9 @@ Yet, there are still **2 problems** with their implementation that didn't worked
 
 That's why we came up with another design for singleton components. **Simply store them inside a struct**. This struct will be passed by reference to our systems like the registry. The **data is private, but public function exists** to get const references to them. We used the concept of **C++ friend classes** to make those component modifiable by one or two classes only, and read only for all other.
 
-#### UML Class diagram explanation
-
-
+<p align="center">
+<img width="800" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/uml-2.png?raw=true" alt="UML"/>
+</p>
 
 ### C - OpenGL renderer abstraction
 
