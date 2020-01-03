@@ -9,8 +9,28 @@
 
 [**I - Planning, Research and Analysis**](#i---planning-research-and-analysis)
 *	[**Voxel editors analysis**](#a---voxel-editors-analysis)
+*	[**Architecture and Data structure**](#b---architecture-and-data-structure)
+*	[**OpenGL API abstraction**](#c---opengl-api-abstraction)
+*	[**Laying out the tasks**](#d---laying-out-the-tasks)
+
+[**II - Core features**](#ii---core-features)
+*	[**Renderer**](#a---renderer)
+*	[**Mouse selection**](#b---mouse-selection)
+*	[**Brushes**](#c---brushes)
+*	[**Interface and User controls**](#d---interface-and-user-controls)
+*	[**Procedural terrain generation**](#e---procedural-terrain-generation)
+
+[**III - Additional features**](#iii---additional-features)
+*	[**WASM**](#a---wasm)
+*	[**Shadows**](#b---shadows)
+*	[**Benchmarking**](#c---benchmarking)
+*	[**History**](#d---history)
+
+[**IV - Planned features**](#iv---planned-features)
 
 [**Conclusion**](#conclusion)
+
+[**References**](#references)
 
 </p>
 </details>
@@ -55,6 +75,7 @@ Additionaly, we added features not mentionned in the specifications.
 | --- | --- | --- |
 | [Met ECS library](https://github.com/guillaume-haerinck/met-ecs) | A post-mortem for this library is available [here](https://github.com/guillaume-haerinck/met-ecs/tree/master/docs) | I - B |
 | Shadows | | |
+| Instanced rendering | | |
 | Deferred shading | | |
 | ArcBall Camera | |
 | Benchmarking | | |
@@ -321,6 +342,9 @@ We used the [ImGui](https://github.com/ocornut/imgui) library to make our interf
 
 We knew that we might need to handle **inter-interfaces communication**, so we made a simple event system, a modified version of the Observer pattern. The idea is simple, we have a **stack of events (just enums)**, that every interface can fill if they want to. When there is an event in the stack, we call the *onEvent()* function for each IGui* instance. Then each of the interfaces can handle it in a switch-case structure if they need to.
 
+<details><summary>Show code example</summary>
+<p>
+
 ```C++
 void App::update() {
 	// ...
@@ -340,6 +364,9 @@ void MyGui::onEvent(GuiEvent  e) {
 	}
 }
 ```
+</p>
+</details>
+
 
 The event themselves do not contain data. Different interfaces might need differents things for the same type of event, and the singleton components already store the states of the application. **We haven't used events yet**, but they might come in handy if we do not want to check singleton components, or if a special event can't be described by a change in singleton components.
 
@@ -353,7 +380,7 @@ The event themselves do not contain data. Different interfaces might need differ
 
 ___
 
-### C - OpenGL renderer abstraction
+### C - OpenGL API Abstraction
 
 The history of OpenGL [starts a way back](https://openglbook.com/chapter-0-preface-what-is-opengl.html) to the beginning of dedicated 3D hardware in the early 1990's. For all those years, the API had time for evolution and new features, but the biggest change happened in 2004 with the release of the version 2.0. This version, which is now called the *Core profile* allowed developer to use a **programmable pipeline** (shaders), and to send only the geometry data once instead of each frame.
 
@@ -367,6 +394,9 @@ For this project, we decided to use the OpenGL ES 3.0 specification. It has enou
 
 With DirectX 11, when you send data to your graphic card you have describe it with an array of struct called [InputElementDesc](https://docs.microsoft.com/en-us/windows/win32/api/d3d11/ns-d3d11-d3d11_input_element_desc). You assign assign this array to your vertex shader right after its creation, and everyone is happy.
 
+<details><summary>Show code example</summary>
+<p>
+
 ```C++
 // My buffer will be holding Float3 position. Not-instanced.
 const D3D11_INPUT_ELEMENT_DESC VertexPosition::InputElements[] = {
@@ -374,40 +404,39 @@ const D3D11_INPUT_ELEMENT_DESC VertexPosition::InputElements[] = {
 };
 ```
 
+</p>
+</details>
+
 It's OpenGL counterpart is not so easy to use.  
 
-You have to create a Vertex Array, assign your data to it, and finally describe what is inside with [glVertexAttribPointer](http://docs.gl/es3/glVertexAttribPointer). Here, **the description is not assigned to your vertex shader, but to your buffers**. This means that if you have different meshes with the same kind of data, you will have to repeat this step for each different buffer. It is very error-prone, there are a lot of steps, a lot of hidden states, and the code is difficult to read.
+You have to create a Vertex Array, assign your data to it, and finally describe what is inside with [glVertexAttribPointer](http://docs.gl/es3/glVertexAttribPointer). Here, **the description is not assigned to your vertex shader, but to your buffers**. This means that if you have different meshes with the same kind of data, you will have to repeat this step for each different buffer. It is very error-prone.
 
-We can't change the inner working of OpenGL, but we can emulate some DirectX clever ideas, and that's what we made (helped a lot by [The Cherno Hazel Engine](https://www.youtube.com/watch?v=jIJFM_pi6gQ))
+We can't change the inner working of OpenGL, but we can emulate some DirectX clever ideas, and that's what we made (helped a lot by [The Cherno Hazel Engine](https://www.youtube.com/watch?v=jIJFM_pi6gQ)). We created a class *PipelineInputDescription* which does exactly as DirectX. When we create a Vertex Array, our utility function take it amongst its parameters.
 
 ``` C++
-// Cube mesh layout
-PipelineInputDescription inputDescription = {
+const PipelineInputDescription inputDescription = {
 	{ ShaderDataType::Float3, "Position" },
-	{ ShaderDataType::Float3, "Normal" },
-	{ ShaderDataType::Float3, "Translation", BufferElementUsage::PerInstance },
-	{ ShaderDataType::Float3, "EntityId", BufferElementUsage::PerInstance },
-	{ ShaderDataType::UInt, "MaterialIndex", BufferElementUsage::PerInstance }
+	{ ShaderDataType::Float3, "Translation", BufferElementUsage::PerInstance }
 };
 ```
 
 #### Pipeline output description
 
+Our application uses **multiple render targets** and differents passes. This means that our fragment shaders will sometimes output to multiple textures (more on that on Part II). In OpenGL, you have to create a Framebuffer and assign textures to it. The [plethoras of options](http://docs.gl/es3/glTexImage2D) available for those textures can be very cumberstone to use, so we decided to abstract it.
+
+We had an inputDescription, now we would have an outputDescription that we use when we create our FrameBuffers. For exemple :
+
 ```C++
-// Geometry pass fragment shader output
-PipelineOutputDescription outputDescription = {
+const PipelineOutputDescription outputDescription = {
 	{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Albedo" },
-	{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Normal" },
-	{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_LightSpacePosition" },
-	{ RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetDataType::UCHAR, RenderTargetChannels::RGBA, "EntityIdToColor", RenderTargetOperation::ReadPixel },
+	{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Normal" }
 	{ RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetDataType::FLOAT, RenderTargetChannels::R, "Depth" }
 };
 ```
 
-- constant buffers instead of uniforms
-- instanced rendering
-- rename opengl Object to well known equivalent closer to DirectX (uniform buffer object -> constant buffer | framebuffer -> renderTarget | vertex array -> deleted )
+#### Constant buffers
 
+DirectX11 doesn't have any notion of uniforms. To set a shader variable value from the application, it uses the concept of Constant Buffers, similar but not exactly the same.
 
 #### Render command
 
@@ -435,18 +464,8 @@ ___
 
 > The needed bits and parts of the app. 
 
-### Selection
-
-- Framebuffer with color picking
-- Raycasting
-
-### Interface and User controls
-
-- Docking branch imgui
-- imgui imagebutton not working correctly when pressed, use font icon instead
-- Arcball camera Panning
-
-### Rendering system and passes
+___
+### A - Renderer
 
 - per-vertex normals with a cube with 8 vertex is less efficient as we have to interpolate between 4 each time to get surface normal
 - Uber shader to make only one pass instead of multiple with lots of binding and unbinding (measure performance gain)
@@ -455,40 +474,61 @@ ___
 
 [https://fr.dolphin-emu.org/blog/2017/07/30/ubershaders/?nocr=true](https://fr.dolphin-emu.org/blog/2017/07/30/ubershaders/?nocr=true)
 
-### Brushes
+___
+### B - Mouse selection
+
+- Framebuffer with color picking
+- Raycasting
+
+___
+### C - Brushes
 
 - Voxel add tool, explosion if just add. Must limit to 1 add in height per click.
 - Color painting
 
-### Procedural terrain generation
+___
+### D - Interface and User controls
 
+- Docking branch imgui
+- imgui imagebutton not working correctly when pressed, use font icon instead
+- Arcball camera Panning
 
+___
+### E - Procedural terrain generation
 
+- Ui choices todo
+- RBF maths functions testing
 
 ## III - Additional features
+> It's great if it works, it's better if it works well
 
-### Wasm and Emscripten
+___
+### A - WASM
 
 - OpenGL es constraints
 - Using emscripten directly
 
-### Undo & redo
-
-- First think with enum
-- command pattern
-
-### Shadows
+___
+### B - Shadows
 
 - Shadow mapping
 - SSAO
 
-### Benchmarking
+___
+### C - Benchmarking
 
 - Open source chrome tracing
 - KHR debug opengl extension
 - [https://renderdoc.org/docs/window/event_browser.html](https://renderdoc.org/docs/window/event_browser.html)
 
+___
+### D - Undo & redo
+
+- First think with enum
+- command pattern
+
 ## IV - Planned features
+> A sort of to-do list but with more research
 
 ### Exporting
 
