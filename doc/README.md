@@ -7,7 +7,7 @@
 
 [**Introduction**](#introduction)
 
-[**I - Planning Research and Analysis**](#i---planning-research-and-analysis)
+[**I - Planning, Research and Analysis**](#i---planning-research-and-analysis)
 *	[**Voxel editors analysis**](#a---voxel-editors-analysis)
 
 [**Conclusion**](#conclusion)
@@ -53,14 +53,13 @@ Additionaly, we added features not mentionned in the specifications.
 
 | Description | Comments | Part |
 | --- | --- | --- |
-| Met ECS library | | |
+| [Met ECS library](https://github.com/guillaume-haerinck/met-ecs) | A post-mortem for this library is available [here](https://github.com/guillaume-haerinck/met-ecs/tree/master/docs) | I - B |
 | Shadows | | |
 | Deferred shading | | |
 | ArcBall Camera | |
 | Benchmarking | | |
 | WASM build support | | |
 | ImGui Docking branch | | |
-| SSAO | TODO | |
 
 </p>
 </details>
@@ -71,7 +70,7 @@ From the start, we wanted to create a **robust piece of software**. The kind of 
 
 As the **4rd iteration** of its creators to create a 3D data-driven real-time application, we knew that we could build something better out of our past mistakes, but **a lot was still to learn**. [Mirrors, lasers and robots](https://github.com/guillaume-haerinck/imac-tower-defense) helped us to reason about the communication inside of our app, and playground apps for [OpenGL](https://github.com/guillaume-haerinck/opengl-playground) and [DirectX](https://github.com/guillaume-haerinck/directx11-playground) gave us good intuitions to abstract our render engine. Do you want to know what this first version of Beast Voxel Editor teached us ?
 
-Through this document, we will describe as simply and thoroughly as we can our development process. We will talk about the problems we ecountered, the solutions we found for them, and the missing bits of this first version (because we can make a good software, but we can't make time).
+Through this document, we will describe as simply and thoroughly as possible our development process. We will explain the problems we ecountered, the solutions we found for them, and the missing bits of this first version (because we can make a good software, but we can't make time).
 
 ## I - Planning, research and analysis
 
@@ -213,7 +212,7 @@ We get that the rendering is done - maybe done by this unknown object - and then
 
 #### [MagicaVoxel](https://ephtracy.github.io/)
 
-MagicaVoxel is, without contest, the most known and used Voxel Editor out there. It might not be open-source, but it's free (*for how long ?*). It has a lot of features (but some are a bit hidden), and slick interface (which could be made more intuitive). Tools have a really great feeling, maybe the best amongst all voxel editors. It can handle large scene, group objects and move them in the world, but it does have a limit on number of objects. I also like a lot its renderrer and the viewport options (show outlines, disable shadows, etc...)
+MagicaVoxel is, without contest, the most known and used Voxel Editor out there. It might not be open-source, but it's free (*for how long ?*). It has a lot of features (but some are a bit hidden), and slick interface (which could be made more intuitive). Tools have a really great feeling, maybe the best amongst all voxel editors. It can handle large scene, group objects and move them in the world, but it does have a limit on number of objects. I also like a lot its renderer and the viewport options (show outlines, disable shadows, etc).
 
 <p align="center">
 <img width="600" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/magica-voxel/final.jpg?raw=true" alt="Magica voxel"/>
@@ -260,8 +259,15 @@ It might be interesting to delve deeper into its rendering structure, as the pro
 
 ### B - Architecture and Data Structure
 
-- ECS
-- Met ecs
+A good advice from *Mike Acton* before starting to write a piece of software is to *"know your data"*. In our case, we knew that we would have to store, traverse and write a lot of positions for our cubes. It would be the barebone of our app. We also knew that we might have to add a lot of features in the future, so storing our data in an **array of structures (AOS) would have been super-slow** as we would have ended up with a lot of cold data, unused most of the time. This meant **no Cube class**.
+
+Instead, we had to go for **split data storage**. For exemple one array for positions, another for materials, etc. Also known as a structure of array (SOA). There are tons of data structures which could have been usefull for us, but *premature optimisation is the source of all evil*. Instead, we decided to use a structure that we know, that we used in the past, and which encourage changes and prototyping.
+
+#### Entity Component System
+
+
+
+
 - Singleton components
 - previous project (opengl-playground)
 
