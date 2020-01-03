@@ -553,12 +553,28 @@ To get to this first version on time, we knew we had follow a planning. While so
 
 We see that the box brush is heavily used to block out shapes, then they went to pixel mode. There is also the face selection here and there. We will start with the pixel brush, then the box. The line brush and sphere brush are secondary.
 
-#### Development start & Code guidelines
+#### Development start & Code Guidelines
 
-- Continuous integration
-- Trello calender
-- Unit test
-- Automatic deploy
+Now that we had an architecture, and a list of tasks, we could get some work done. But first, we wanted to be certain that we wouldn't be breaking functionnalities as we were developing, and we wanted to be as transparent as possible aubout our progress.
+
+First, we created  **automatic builds** with [Github actions](https://github.com/features/actions). The idea is that each time we push to the repository, a remote server builds our application for linux and wasm. This way, we know when something breaks. It is represented by these two badges (let's hope they're still green) :
+
+[![Actions Status](https://github.com/guillaume-haerinck/voxel-editor/workflows/cpp/badge.svg)](https://github.com/guillaume-haerinck/voxel-editor/actions)
+[![Actions Status](https://github.com/guillaume-haerinck/voxel-editor/workflows/wasm/badge.svg)](https://github.com/guillaume-haerinck/voxel-editor/actions)
+
+Then we added unit **unit tests** with the [Catch2 library](https://github.com/catchorg/Catch2). We can't really test OpenGL, but we can test our [Maths functions](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/test/maths/rbf.test.cpp). It one of it fail, this badge would turn red :
+
+[![Actions Status](https://github.com/guillaume-haerinck/voxel-editor/workflows/unit-test/badge.svg)](https://github.com/guillaume-haerinck/voxel-editor/actions)
+
+Finally, we made a [Changelog](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/CHANGELOG.md) file, and opened some [Github Projects](https://github.com/guillaume-haerinck/cube-beast-editor/projects) to show our progress publicly.
+
+<br>
+
+<p align="center">
+<img width="900" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/github-project.png?raw=true" alt="UML"/>
+</p>
+
+<br>
 
 ## II - Core features
 
