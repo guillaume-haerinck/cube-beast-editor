@@ -1,4 +1,4 @@
-# Beast Voxel Editor post-mortem
+# Cube Beast Editor post-mortem
 
 <details><summary>Table of Content</summary>
 <p>
@@ -257,6 +257,8 @@ It might be interesting to delve deeper into its rendering structure, as the pro
 - MagicaVoxel would be the perfect tool if the interface was a bit more intuitive
 - There is not a one-go solution when it comes to rendering
 
+___
+
 ### B - Architecture and Data Structure
 
 A good advice from *Mike Acton* before starting to write a piece of software is to *"know your data"*. In our case, we knew that we would have to store, traverse and write a lot of positions for our cubes. It would be the barebone of our app. We also knew that we might have to add a lot of features in the future, so storing our data in an **array of structures (AOS) would have been super-slow** as we would have ended up with a lot of cold data, unused most of the time. This meant **no Cube class**.
@@ -265,17 +267,95 @@ Instead, we had to go for **split data storage**. For exemple one array for posi
 
 #### Entity Component System
 
+Mostly popular amongst game developers, this data-oriented way to program allows easy operation on large groups, prototyping and a SOA storage. In the past we've used the [ENTT library](https://github.com/skypjack/entt) to handle this for us. However this time it wasn't allowed by our teachers, so we had to create a [simple ECS library](https://github.com/guillaume-haerinck/met-ecs).
 
+We won't go into many details here as a [post-mortem](https://github.com/guillaume-haerinck/met-ecs/tree/master/docs) is available for this project as well. But if you are new to ECS, you got to know that it is made out of 3 pieces. Entites, Components and Systems.
 
+-   Entities are unique identifiers
+-   Components are plain datatypes (Positions, Colors, etc...)
+-   Entities can possess zero or more components
+-   Systems are logic executed on entities with matching component sets
+- Components have no functions, and systems have no states
 
-- Singleton components
-- previous project (opengl-playground)
+All of this orchestra is handled in our library by an object called **Registry**. It is the one that creates entities, assign components to them and can get them back. It is an object that is supposed to be used accross all systems.
+
+This gave us a **starting point to structure our application**. We knew that we would need of folder with all sorts of components, another for all systems (RenderSystem, SelectionSystem, etc) and an **App** class to order all of this.
+
+<p align="center">
+<img width="700" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/uml-1.png?raw=true" alt="UML"/>
+</p>
+
+#### The case of static data
+
+One problem that comes after starting to develop in ECS is **how to store,  get and where to modify static data**. By static data, we mean global states of the app, the sort of things that are needed but not modified by our systems. We are talking about input handling, user preferences, graphic objects like shaders and framebuffers, etc.
+
+There are a lot of ways to handle this sort of things. One might put it outside of the ECS, maybe by using a Singleton or the Service locator pattern. Another could use pointers inside of components, or be Event-based and call a set of function whenever the states are changed. We tried a few a this options on our past project and not one has been good enough to carry on.
+
+Overwatch developers [encountered this problem](https://youtu.be/W3aieHjyNvw?t=548) as well, and after a while they came up with a simple and yet powerfull idea : [Singleton Components](https://youtu.be/W3aieHjyNvw?t=741).
+
+> It's ok to define a component type that will only ever have one instance. - Timothy Ford, *GDC 2017*, Overwatch Gameplay Architecture and Netcode.
+
+Yet, there are still **2 problems** with their implementation that didn't worked well with our library.
+
+1. Singleton components could be modified everywhere like normal components. But the fact is that they where **supposed to be read-only** for everyone except one owner class. Using a plain entity to store them was a danger.
+
+2. In the way the library is structured, getting singleton components would have taken **at least 4 lines of code**, as we would have to check if the component existed. This is was pain and not developer-friendly.
+
+That's why we came up with another design for singleton components. **Simply store them inside a struct**. This struct will be passed by reference to our systems like the registry. The **data is private, but public function exists** to get const references to them. We used the concept of **C++ friend classes** to make those component modifiable by one or two classes only, and read only for all other.
+
+<p align="center">
+<img width="700" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/uml-2.png?raw=true" alt="UML"/>
+</p>
+
+#### Interfaces
+
+We used the [ImGui](https://github.com/ocornut/imgui) library to make our interfaces. As an imediate-mode stateless library, we have to update it each frame. To ease the code organisation, we split the different imgui windows into different classes. As for systems, those classes all inherits an interface, and they have access to the registry and singleton components. 
+
+We knew that we might need to handle **inter-interfaces communication**, so we made a simple event system, a modified version of the Observer pattern. The idea is simple, we have a **stack of events (just enums)**, that every interface can fill if they want to. When there is an event in the stack, we call the *onEvent()* function for each IGui* instance. Then each of the interfaces can handle it in a switch-case structure if they need to.
+
+```C++
+void App::update() {
+	(...)
+
+	for (const auto& event : m_eventStack) {
+		for (const auto& gui : m_guis) {
+			gui.onEvent(event);
+		}
+	}
+	m_eventsStack.emptyOldEvents();
+	
+	(...)
+}
+
+void  MyGui::onEvent(GuiEvent  e) {
+	switch (e) {
+		case  GuiEvent::MY_EVENT: mySpecialFunction(); break;
+		default: 
+			// Other events are not handled by this class
+			break;
+	}
+}
+```
+
+The event themselves do not contain data. Different interfaces might need differents things for the same type of event, and the singleton components already store the states of the application. **We haven't used events yet**, but they might come in handy if we do not want to check singleton components, or if a special event can't be described by a change in singleton components.
+
+<p align="center">
+<img width="600" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/uml-3.png?raw=true" alt="UML"/>
+</p>
+
+___
 
 ### C - OpenGL renderer abstraction
 
 - constant buffers instead of uniforms
 - instanced rendering
 - rename opengl Object to well known equivalent closer to DirectX (uniform buffer object -> constant buffer | framebuffer -> renderTarget | vertex array -> deleted )
+
+<p align="center">
+<img width="700" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/uml-4.png?raw=true" alt="UML"/>
+</p>
+
+___
 
 ### D - Laying out the tasks
 
