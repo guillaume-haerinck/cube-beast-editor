@@ -281,9 +281,13 @@ All of this orchestra is handled in our library by an object called **Registry**
 
 This gave us a **starting point to structure our application**. We knew that we would need of folder with all sorts of components, another for all systems (RenderSystem, SelectionSystem, etc) and an **App** class to order all of this.
 
+<br>
+
 <p align="center">
 <img width="700" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/uml-1.png?raw=true" alt="UML"/>
 </p>
+
+<br>
 
 #### The case of static data
 
@@ -303,9 +307,13 @@ Yet, there are still **2 problems** with their implementation that didn't worked
 
 That's why we came up with another design for singleton components. **Simply store them inside a struct**. This struct will be passed by reference to our systems like the registry. The **data is private, but public function exists** to get const references to them. We used the concept of **C++ friend classes** to make those component modifiable by one or two classes only, and read only for all other.
 
+<br>
+
 <p align="center">
 <img width="700" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/uml-2.png?raw=true" alt="UML"/>
 </p>
+
+<br>
 
 #### Interfaces
 
@@ -315,41 +323,99 @@ We knew that we might need to handle **inter-interfaces communication**, so we m
 
 ```C++
 void App::update() {
-	(...)
-
+	// ...
 	for (const auto& event : m_eventStack) {
 		for (const auto& gui : m_guis) {
 			gui.onEvent(event);
 		}
 	}
-	m_eventsStack.emptyOldEvents();
-	
-	(...)
+	m_eventStack.emptyOldEvents();
+	// ...
 }
 
-void  MyGui::onEvent(GuiEvent  e) {
+void MyGui::onEvent(GuiEvent  e) {
 	switch (e) {
 		case  GuiEvent::MY_EVENT: mySpecialFunction(); break;
-		default: 
-			// Other events are not handled by this class
-			break;
+		default: /* Other events are not handled by this class */ break;
 	}
 }
 ```
 
 The event themselves do not contain data. Different interfaces might need differents things for the same type of event, and the singleton components already store the states of the application. **We haven't used events yet**, but they might come in handy if we do not want to check singleton components, or if a special event can't be described by a change in singleton components.
 
+<br>
+
 <p align="center">
 <img width="600" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/uml-3.png?raw=true" alt="UML"/>
 </p>
+
+<br>
 
 ___
 
 ### C - OpenGL renderer abstraction
 
+The history of OpenGL [starts a way back](https://openglbook.com/chapter-0-preface-what-is-opengl.html) to the beginning of dedicated 3D hardware in the early 1990's. For all those years, the API had time for evolution and new features, but the biggest change happened in 2004 with the release of the version 2.0. This version, which is now called the *Core profile* allowed developer to use a **programmable pipeline** (shaders), and to send only the geometry data once instead of each frame.
+
+From this point, **features were added to the API, but not much changed in the way to use its core**. It kept the c-like API as opposed to the Object-Oriented way of Microsoft's DirectX, and finally in 2016, a new API called [Vulkan](https://fr.wikipedia.org/wiki/Vulkan_%28API%29) was released by the *Khronos group* (in charge of OpenGL).
+
+Does that mean that OpenGL is dead ? **Not at all**. Its specification is still updated frequently and used accross millions of devices. Vulkan simply does not play in the same league or have the same goal. It is much more complicated to use, can lead to great performance gain, but also some disasters.
+
+For this project, we decided to use the OpenGL ES 3.0 specification. It has enough features for our needs, can be played on many devices, and can be exported to be played on a web-browser (more on that in the part III). With the insights we got from our past experience with DirectX 11, we knew that we could abstract OpenGL in a way that would be the **less error-prone, less verbose and easier to understand**.
+
+#### Pipeline Input Description
+
+With DirectX 11, when you send data to your graphic card you have describe it with an array of struct called [InputElementDesc](https://docs.microsoft.com/en-us/windows/win32/api/d3d11/ns-d3d11-d3d11_input_element_desc). You assign assign this array to your vertex shader right after its creation, and everyone is happy.
+
+```C++
+// My buffer will be holding Float3 position. Not-instanced.
+const D3D11_INPUT_ELEMENT_DESC VertexPosition::InputElements[] = {
+	{ "SV_Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+};
+```
+
+It's OpenGL counterpart is not so easy to use.  
+
+You have to create a Vertex Array, assign your data to it, and finally describe what is inside with [glVertexAttribPointer](http://docs.gl/es3/glVertexAttribPointer). Here, **the description is not assigned to your vertex shader, but to your buffers**. This means that if you have different meshes with the same kind of data, you will have to repeat this step for each different buffer. It is very error-prone, there are a lot of steps, a lot of hidden states, and the code is difficult to read.
+
+We can't change the inner working of OpenGL, but we can emulate some DirectX clever ideas, and that's what we made (helped a lot by [The Cherno Hazel Engine](https://www.youtube.com/watch?v=jIJFM_pi6gQ))
+
+``` C++
+// Cube mesh layout
+PipelineInputDescription inputDescription = {
+	{ ShaderDataType::Float3, "Position" },
+	{ ShaderDataType::Float3, "Normal" },
+	{ ShaderDataType::Float3, "Translation", BufferElementUsage::PerInstance },
+	{ ShaderDataType::Float3, "EntityId", BufferElementUsage::PerInstance },
+	{ ShaderDataType::UInt, "MaterialIndex", BufferElementUsage::PerInstance }
+};
+```
+
+#### Pipeline output description
+
+```C++
+// Geometry pass fragment shader output
+PipelineOutputDescription outputDescription = {
+	{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Albedo" },
+	{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_Normal" },
+	{ RenderTargetUsage::Color, RenderTargetType::Texture, RenderTargetDataType::FLOAT, RenderTargetChannels::RGBA, "Geometry_LightSpacePosition" },
+	{ RenderTargetUsage::Color, RenderTargetType::RenderBuffer, RenderTargetDataType::UCHAR, RenderTargetChannels::RGBA, "EntityIdToColor", RenderTargetOperation::ReadPixel },
+	{ RenderTargetUsage::Depth, RenderTargetType::RenderBuffer, RenderTargetDataType::FLOAT, RenderTargetChannels::R, "Depth" }
+};
+```
+
 - constant buffers instead of uniforms
 - instanced rendering
 - rename opengl Object to well known equivalent closer to DirectX (uniform buffer object -> constant buffer | framebuffer -> renderTarget | vertex array -> deleted )
+
+
+#### Render command
+
+[https://ourmachinery.com/post/ecs-and-rendering/](https://ourmachinery.com/post/ecs-and-rendering/)
+
+#### Debug draw
+
+
 
 <p align="center">
 <img width="700" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/uml-4.png?raw=true" alt="UML"/>
@@ -386,6 +452,8 @@ ___
 - Uber shader to make only one pass instead of multiple with lots of binding and unbinding (measure performance gain)
 - Render target with ints are a pain to use (unknown values, clear different, etc), so cast entities to float to improve it
 - glVertexAttribPointer and glVertexAttribIPointer not to interpolate int values
+
+[https://fr.dolphin-emu.org/blog/2017/07/30/ubershaders/?nocr=true](https://fr.dolphin-emu.org/blog/2017/07/30/ubershaders/?nocr=true)
 
 ### Brushes
 
