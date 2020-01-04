@@ -116,21 +116,6 @@ void BrushSystem::boxBrush() {
         }
     }
 
-    // Remove already modified pos from selection area
-    for (size_t i = selectedArea.size() - 1; i > 0; i--) {
-        bool exist = false;
-        for (const glm::ivec3& existingPos : m_tempAddedPos) {
-            if (selectedArea.at(i) == existingPos) {
-                exist = true;
-                break;
-            }
-        }
-
-        if (exist) {
-            selectedArea.pop_back();
-        }
-    }
-
     switch (m_scomps.brush.usage()) {
     case BrushUse::ADD: {
         // TODO use a LUT in scomps for O(1) access to pos instead of O(n)
@@ -150,7 +135,6 @@ void BrushSystem::boxBrush() {
                 material.sIndex = m_scomps.materials.selectedIndex();
                 m_ctx.registry.assign<comp::Material>(entity, material);
                 m_ctx.registry.assign<comp::Transform>(entity, trans);
-                m_tempAddedPos.push_back(trans.position);
             }
         }
         break;
@@ -161,8 +145,8 @@ void BrushSystem::boxBrush() {
         m_ctx.registry.view<comp::Transform>().each([&](met::entity entity, comp::Transform& transform) {
             for (const glm::ivec3& checkPos : selectedArea) {
                 if (checkPos == transform.position) {
+                    // FIX Lib ?, as sometimes destroyed entities are elsewhere
                     m_ctx.registry.destroy(entity);
-                    m_tempAddedPos.push_back(transform.position);
                 }
             }
         });
@@ -175,7 +159,6 @@ void BrushSystem::boxBrush() {
             for (const glm::ivec3& checkPos : selectedArea) {
                 if (checkPos == transform.position) {
                     material.sIndex = m_scomps.materials.selectedIndex();
-                    m_tempAddedPos.push_back(transform.position);
                 }
             }
         });
