@@ -135,6 +135,7 @@ void BrushSystem::boxBrush() {
                 material.sIndex = m_scomps.materials.selectedIndex();
                 m_ctx.registry.assign<comp::Material>(entity, material);
                 m_ctx.registry.assign<comp::Transform>(entity, trans);
+                m_tempAddedPos.push_back(trans.position);
             }
         }
         break;
@@ -142,14 +143,21 @@ void BrushSystem::boxBrush() {
 
     case BrushUse::REMOVE : {
         // TODO use a LUT in scomps for O(1) access to pos instead of O(n)
+        std::vector<met::entity> idToDestroy;
         m_ctx.registry.view<comp::Transform>().each([&](met::entity entity, comp::Transform& transform) {
             for (const glm::ivec3& checkPos : selectedArea) {
                 if (checkPos == transform.position) {
-                    // FIX Lib ?, as sometimes destroyed entities are elsewhere
-                    m_ctx.registry.destroy(entity);
+                    // Fix lib. Destroying entities while iterating is changing the array indices.
+                    idToDestroy.push_back(entity);
+                    m_tempAddedPos.push_back(transform.position);
                 }
             }
         });
+
+        for (auto const& id : idToDestroy) {
+            m_ctx.registry.destroy(id);
+        }
+
         break;
     }
 
@@ -159,6 +167,7 @@ void BrushSystem::boxBrush() {
             for (const glm::ivec3& checkPos : selectedArea) {
                 if (checkPos == transform.position) {
                     material.sIndex = m_scomps.materials.selectedIndex();
+                    m_tempAddedPos.push_back(transform.position);
                 }
             }
         });
