@@ -80,5 +80,62 @@ void BrushSystem::voxelBrush() {
 void BrushSystem::boxBrush() {
     PROFILE_SCOPE("BoxBrush update");
 
-    
+    glm::ivec3 endPos = m_scomps.hovered.position();
+    glm::ivec3 startPos;
+    if (m_tempAddedPos.size() >= 1)
+        startPos = m_tempAddedPos.at(0);
+    else
+        startPos = endPos;
+
+    if (m_scomps.hovered.isCube()) {
+        switch (m_scomps.hovered.face()) {
+        case Face::FRONT: endPos.z--; break;
+        case Face::BACK: endPos.z++; break;
+        case Face::RIGHT: endPos.x++; break;
+        case Face::LEFT: endPos.x--; break;
+        case Face::TOP: endPos.y++; break;
+        case Face::BOTTOM: endPos.y--; break;
+        case Face::NONE: break;
+        default:
+            assert(false && "Unknown hovered face");
+        }
+    }
+
+    switch (m_scomps.brush.usage()) {
+    case BrushUse::ADD: {
+        // Add needed pos
+        std::vector<glm::ivec3> tempPos;
+        for (size_t x = startPos.x; x <= endPos.x; x++) {
+            for (size_t y = startPos.y; y <= endPos.y; y++) {
+                for (size_t z = startPos.z; z <= endPos.z; z++) {
+                    tempPos.push_back(glm::ivec3(x, y, z));
+                }
+            }
+        }
+        
+        // Only keep pos if they not already exist
+        for (const glm::ivec3& checkPos : tempPos) {
+            bool exist = false;
+            for (const glm::ivec3& existingPos : m_tempAddedPos) {
+                if (checkPos == existingPos) {
+                    exist = true;
+                    break;
+                }
+            }
+
+            if (!exist) {
+                met::entity entity = m_ctx.registry.create();
+                comp::Material material;
+                comp::Transform trans;
+                trans.position = checkPos;
+                material.sIndex = m_scomps.materials.selectedIndex();
+                m_ctx.registry.assign<comp::Material>(entity, material);
+                m_ctx.registry.assign<comp::Transform>(entity, trans);
+                m_tempAddedPos.push_back(trans.position);
+            }
+        }
+        break;
+    }
+    default: break;
+    }
 }
