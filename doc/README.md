@@ -587,19 +587,49 @@ ___
 
 We have an abstracted OpenGL API to call, but now we have to figure out what we want to call. How can we render a large number of cubes on a 3D scene and still be efficient in terms of performance ? We are not the first ones to ask this question, and because of [Minecraft](https://classic.minecraft.net/?join=CZpjn0QLBtY2c5Dc)'s success, we've seen a lot of [open-source projects](https://github.com/minetest/) trying to replicate or improve its inner working.
 
-There are some **really good litterature available online** about this subject. In particular [a few](https://0fps.net/2012/01/14/an-analysis-of-minecraft-like-engines/) [blog](https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/) [posts](https://0fps.net/2012/07/07/meshing-minecraft-part-2/) in 2012 by Mikola Lysenko on his blog 0fps. There is also [this great talk](https://www.youtube.com/watch?v=8gM3xMObEz4) called *Minecraft.js* from Max Ogden which took place during the 2013 NodePDX. If they can make a [voxel engine](https://medium.com/@deathcap1/six-months-of-voxel-js-494be64dd1cc) running in WebGL, why can't we ?
+There are some **really good litterature available online** about this subject. In particular [a few](https://0fps.net/2012/01/14/an-analysis-of-minecraft-like-engines/) [blog](https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/) [posts](https://0fps.net/2012/07/07/meshing-minecraft-part-2/) in 2012 by Mikola Lysenko on his blog 0fps. There is also [this great talk](https://www.youtube.com/watch?v=8gM3xMObEz4) called *Minecraft.js* from Max Ogden which took place during the 2013 NodePDX. Finally, from the page 578 of the book [Real-Time Rendering Third Edition](https://www.realtimerendering.com/) we get some good insights on voxels.
 
-Well, we want this first version to be simple and easily debugable. Yet all of these sources are creating their geometry data procedurally based on the position of their cubes. They call this step **Meshing**, and it's not that simple (though we could simply follow [youtube tutorials](https://www.youtube.com/watch?v=jHtqA6j9UMg)). Do we really need this much optimisation about our geometry data for small scenes ? Is this really efficient if the scene is modified a lot like in our case ?
+If they can make a [voxel engine](https://medium.com/@deathcap1/six-months-of-voxel-js-494be64dd1cc) running in WebGL, why can't we ?
+
+Well, we want this first version to be simple and fast to create. Yet all of these sources are making their geometry data procedurally based on the position of their cubes. They call this step **Meshing**, and it's not that simple (though we could simply follow [youtube tutorials](https://www.youtube.com/watch?v=jHtqA6j9UMg)). Do we really need this much optimisation about our geometry data for small scenes ? Is this really efficient if the scene is modified a lot like in our case ? Is rendering going to be a bottleneck now, or will it be our data storage ?
 
 In front of these question, we decided to go for a much simpler solution for now. The one that is typically used when you need to render the same mesh many times in a frame. We decided to go for instanced rendering.
 
 #### Instancing
 
+The idea of  instanced rendering is simple. As calling OpenGL from the CPU takes time, why don't we call it only once to render thousands of meshes ? It's not difficult to use, but it does changes the way we assign our positions. Typically, we would send a **world matrix in a constant buffer** to move the object on the 3D scene. But constant buffers are changed between drawcalls, and constant during this call. Meaning that we have to send an array for our translations.
+
+It would be possible to send our constant buffer as an array, but instead it is much more efficient to use one of our attribute buffers. While the geometry data will stay the same when the pipeline is replayed, the translation given in the vertex shader will be the next index of its array.
+
+<br>
+
+![Instanced rendering](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/instancing.png?raw=true)
+
+
+<br>
+
+
+
+<p align="center">
+<img width="600" src="https://software.intel.com/sites/default/files/managed/58/12/instancing2.png" alt="UML"/>
+</p>
+
+> [OpenGL ES 3.0 instanced rendering](https://software.intel.com/en-us/articles/opengl-es-30-instanced-rendering), Intel Developer Zone, by Cristiano F., 2014
+
+Real Time Rendering Third Edition page 796
+
 [https://nbertoa.wordpress.com/2016/02/02/instancing-vs-geometry-shader-vs-vertex-shader/](https://nbertoa.wordpress.com/2016/02/02/instancing-vs-geometry-shader-vs-vertex-shader/)
 
 #### Deferred shading
 
+
+![Defered shading](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/defered-shading.png?raw=true)
+
 #### Render System
+
+![Pipeline](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/pipeline.png?raw=true)
+
+![NVidia NSight](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/nsight.png?raw=true)
 
 - per-vertex normals with a cube with 8 vertex is less efficient as we have to interpolate between 4 each time to get surface normal
 - Uber shader to make only one pass instead of multiple with lots of binding and unbinding (measure performance gain)
@@ -648,6 +678,7 @@ ___
 
 - Shadow mapping
 - SSAO
+[https://0fps.net/2013/07/03/ambient-occlusion-for-minecraft-like-worlds/](https://0fps.net/2013/07/03/ambient-occlusion-for-minecraft-like-worlds/)
 
 ___
 ### C - Benchmarking
