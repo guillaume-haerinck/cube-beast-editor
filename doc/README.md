@@ -649,26 +649,34 @@ All of our rendering logic has been put into the *RenderSystem* class. There we 
 
 Then we preparre for the geometry pass by updating our attribute buffers. We have translations to place our cubes in the scene, an index to the array of materials available in a constant buffer, and finally the id to the entity being drawn (more explanation on this on the selection part). Finally, we can make multiple passes for the cubes, and after all this the Gui.
 
+<br>
+
 ![Pipeline](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/pipeline.png?raw=true)
+
+<br>
 
 When we open up our App in debug mode to check its render time with NVidia NSight. We see that the render time for the **geometry pass and the shadow map pass increase linearly with the number of cubes**. The lighting pass stays the same as well as for the ImGui render time.
 
-> 10x10x10 Voxels
+<br>
+
+> 10x10x10 Voxel count
 ![NVidia NSight](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/nsight-debug-10x10x10.png?raw=true)
 
-> 20x20x10 Voxels
+> 20x20x10 Voxel count
 ![NVidia NSight](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/nsight-debug-20x20x10.png?raw=true)
 
-> 20x20x20 Voxels
+> 20x20x20 Voxel count
 ![NVidia NSight](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/nsight-debug-20x20x20.png?raw=true)
 
-We know that we can do and we will need to do way better than this. Between this 3 tests, the screen is almost the same for the user : it's just a cube getting bigger or smaller. But for OpenGL, that's 2, 3 more geometry to render because this giant cube is made of smaller cubes.
+<br>
 
-We know for a fact that WebGL doesn't keep up when the number of meshes to draw start to increase too much, as showed during the [Google I/0 2019](https://youtu.be/K2JzIUIHIhc?t=1079) when presenting the new API WebGPU. If we want to target the web, we will need to do procedural mesh as [we've seen before](https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/).
+We know that we can do and we will need to do way better than this. Between this 3 tests, the screen is almost the same for the user : it's just a cube getting bigger or smaller. But for OpenGL, that's 2 or 3 times more geometry to render. This giant cube is made of smaller cubes.
 
-During our research, we've also found that changing OpenGL states can quickly become a bottleneck as well. So during our research we came up with the concept of **UberShaders**. The developers from dolphin emulator made [a really interesting article](https://fr.dolphin-emu.org/blog/2017/07/30/ubershaders/?nocr=true) about this in 2017. This idea is to put as much stuff as possible inside shaders. In a way, we are merging passes and shaders together.
+We know for a fact that WebGL doesn't keep up when the number of meshes to draw start increase too much. This as been showed during the [Google I/0 2019](https://youtu.be/K2JzIUIHIhc?t=1079) as plus to use the new API WebGPU. If we want to target the web, we will need to do procedural mesh as [we've seen before](https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/).
 
-It might be fun to see if we could suppess the shadow map pass and handle it in inside of the geometry pass. We might loose performance, as writing a depth map manually might not be that optimized, but we never know.
+During our research, we've also found that changing OpenGL states can quickly become a bottleneck as well.  That's when we encountered the concept of **UberShaders**. The developers from dolphin emulator made [a really interesting article](https://fr.dolphin-emu.org/blog/2017/07/30/ubershaders/?nocr=true) about this in 2017. The idea is to put as much stuff as possible inside the same set of shaders. In a way, we are merging passes and shaders together. 
+
+**Their problem wasn't really about switching state, it was more about compiling shaders**, but the idea is worth mentioning. It would be fun to see if we could suppess the shadow map pass and handle it in inside of the geometry pass. We might loose performance, as writing a depth map manually might not be that optimized, but we never know.
 ___
 ### B - Mouse selection
 
@@ -680,6 +688,25 @@ ___
 
 - Voxel add tool, explosion if just add. Must limit to 1 add in height per click.
 - Color painting
+
+![NVidia NSight](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/brush-bottleneck.png?raw=true)
+
+> Do not check for exception, sort by them.
+
+```C++
+for (position : selectionBox) {
+	bool exist = false;
+	for (voxelPosition : myVoxels.Pos) {
+		if (voxelPosition == position) {
+			exist = true;
+			break;
+		}
+	}
+	
+	if (!exist)
+		createVoxelAt(position);
+}
+```
 
 ___
 ### D - Interface and User controls
