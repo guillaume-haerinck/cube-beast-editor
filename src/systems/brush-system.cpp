@@ -106,6 +106,7 @@ void BrushSystem::boxBrush() {
     if (startPos.y > endPos.y) { std::swap(startPos.y, endPos.y); }
     if (startPos.z > endPos.z) { std::swap(startPos.z, endPos.z); }
 
+    // Fill selection area
     std::vector<glm::ivec3> selectedArea;
     for (size_t x = startPos.x; x <= endPos.x; x++) {
         for (size_t y = startPos.y; y <= endPos.y; y++) {
@@ -115,17 +116,31 @@ void BrushSystem::boxBrush() {
         }
     }
 
+    // Remove already modified pos from selection area
+    for (size_t i = selectedArea.size() - 1; i > 0; i--) {
+        bool exist = false;
+        for (const glm::ivec3& existingPos : m_tempAddedPos) {
+            if (selectedArea.at(i) == existingPos) {
+                exist = true;
+                break;
+            }
+        }
+
+        if (exist) {
+            selectedArea.pop_back();
+        }
+    }
+
     switch (m_scomps.brush.usage()) {
     case BrushUse::ADD: {
-        // Only keep pos if they not already exist
+        // TODO use a LUT in scomps for O(1) access to pos instead of O(n)
         for (const glm::ivec3& checkPos : selectedArea) {
             bool exist = false;
-            for (const glm::ivec3& existingPos : m_tempAddedPos) {
-                if (checkPos == existingPos) {
+            m_ctx.registry.view<comp::Transform>().each([&](met::entity entity, comp::Transform& transform) {
+                if (checkPos == transform.position) {
                     exist = true;
-                    break;
                 }
-            }
+            });
 
             if (!exist) {
                 met::entity entity = m_ctx.registry.create();
@@ -140,6 +155,33 @@ void BrushSystem::boxBrush() {
         }
         break;
     }
+
+    case BrushUse::REMOVE : {
+        // TODO use a LUT in scomps for O(1) access to pos instead of O(n)
+        m_ctx.registry.view<comp::Transform>().each([&](met::entity entity, comp::Transform& transform) {
+            for (const glm::ivec3& checkPos : selectedArea) {
+                if (checkPos == transform.position) {
+                    m_ctx.registry.destroy(entity);
+                    m_tempAddedPos.push_back(transform.position);
+                }
+            }
+        });
+        break;
+    }
+
+    case BrushUse::PAINT : {
+        // TODO use a LUT in scomps for O(1) access to pos instead of O(n)
+        m_ctx.registry.view<comp::Transform, comp::Material>().each([&](met::entity entity, comp::Transform& transform, comp::Material& material) {
+            for (const glm::ivec3& checkPos : selectedArea) {
+                if (checkPos == transform.position) {
+                    material.sIndex = m_scomps.materials.selectedIndex();
+                    m_tempAddedPos.push_back(transform.position);
+                }
+            }
+        });
+        break;
+    }
+
     default: break;
     }
 }
