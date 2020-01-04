@@ -587,7 +587,7 @@ ___
 
 We have an abstracted OpenGL API to call, but now we have to figure out what we want to call. How can we render a large number of cubes on a 3D scene and still be efficient in terms of performance ? We are not the first ones to ask this question, and because of [Minecraft](https://classic.minecraft.net/?join=CZpjn0QLBtY2c5Dc)'s success, we've seen a lot of [open-source projects](https://github.com/minetest/) trying to replicate or improve its inner working.
 
-There are some **really good litterature available online** about this subject. In particular [a few](https://0fps.net/2012/01/14/an-analysis-of-minecraft-like-engines/) [blog](https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/) [posts](https://0fps.net/2012/07/07/meshing-minecraft-part-2/) in 2012 by Mikola Lysenko on his blog 0fps. There is also [this great talk](https://www.youtube.com/watch?v=8gM3xMObEz4) called *Minecraft.js* from Max Ogden which took place during the 2013 NodePDX. Finally, from the page 578 of the book [Real-Time Rendering Third Edition](https://www.realtimerendering.com/) we get some good insights on voxels.
+There are some **really good litterature available online** on this subject. In particular [a few](https://0fps.net/2012/01/14/an-analysis-of-minecraft-like-engines/) [blog](https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/) [posts](https://0fps.net/2012/07/07/meshing-minecraft-part-2/) in 2012 by Mikola Lysenko on his blog 0fps. There is also [this great talk](https://www.youtube.com/watch?v=8gM3xMObEz4) called *Minecraft.js* from Max Ogden which took place during the 2013 NodePDX. Finally, from the page 578 of the book [Real-Time Rendering Third Edition](https://www.realtimerendering.com/) we get some good insights on voxels.
 
 If they can make a [voxel engine](https://medium.com/@deathcap1/six-months-of-voxel-js-494be64dd1cc) running in WebGL, why can't we ?
 
@@ -608,7 +608,7 @@ It would be possible to send our constant buffer as an array, but instead it is 
 
 <br>
 
-Instancing becomes efficient when we start to render an important number of primitives. However for very simple primitives like cube, it seems like that it doesn't change much as explained in Real Time Rending Third Edition page 796. Yet there is only one way to be certain, it's to benchmark (more on that an part III). There is also an [interesting post](https://nbertoa.wordpress.com/2016/02/02/instancing-vs-geometry-shader-vs-vertex-shader/) by Nicolas Bertoa about Geometry Shader to create our cubes. Howerever these shaders are neither supported by OpenGL ES, and neither a good awnser to many problems. Their use is discouraged by a lot of people.
+Instancing becomes efficient when we start to render an important number of primitives, with important number of vertices. However for very simple primitives like cube, it seems like that it doesn't change much as explained in Real Time Rending Third Edition page 796. Yet there is only one way to be certain, it's to benchmark (more on that an part III). There is also an [interesting post](https://nbertoa.wordpress.com/2016/02/02/instancing-vs-geometry-shader-vs-vertex-shader/) by Nicolas Bertoa about Geometry Shader to create our cubes. Howerever these types of shaders are neither supported by OpenGL ES, and neither a good awnser to many problems. Their use is discouraged by a lot of people.
 
 <p align="center">
 <img width="600" src="https://software.intel.com/sites/default/files/managed/58/12/instancing2.png" alt="UML"/>
@@ -616,11 +616,32 @@ Instancing becomes efficient when we start to render an important number of prim
 
 > [OpenGL ES 3.0 instanced rendering](https://software.intel.com/en-us/articles/opengl-es-30-instanced-rendering), Intel Developer Zone, by Cristiano F., 2014
 
-#### Deferred shading
+#### Deferred Shading
 
+In a - not so far - future, we want to be able to handle emissive materials for our cubes in real time. This mean that we would have to handle an important number of lights in our 3D scene. If we did this directly, we would have to process each light againts each fragment in our scene, which is way too much to handle. Instead, we want to **only compute lighting for the objects that are visible by the user**. 
 
+A great way to handle this is to make use of **multiple render passes**. Different models exists to make the performance gain even more substantial (like showed by [Jeremiah on 3dgep](https://www.3dgep.com/forward-plus/) in 2015), but we decided as always to **stick to the simpler version for now**.
+
+With deferred shading, you have at least 2 render passes :
+
+1. **Geometry pass** : Where you output your geometry data to textures. Things like positions, normals, albedo colors. To be reused with lighting calculation.
+
+2. **Lighting pass**: Where you compute your lights against the geometry textures, and output the final results.
+
+At the time of this writing, our software has 6 passes per frame (with 3 only dedicated to the cubes). We won't go into the detail of the ligthing equation as many sources are available online, but this is what you got to know :
+
+- We have a small ambient component to simulate global illumination. The cubes are never pitch black.
+- We use the [lambert diffuse](https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/diffuse-lambertian-shading) component for our main lighting.
+- There is no specularity component, but if we had to implement it, we would have used the [Cook-Torrance](https://learnopengl.com/PBR/Theory) [PBR model](http://www.pbr-book.org/).
+- At the end of our lighting pass, we do not apply any [Gamma correction](https://learnopengl.com/Advanced-Lighting/Gamma-Correction), or [HDR correction](https://learnopengl.com/Advanced-Lighting/HDR) as it wasn't matching perfectly with our brush color.
+
+As you can see below, we also generate a [shadow map](https://en.wikipedia.org/wiki/Shadow_mapping) for the directionnal light, and we will add screen-space ambient occulusion (SSAO) in the future. More on that on part III.
+
+<br>
 
 ![Defered shading](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/defered-shading.png?raw=true)
+
+<br>
 
 #### Render System
 
@@ -628,11 +649,6 @@ Instancing becomes efficient when we start to render an important number of prim
 
 ![NVidia NSight](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/nsight.png?raw=true)
 
-- per-vertex normals with a cube with 8 vertex is less efficient as we have to interpolate between 4 each time to get surface normal
-- Uber shader to make only one pass instead of multiple with lots of binding and unbinding (measure performance gain)
-- Render target with ints are a pain to use (unknown values, clear different, etc), so cast entities to float to improve it
-- glVertexAttribPointer and glVertexAttribIPointer not to interpolate int values
-- Instanced rendering
 
 [https://fr.dolphin-emu.org/blog/2017/07/30/ubershaders/?nocr=true](https://fr.dolphin-emu.org/blog/2017/07/30/ubershaders/?nocr=true)
 
