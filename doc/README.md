@@ -635,7 +635,7 @@ At the time of this writing, our software has 6 passes per frame (with 3 only de
 - There is no specularity component, but if we had to implement it, we would have used the [Cook-Torrance](https://learnopengl.com/PBR/Theory) [PBR model](http://www.pbr-book.org/).
 - At the end of our lighting pass, we do not apply any [Gamma correction](https://learnopengl.com/Advanced-Lighting/Gamma-Correction), or [HDR correction](https://learnopengl.com/Advanced-Lighting/HDR) as it wasn't matching perfectly with our brush color.
 
-As you can see below, we also generate a [shadow map](https://en.wikipedia.org/wiki/Shadow_mapping) for the directionnal light, and we will add screen-space ambient occulusion (SSAO) in the future. More on that on part III.
+As you can see below, we also generate a [shadow map](https://en.wikipedia.org/wiki/Shadow_mapping) for the directionnal light, and we will add screen-space ambient occulusion (SSAO) in the future. More on that on part III. Below you can see our first 4 passes, the 2 missings ones dedicated to the Gui (we do not want to spoil).
 
 <br>
 
@@ -645,13 +645,30 @@ As you can see below, we also generate a [shadow map](https://en.wikipedia.org/w
 
 #### Render System
 
+All of our rendering logic has been put into the *RenderSystem* class. There we have an absolute control about **what we give to OpenGL, and in what order**. The first steps is to update our constant buffers if they need to. While the View-Projection matrix is updated each frame, our lights and material informations will only be updated if there has been a change.
+
+Then we preparre for the geometry pass by updating our attribute buffers. We have translations to place our cubes in the scene, an index to the array of materials available in a constant buffer, and finally the id to the entity being drawn (more explanation on this on the selection part). Finally, we can make multiple passes for the cubes, and after all this the Gui.
+
 ![Pipeline](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/pipeline.png?raw=true)
 
-![NVidia NSight](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/nsight.png?raw=true)
+When we open up our App in debug mode to check its render time with NVidia NSight. We see that the render time for the **geometry pass and the shadow map pass increase linearly with the number of cubes**. The lighting pass stays the same as well as for the ImGui render time.
 
+> 10x10x10 Voxels
+![NVidia NSight](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/nsight-debug-10x10x10.png?raw=true)
 
-[https://fr.dolphin-emu.org/blog/2017/07/30/ubershaders/?nocr=true](https://fr.dolphin-emu.org/blog/2017/07/30/ubershaders/?nocr=true)
+> 20x20x10 Voxels
+![NVidia NSight](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/nsight-debug-20x20x10.png?raw=true)
 
+> 20x20x20 Voxels
+![NVidia NSight](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/nsight-debug-20x20x20.png?raw=true)
+
+We know that we can do and we will need to do way better than this. Between this 3 tests, the screen is almost the same for the user : it's just a cube getting bigger or smaller. But for OpenGL, that's 2, 3 more geometry to render because this giant cube is made of smaller cubes.
+
+We know for a fact that WebGL doesn't keep up when the number of meshes to draw start to increase too much, as showed during the [Google I/0 2019](https://youtu.be/K2JzIUIHIhc?t=1079) when presenting the new API WebGPU. If we want to target the web, we will need to do procedural mesh as [we've seen before](https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/).
+
+During our research, we've also found that changing OpenGL states can quickly become a bottleneck as well. So during our research we came up with the concept of **UberShaders**. The developers from dolphin emulator made [a really interesting article](https://fr.dolphin-emu.org/blog/2017/07/30/ubershaders/?nocr=true) about this in 2017. This idea is to put as much stuff as possible inside shaders. In a way, we are merging passes and shaders together.
+
+It might be fun to see if we could suppess the shadow map pass and handle it in inside of the geometry pass. We might loose performance, as writing a depth map manually might not be that optimized, but we never know.
 ___
 ### B - Mouse selection
 
