@@ -284,7 +284,7 @@ ___
 
 A good advice from *Mike Acton* before starting to write a piece of software is to *"know your data"*. In our case, we knew that we would have to store, traverse and write a lot of positions for our cubes. It would be the barebone of our app. We also knew that we might have to add a lot of features in the future, so storing our data in an **array of structures (AOS) would have been super-slow** as we would have ended up with a lot of cold data, unused most of the time. This meant **no Cube class**.
 
-Instead, we had to go for **split data storage**. For exemple one array for positions, another for materials, etc. Also known as a structure of array (SOA). There are tons of data structures which could have been usefull for us, but *premature optimisation is the source of all evil*. Instead, we decided to use a structure that we know, that we used in the past, and which encourage changes and prototyping.
+Instead, we had to go for **split data storage**. For exemple one array for positions, another for materials, etc. Also known as a structure of array (SOA). There are tons of data structures which could have been usefull for us, but **premature optimisation is the source of all evil**. Instead, we decided to use a structure that we know, that we used in the past, and which encourage changes and prototyping. Once that it would be stable and benchmarked, we could think about improving our data storage.
 
 #### Entity Component System
 
@@ -580,13 +580,32 @@ Finally, we made a [Changelog](https://github.com/guillaume-haerinck/cube-beast-
 
 > The needed bits and parts of the app. 
 
+These set of features has been the top priority for us. They shape our application and without them there would be nothing to show. As always in development, it's never over and there is still a lots of improvements to be made. Yet, we are satisfied with the work we have done, and it will be easy and a pleasure to improve when we have the time.
+
 ___
 ### A - Renderer
+
+We have an abstracted OpenGL API to call, but now we have to figure out what we want to call. How can we render a large number of cubes on a 3D scene and still be efficient in terms of performance ? We are not the first ones to ask this question, and because of [Minecraft](https://classic.minecraft.net/?join=CZpjn0QLBtY2c5Dc)'s success, we've seen a lot of [open-source projects](https://github.com/minetest/) trying to replicate or improve its inner working.
+
+There are some **really good litterature available online** about this subject. In particular [a few](https://0fps.net/2012/01/14/an-analysis-of-minecraft-like-engines/) [blog](https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/) [posts](https://0fps.net/2012/07/07/meshing-minecraft-part-2/) in 2012 by Mikola Lysenko on his blog 0fps. There is also [this great talk](https://www.youtube.com/watch?v=8gM3xMObEz4) called *Minecraft.js* from Max Ogden which took place during the 2013 NodePDX. If they can make a [voxel engine](https://medium.com/@deathcap1/six-months-of-voxel-js-494be64dd1cc) running in WebGL, why can't we ?
+
+Well, we want this first version to be simple and easily debugable. Yet all of these sources are creating their geometry data procedurally based on the position of their cubes. They call this step **Meshing**, and it's not that simple (though we could simply follow [youtube tutorials](https://www.youtube.com/watch?v=jHtqA6j9UMg)). Do we really need this much optimisation about our geometry data for small scenes ? Is this really efficient if the scene is modified a lot like in our case ?
+
+In front of these question, we decided to go for a much simpler solution for now. The one that is typically used when you need to render the same mesh many times in a frame. We decided to go for instanced rendering.
+
+#### Instancing
+
+[https://nbertoa.wordpress.com/2016/02/02/instancing-vs-geometry-shader-vs-vertex-shader/](https://nbertoa.wordpress.com/2016/02/02/instancing-vs-geometry-shader-vs-vertex-shader/)
+
+#### Deferred shading
+
+#### Render System
 
 - per-vertex normals with a cube with 8 vertex is less efficient as we have to interpolate between 4 each time to get surface normal
 - Uber shader to make only one pass instead of multiple with lots of binding and unbinding (measure performance gain)
 - Render target with ints are a pain to use (unknown values, clear different, etc), so cast entities to float to improve it
 - glVertexAttribPointer and glVertexAttribIPointer not to interpolate int values
+- Instanced rendering
 
 [https://fr.dolphin-emu.org/blog/2017/07/30/ubershaders/?nocr=true](https://fr.dolphin-emu.org/blog/2017/07/30/ubershaders/?nocr=true)
 
