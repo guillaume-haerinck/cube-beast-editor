@@ -1,6 +1,7 @@
 #include "brush-system.h"
 
 #include <profiling/instrumentor.h>
+#include <algorithm>
 
 #include "components/physics/transform.h"
 #include "components/graphics/material.h"
@@ -101,20 +102,23 @@ void BrushSystem::boxBrush() {
         }
     }
 
-    switch (m_scomps.brush.usage()) {
-    case BrushUse::ADD: {
-        // Add needed pos
-        std::vector<glm::ivec3> tempPos;
-        for (size_t x = startPos.x; x <= endPos.x; x++) {
-            for (size_t y = startPos.y; y <= endPos.y; y++) {
-                for (size_t z = startPos.z; z <= endPos.z; z++) {
-                    tempPos.push_back(glm::ivec3(x, y, z));
-                }
+    if (startPos.x > endPos.x) { std::swap(startPos.x, endPos.x); }
+    if (startPos.y > endPos.y) { std::swap(startPos.y, endPos.y); }
+    if (startPos.z > endPos.z) { std::swap(startPos.z, endPos.z); }
+
+    std::vector<glm::ivec3> selectedArea;
+    for (size_t x = startPos.x; x <= endPos.x; x++) {
+        for (size_t y = startPos.y; y <= endPos.y; y++) {
+            for (size_t z = startPos.z; z <= endPos.z; z++) {
+                selectedArea.push_back(glm::ivec3(x, y, z));
             }
         }
-        
+    }
+
+    switch (m_scomps.brush.usage()) {
+    case BrushUse::ADD: {
         // Only keep pos if they not already exist
-        for (const glm::ivec3& checkPos : tempPos) {
+        for (const glm::ivec3& checkPos : selectedArea) {
             bool exist = false;
             for (const glm::ivec3& existingPos : m_tempAddedPos) {
                 if (checkPos == existingPos) {

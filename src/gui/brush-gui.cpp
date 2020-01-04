@@ -16,9 +16,11 @@ void BrushGui::update() {
         ImGui::Text("  Usage");
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, m_scomps.uiStyle.largeButtonRounding());
         {
+            /*
             if (drawButton(ICON_FA_MOUSE_POINTER, "Select", m_scomps.brush.usage() == BrushUse::SELECT)) {
                 m_scomps.brush.m_usage = BrushUse::SELECT;
             }
+            */
             if (drawButton(ICON_FA_PEN, "Add", m_scomps.brush.usage() == BrushUse::ADD)) {
                 m_scomps.brush.m_usage = BrushUse::ADD;
             }
@@ -41,6 +43,7 @@ void BrushGui::update() {
             if (drawButton(ICON_FA_VECTOR_SQUARE, "Box", m_scomps.brush.type() == BrushType::BOX)) {
                 m_scomps.brush.m_type = BrushType::BOX;
             }
+            /*
             if (drawButton(ICON_FA_TH, "Face", m_scomps.brush.type() == BrushType::FACE)) {
                 m_scomps.brush.m_type = BrushType::FACE;
             }
@@ -50,6 +53,7 @@ void BrushGui::update() {
             if (drawButton(ICON_FA_STOP_CIRCLE, "Circle", m_scomps.brush.type() == BrushType::CIRCLE)) {
                 m_scomps.brush.m_type = BrushType::CIRCLE;
             }
+            */
         }
         ImGui::PopStyleVar(1);
 
