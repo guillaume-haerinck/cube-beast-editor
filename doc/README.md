@@ -1,6 +1,6 @@
 # Cube Beast Editor post-mortem
 
-<details><summary>Table of Content</summary>
+<details><summary>Table of Contents</summary>
 <p>
 
 [**Specifications**](#specifications)
@@ -46,22 +46,22 @@ The *D* column means *Done* and the *O* column means *Required*
 
 | D | R | Description | Comments | Part |
 | --- | --- | --- | --- | --- |
-| X | X | Render a 3D scene with cubes | | I - C |
-| | X | Select cube with keyboard | Replaced by mouse select| II - A |
-| X | | Select cube with mouse | Raycast & Framebuffer color picking | II - A |
-| X | X | Show selected cube with an outline | Multiple modes | |
-| X | X | Paint selected cube | | |
-| X | X | Add and Remove cubes | | I - C |
-| | X | Extrude tool | TODO Use face mode with the pencil brush | |
-| X | X | Procedural terrain generation with RBF | | |
-| X | X | Directionnal light | | |
-|  | X | Point light | TODO | |
-| | | Paint adjacent faces | | |
-| | | Proportional edit | |
-| | | Save scene to custom file | |
-| | | Load a 3D file (.gltf) | |
-| | | Change grid size | |
-| | | Textured cubes | |
+| X | X | Render a 3D scene with cubes | | [II - A](#a---renderer) |
+| | X | Select cube with keyboard | Replaced by mouse select| [II - B](#b---mouse-selection) |
+| X | | Select cube with mouse | Raycast & Framebuffer color picking | [II - B](#b---mouse-selection) |
+| X | X | Show selected cube with an outline | Multiple modes | [II - D](#d---interface-and-user-controls) |
+| X | X | Paint selected cube | | [II - C](#c---brushes) |
+| X | X | Add and Remove cubes | | [II - C](#c---brushes) |
+| | X | Extrude tool | | [II - C](#c---brushes) |
+| X | X | Procedural terrain generation with RBF | | [II - E](#e---procedural-terrain-generation) |
+| X | X | Directionnal light | | [II - A](#a---renderer) |
+|  | X | Point light | | [II - A](#a---renderer) |
+| | | Paint adjacent faces | | [II - C](#c---brushes) |
+| | | Proportional edit | | III - |
+| | | Save scene to custom file | | III - |
+| | | Load a 3D file (.gltf) | | III - |
+| | | Change grid size | | III -  |
+| | | Textured cubes | | III - |
 
 </p>
 </details>
@@ -73,14 +73,14 @@ Additionaly, we added features not mentionned in the specifications.
 
 | Description | Comments | Part |
 | --- | --- | --- |
-| [Met ECS library](https://github.com/guillaume-haerinck/met-ecs) | A post-mortem for this library is available [here](https://github.com/guillaume-haerinck/met-ecs/tree/master/docs) | I - B |
-| Shadows | | |
-| Instanced rendering | | |
-| Deferred shading | | |
-| ArcBall Camera | |
-| Benchmarking | | |
-| WASM build support | | |
-| ImGui Docking branch | | |
+| [Met ECS library](https://github.com/guillaume-haerinck/met-ecs) | A post-mortem for this library is available [here](https://github.com/guillaume-haerinck/met-ecs/tree/master/docs) | [I - B](#b---architecture-and-data-structure) |
+| Shadows | | III - B |
+| Instanced rendering | | [II - A](#a---renderer) |
+| Deferred shading | | [II - A](#a---renderer) |
+| ArcBall Camera | | [II - D](#d---interface-and-user-controls) |
+| Benchmarking | | III - C |
+| WASM build support | | III - A |
+| ImGui Docking branch | | [II - D](#d---interface-and-user-controls) |
 
 </p>
 </details>
@@ -580,7 +580,7 @@ Finally, we made a [Changelog](https://github.com/guillaume-haerinck/cube-beast-
 
 > The needed bits and parts of the app. 
 
-These set of features has been the top priority for us. They shape our application and without them there would be nothing to show. As always in development, it's never over and there is still a lots of improvements to be made. Yet, we are satisfied with the work we have done, and it will be easy and a pleasure to improve when we have the time.
+These set of features has been the top priority for us. They shape our application and without them there would be nothing to show. As always in development, it's never over and there is still a lots of improvements to be made. Yet, we are satisfied with the work we have done, and it will be easy and a pleasure to improve when we have time to do so.
 
 ___
 ### A - Renderer
@@ -608,7 +608,7 @@ It would be possible to send our constant buffer as an array, but instead it is 
 
 <br>
 
-
+Instancing becomes efficient when we start to render an important number of primitives. However for very simple primitives like cube, it seems like that it doesn't change much as explained in Real Time Rending Third Edition page 796. Yet there is only one way to be certain, it's to benchmark (more on that an part III). There is also an [interesting post](https://nbertoa.wordpress.com/2016/02/02/instancing-vs-geometry-shader-vs-vertex-shader/) by Nicolas Bertoa about Geometry Shader to create our cubes. Howerever these shaders are neither supported by OpenGL ES, and neither a good awnser to many problems. Their use is discouraged by a lot of people.
 
 <p align="center">
 <img width="600" src="https://software.intel.com/sites/default/files/managed/58/12/instancing2.png" alt="UML"/>
@@ -616,11 +616,8 @@ It would be possible to send our constant buffer as an array, but instead it is 
 
 > [OpenGL ES 3.0 instanced rendering](https://software.intel.com/en-us/articles/opengl-es-30-instanced-rendering), Intel Developer Zone, by Cristiano F., 2014
 
-Real Time Rendering Third Edition page 796
-
-[https://nbertoa.wordpress.com/2016/02/02/instancing-vs-geometry-shader-vs-vertex-shader/](https://nbertoa.wordpress.com/2016/02/02/instancing-vs-geometry-shader-vs-vertex-shader/)
-
 #### Deferred shading
+
 
 
 ![Defered shading](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/defered-shading.png?raw=true)
