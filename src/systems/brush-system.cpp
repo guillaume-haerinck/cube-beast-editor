@@ -118,6 +118,7 @@ void BrushSystem::boxBrush() {
 
     switch (m_scomps.brush.usage()) {
     case BrushUse::ADD: {
+        PROFILE_SCOPE("BoxBrush add");
         // TODO use a LUT in scomps for O(1) access to pos instead of O(n)
         for (const glm::ivec3& checkPos : selectedArea) {
             bool exist = false;
@@ -142,6 +143,7 @@ void BrushSystem::boxBrush() {
     }
 
     case BrushUse::REMOVE : {
+        PROFILE_SCOPE("BoxBrush remove");
         // TODO use a LUT in scomps for O(1) access to pos instead of O(n)
         std::vector<met::entity> idToDestroy;
         m_ctx.registry.view<comp::Transform>().each([&](met::entity entity, comp::Transform& transform) {
@@ -162,6 +164,8 @@ void BrushSystem::boxBrush() {
     }
 
     case BrushUse::PAINT : {
+        PROFILE_SCOPE("BoxBrush paint");
+    
         // TODO use a LUT in scomps for O(1) access to pos instead of O(n)
         m_ctx.registry.view<comp::Transform, comp::Material>().each([&](met::entity entity, comp::Transform& transform, comp::Material& material) {
             for (const glm::ivec3& checkPos : selectedArea) {
