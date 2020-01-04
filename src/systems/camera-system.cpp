@@ -48,7 +48,7 @@ void CameraSystem::update() {
 		glm::vec4 col1 = glm::normalize(glm::column<glm::mat4x4>(invView, 1));
 		glm::vec4 movement = col0 * m_scomps.inputs.posDelta().x + col1 * -m_scomps.inputs.posDelta().y;
 
-		m_scomps.camera.m_target += glm::vec3(movement.x, movement.y, movement.z) * 0.02f;
+		m_scomps.camera.m_target += glm::vec3(movement.x, movement.y, movement.z) * 0.04f;
 
 		m_scomps.camera.m_hasToBeUpdated = true;
 	}
@@ -56,9 +56,9 @@ void CameraSystem::update() {
 	// Change arcball radius
 	if (m_scomps.inputs.isEnabled(InputAction::CAM_DOLLY)) {
 		if (m_scomps.inputs.wheelDelta() > 0 && m_scomps.camera.m_radius >= 2) {
-			m_scomps.camera.m_radius -= 1;
+			m_scomps.camera.m_radius -= 1.5f;
 		} else if (m_scomps.inputs.wheelDelta() < 0) {
-			m_scomps.camera.m_radius += 1;
+			m_scomps.camera.m_radius += 1.5f;
 		}
 
 		m_scomps.camera.m_hasToBeUpdated = true;

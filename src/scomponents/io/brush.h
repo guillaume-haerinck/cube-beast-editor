@@ -3,7 +3,7 @@
 enum class BrushType {
 	VOXEL = 0,
 	FACE,
-	RECTANGLE,
+	BOX,
 	LINE,
 	CIRCLE
 };

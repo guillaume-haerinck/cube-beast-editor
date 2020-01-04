@@ -15,6 +15,7 @@ public:
 
 private:
     void voxelBrush();
+    void boxBrush();
 
 private:
     Context& m_ctx;

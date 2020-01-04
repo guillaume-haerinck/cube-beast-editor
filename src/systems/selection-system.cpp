@@ -12,14 +12,14 @@
 SelectionSystem::SelectionSystem(Context& ctx, SingletonComponents& scomps) 
     : m_ctx(ctx), m_scomps(scomps)
 {
-    // TODO set 9.5 to max cube height or width
+    // TODO set 19.5 to scene size
     m_planePositions = {
         glm::vec3(0),
         glm::vec3(0),
         glm::vec3(0),
-        glm::vec3(9.5, 0, 0),
-        glm::vec3(0, 9.5, 0),
-        glm::vec3(0, 0, 9.5)
+        glm::vec3(19.5, 0, 0),
+        glm::vec3(0, 19.5, 0),
+        glm::vec3(0, 0, 19.5)
     };
 
     m_planeNormals = {
@@ -73,7 +73,7 @@ void SelectionSystem::update() {
         for (unsigned int i = 0; i < m_planeNormals.size(); i++) {
             if (voxmt::doesLineIntersectPlane(m_planeNormals.at(i), m_planePositions.at(i), from, to, intersectionPoint)) {
                 const bool isInsideMin = intersectionPoint.x >= 0.0f && intersectionPoint.y >= 0.0f && intersectionPoint.z >= 0.0f;
-                const bool isInsideMax = intersectionPoint.x <= 10.0f && intersectionPoint.y <= 10.0f && intersectionPoint.z <= 10.0f;
+                const bool isInsideMax = intersectionPoint.x <= 20.0f && intersectionPoint.y <= 20.0f && intersectionPoint.z <= 20.0f; // TODO use scomp for object size
 
                 if (isInsideMin && isInsideMax) {
                     m_scomps.hovered.m_exist = true;

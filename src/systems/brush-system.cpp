@@ -10,19 +10,22 @@ BrushSystem::BrushSystem(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx)
 BrushSystem::~BrushSystem() {}
 
 void BrushSystem::update() {
+    PROFILE_SCOPE("BrushSystem update");
+
     if (!m_scomps.brush.started() && m_tempAddedPos.size() > 0)
         m_tempAddedPos.clear();
 
     if (m_scomps.hovered.exist() && m_scomps.brush.started()) {
         switch (m_scomps.brush.type()) {
             case BrushType::VOXEL: voxelBrush(); break;
+            case BrushType::BOX: boxBrush(); break;
             default: break;
         }
     }
 }
 
 void BrushSystem::voxelBrush() {
-    PROFILE_SCOPE("BrushSystem update");
+    PROFILE_SCOPE("VoxelBrush update");    
 
     comp::Transform trans;
     trans.position = m_scomps.hovered.position();
@@ -72,4 +75,10 @@ void BrushSystem::voxelBrush() {
 
     default: break;
     }
+}
+
+void BrushSystem::boxBrush() {
+    PROFILE_SCOPE("BoxBrush update");
+
+    
 }

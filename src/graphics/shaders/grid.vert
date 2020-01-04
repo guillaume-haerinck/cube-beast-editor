@@ -13,7 +13,7 @@ out vec2 v_texCoord;
 
 void main() {
     v_texCoord = texCoord;
-    gl_Position = matViewProj * vec4(position * 10.0, 1.0);
+    gl_Position = matViewProj * vec4(position * 20.0, 1.0); // TODO use constant buffer for grid size
 }
 
 )"

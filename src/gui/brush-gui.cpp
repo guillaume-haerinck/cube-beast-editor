@@ -38,8 +38,8 @@ void BrushGui::update() {
             if (drawButton(ICON_FA_CUBE, "Voxel", m_scomps.brush.type() == BrushType::VOXEL)) {
                 m_scomps.brush.m_type = BrushType::VOXEL;
             }
-            if (drawButton(ICON_FA_VECTOR_SQUARE, "Polygon", m_scomps.brush.type() == BrushType::RECTANGLE)) {
-                m_scomps.brush.m_type = BrushType::RECTANGLE;
+            if (drawButton(ICON_FA_VECTOR_SQUARE, "Box", m_scomps.brush.type() == BrushType::BOX)) {
+                m_scomps.brush.m_type = BrushType::BOX;
             }
             if (drawButton(ICON_FA_TH, "Face", m_scomps.brush.type() == BrushType::FACE)) {
                 m_scomps.brush.m_type = BrushType::FACE;
@@ -47,7 +47,7 @@ void BrushGui::update() {
             if (drawButton(ICON_FA_SLASH, "Line", m_scomps.brush.type() == BrushType::LINE)) {
                 m_scomps.brush.m_type = BrushType::LINE;
             }
-            if (drawButton(ICON_FA_STOP_CIRCLE, "Sphere", m_scomps.brush.type() == BrushType::CIRCLE)) {
+            if (drawButton(ICON_FA_STOP_CIRCLE, "Circle", m_scomps.brush.type() == BrushType::CIRCLE)) {
                 m_scomps.brush.m_type = BrushType::CIRCLE;
             }
         }
