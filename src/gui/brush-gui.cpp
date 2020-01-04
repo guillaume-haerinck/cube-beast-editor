@@ -40,7 +40,7 @@ void BrushGui::update() {
             if (drawButton(ICON_FA_CUBE, "Voxel", m_scomps.brush.type() == BrushType::VOXEL)) {
                 m_scomps.brush.m_type = BrushType::VOXEL;
             }
-            if (drawButton(ICON_FA_VECTOR_SQUARE, "Box", m_scomps.brush.type() == BrushType::BOX)) {
+            if (drawButton(ICON_FA_CUBES, "Box", m_scomps.brush.type() == BrushType::BOX)) {
                 m_scomps.brush.m_type = BrushType::BOX;
             }
             /*
