@@ -680,20 +680,27 @@ During our research, we've also found that changing OpenGL states can quickly be
 ___
 ### B - Mouse selection
 
-To pick an object on the screen with a mouse, there is basically 2 techniques : color picking and raycasting. Well we implemented both, not by fun (though it was), but by nescessity (it wasn't really). We started with color picking as it would be usefull to test our render target abstraction.
+To pick an object on the screen with a mouse, there are basically 2 techniques : **color picking** and **raycasting**. Well we implemented both, not by fun (though it was), but by nescessity (it wasn't really). We started with color picking as it would be usefull to test our render target abstraction.
 
 #### Color picking
+
+To do color picking, you have to render each mesh with an unique identifier to a texture. Once that is is generated, you can ask OpenGL the color of the texture at the mouse cursor's position. With the color, you find back your identifier and know which object it is related to. We generate the following texture during the geometry pass.
 
 <p align="center">
 <img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/color-picking.jpg?raw=true" alt="UML"/>
 </p>
 
+It is easy, simple, linear in time and yet there is a problem. **It is super slow** if we don't take gloves to implement this solution as you can see below. The problem is that to give the color, OpenGL has to finish its currents tasks, and that take time.
+
 ![Profiling](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/profiling-selection-before.jpg?raw=true)
 
+Fortunately, there is a way to fix this and make it **uber-fast**. The idea is to do this asynchroniously. With a special element called a [Pixel Buffer Object](https://www.khronos.org/opengl/wiki/Pixel_Buffer_Object), we can say to OpenGL that we're going to need the color of a pixel at said position. He will continue to work but from now on, if it has time to spare, it will fill our Pixel Buffer with the data we need. Then a few times later in the same frame, we can ask for it, and it will be ready. Using this trick got us **from 0.307ms to 0.034ms**, that's an order of magnitude faster.
 
 ![Profiling](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/profiling-selection-after.jpg?raw=true)
 
 #### Raycasting
+
+We got color picking so why bother ?
 
 <p align="center">
 <img width="750" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/ndc-cube.png?raw=true" alt="UML"/>
@@ -707,12 +714,10 @@ ___
 ### C - Brushes
 
 
-| Voxel Mode | Box Mode |
-| :---: | :---: |
-| ![Tool](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/add-vox.gif?raw=true) | ![Tool](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/add-box.gif?raw=true)|
-| ![Tool](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/delete-vox.gif?raw=true) | ![Tool](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/delete-cube.gif?raw=true) |
-| ![Tool](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/paint-vox.gif?raw=true) | ![Tool](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/paint-cube.gif?raw=true) |
-
+| | Add | Remove | Paint |
+| :---: | :---: | :---: | :---: |
+| **Voxel** | <img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/add-vox.gif?raw=true" alt="Tool"/> | <img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/delete-vox.gif?raw=true" alt="Tool"/> | <img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/paint-vox.gif?raw=true" alt="Tool"/> |
+**Box** | <img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/add-box.gif?raw=true" alt="Tool"/> | <img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/delete-cube.gif?raw=true" alt="Tool"/> | <img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/paint-cube.gif?raw=true" alt="Tool"/> |
 
 Bottlencek need to change data structure for o(1) random access (sparse set or interval tree)
 
@@ -760,6 +765,10 @@ ___
 
 - OpenGL es constraints
 - Using emscripten directly
+
+<p align="center">
+<img width="400" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/wasm.jpeg?raw=true" alt="Tool"/>
+</p>
 
 ___
 ### B - Shadows
