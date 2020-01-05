@@ -1,5 +1,12 @@
 # Cube Beast Editor post-mortem
 
+![Imac logo](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/imac.png?raw=true)
+
+**Computer Graphics & Mathematics classes common project**
+*Guillaume Haerinck, Gaelle Vallet - 2021 Promotion*
+
+___
+
 <details><summary>Table of Contents</summary>
 <p>
 
