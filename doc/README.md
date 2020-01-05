@@ -3,6 +3,7 @@
 ![Imac logo](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/imac.png?raw=true)
 
 **Computer Graphics & Mathematics classes common project**
+
 *Guillaume Haerinck, Gaelle Vallet - 2021 Promotion*
 
 ___
@@ -687,7 +688,7 @@ During our research, we've also found that changing OpenGL states can quickly be
 ___
 ### B - Mouse selection
 
-To pick an object on the screen with a mouse, there are basically 2 techniques : **color picking** and **raycasting**. Well we implemented both, not by fun (though it was), but by nescessity (it wasn't really). We started with color picking as it would be usefull to test our render target abstraction.
+To pick an object on the screen with a mouse, there are basically 2 techniques : **color picking** and **raycasting**. Well we implemented both, not by fun (though it was), but by nescessity (it wasn't really). We started with color picking as it would be usefull to test our render target abstraction. Our logic went to the **SelectionSystem** class.
 
 #### Color picking
 
@@ -707,45 +708,58 @@ Fortunately, there is a way to fix this and make it **uber-fast**. The idea is t
 
 #### Raycasting
 
-We got color picking so why bother ?
+Now that we had color picking, why use another technique ? Simply because color picking is not a good fit for every problem. In our case, now that we could pick an object on the screen, we wanted to **pick a selection on  the grid**. Each cells on the grid are not separate objects, it's just a texture on a cube. This meant that we had to check for the point of intersection, we had to go for raycasting.
+
+The first step consist of creating a ray which goes from the near plane to the far plane, as seen below. To do so, we create a matrix to go from the Normalized Device Coordinates (NDC) to the World Coordinates. The formula to get there is straightaway `NDCtoWorld = inverse(matProj * matView)`. 
+
+<br>
 
 <p align="center">
 <img width="750" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/ndc-cube.png?raw=true" alt="UML"/>
 </p>
 
+<br>
+
+Then we can get our vector going from the near plane to the far plane. Notice the perspective divide at the end.
+
+```C++
+vec4 from = NDCtoWorld * vec4(posX, posY, -1, 1);
+from /= from.w;
+```
+
+If we draw our vector from the camera position, we can ensure that it works using our DebugDraw class.
+
 <p align="center">
 <img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/debug-draw-raycast.gif?raw=true" alt="UML"/>
 </p>
 
+From there, it is just a question of line / plane intersection, with plenty of litterature online.
+
 ___
 ### C - Brushes
 
+We've seen in the part I that 2 brushes are used the most. The box brush to quickly create shapes, and the voxel brush to add details. We implemented both as you can see below.
 
 | | Add | Remove | Paint |
 | :---: | :---: | :---: | :---: |
 | **Voxel** | <img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/add-vox.gif?raw=true" alt="Tool"/> | <img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/delete-vox.gif?raw=true" alt="Tool"/> | <img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/paint-vox.gif?raw=true" alt="Tool"/> |
 **Box** | <img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/add-box.gif?raw=true" alt="Tool"/> | <img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/delete-cube.gif?raw=true" alt="Tool"/> | <img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/paint-cube.gif?raw=true" alt="Tool"/> |
 
-Bottlencek need to change data structure for o(1) random access (sparse set or interval tree)
+However, we quickly found a bottleneck using the Box Brush. Because of our data structure, our random access time for a position is O(n), we don't know if a cube exist at a certain position if we don't iterate over our list. As we have to do this for every position on our selection, the **complexity goes to O(n^2) which is really bad**. 
+
+We can see below that we've got quite the bottleneck. It starts slow, but it increase really fast as the complexity says.
 
 ![NVidia NSight](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/brush-bottleneck.png?raw=true)
 
-> Do not check for exception, sort by them.
+This means that we quickly have to find a way to get random access for our position at O(1). There are multiple ways to do so, but we are still unsure about which one to use. In particular, if we should keep ECS and use one of these methods to store an ID rather than a position.
 
-```C++
-for (position : selectionBox) {
-	bool exist = false;
-	for (voxelPosition : myVoxels.Pos) {
-		if (voxelPosition == position) {
-			exist = true;
-			break;
-		}
-	}
-	
-	if (!exist)
-		createVoxelAt(position);
-}
-```
+| Name | Description | Pluses | Problems |
+| --- | --- | --- | --- | --- |
+| Look-Up-Table | An array, size of the scene. The index in the array represents a position. Can store only a boolean to say wether or not there is a cube | Easy | Lots of empty areas, so a lot of cache misses during iteration |
+| [Sparse set](https://www.geeksforgeeks.org/sparse-set/) | Two arrays, one dense, one sparse. The dense contains our position without holes. The sparse is of the size of the scene, and contains indices to the dense array. | Easy. Can iterate on dense without holes | Wasted memory with sparse array |
+| [Interval tree](https://www.geeksforgeeks.org/interval-tree/) | Similar to a binary tree, each parents contains an interval of min-max value. | No unsused memory | Can be tricky to implement correctly. Random access is quick but not exactly O(1) |
+
+We might try a few of them and benchmark the results. Our main criteria being speed and not memory usage.
 
 ___
 ### D - Interface and User controls
@@ -763,6 +777,14 @@ ___
 
 - Ui choices todo
 - RBF maths functions testing
+
+- read json for scene
+
+[https://github.com/ephtracy/voxel-model](https://github.com/ephtracy/voxel-model)
+
+[https://github.com/KhronosGroup/glTF-Tutorials/tree/master/gltfTutorial](https://github.com/KhronosGroup/glTF-Tutorials/tree/master/gltfTutorial)
+
+[https://github.com/mlabbe/nativefiledialog](https://github.com/mlabbe/nativefiledialog)
 
 ## III - Additional features
 > It's great if it works, it's better if it works well
