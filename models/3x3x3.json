@@ -1,0 +1,42 @@
+{
+    "software": "cube-beast-editor",
+    "version": "0.0.1",
+    "geometry": [
+        {
+            "cube": {
+                "from": [0, 0, 0],
+                "to": [3, 3, 3],
+                "paletteIndex": 1
+            },
+            "voxel": {
+                "at": [5, 5, 5],
+                "paletteIndex": 1
+            }
+        }
+    ],
+    "palette": [
+        {
+            "color": [255, 255, 255]
+        },
+        {
+            "color": [0, 255, 0]
+        }
+    ],
+    "generation": [
+        {
+            "type": "rbf",
+            "interpolation": "linear",
+            "mode": "move",
+            "controlPoints": [
+                {
+                    "at": [0, 0, 0],
+                    "weight": 5
+                },
+                {
+                    "at": [5, 5, 5],
+                    "weight": 1
+                }
+            ]
+        }
+    ]
+}
