@@ -35,6 +35,7 @@ endif()
 
 if (NOT EMSCRIPTEN)
     add_library(GLAD STATIC "lib/glad/src/gles2.c")
+    add_library(TFD STATIC "lib/tinyfiledialogs/tinyfiledialogs.c")
 endif()
 file(GLOB_RECURSE IMGUI_SOURCES lib/imgui/*)
 add_library(IMGUI STATIC ${IMGUI_SOURCES})
@@ -72,14 +73,17 @@ target_link_libraries(
 )
 
 if (NOT EMSCRIPTEN)
-    target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} GLAD)
+    target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} GLAD TFD)
 endif()
 
 if (UNIX)
     target_link_libraries(${PROJECT_NAME} -ldl)
 endif()
 
-if (WIN32) # Copy .dll to build folder
+if (WIN32) 
+    target_link_libraries(${PROJECT_NAME} Comdlg32.lib Ole32.lib)
+
+    # Copy .dll to build folder
     add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different

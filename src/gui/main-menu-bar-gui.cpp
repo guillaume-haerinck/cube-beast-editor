@@ -2,6 +2,10 @@
 
 #include <imgui/imgui_internal.h>
 
+#ifndef __EMSCRIPTEN__
+    #include <tinyfiledialogs/tinyfiledialogs.h>
+#endif
+
 #include "icons-awesome.h"
 #include "loaders/cbe-loader.h"
 
@@ -34,10 +38,17 @@ void MainMenuBarGui::update() {
 
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
-                if (ImGui::MenuItem("Open 3x3x3 test")) {
-                    CbeLoader loader(m_ctx);
-                    loader.loadFile("models/3x3x3.cbe");
+
+#ifndef __EMSCRIPTEN__
+                if (ImGui::MenuItem("Open model")) {
+                    char const* filters[1] = { "*.cbe" };
+                    const char* filePath = tinyfd_openFileDialog("Load a .cbe model", "", 1, filters, 0, 0);
+                    if (filePath != nullptr) {
+                        CbeLoader loader(m_ctx);
+                        loader.loadFile(filePath);
+                    }
                 }
+#endif
                 ImGui::EndMenu();
             }
             ImGui::EndMainMenuBar();

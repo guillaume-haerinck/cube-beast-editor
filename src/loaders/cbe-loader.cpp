@@ -47,6 +47,8 @@ void CbeLoader::generation(const nlohmann::json& json) {
 
         const glm::vec3 pos = glm::vec3(controlPoints.at(i)["position"].at(0), controlPoints.at(i)["position"].at(1), controlPoints.at(i)["position"].at(2));
         controlPointsXYZ.at(i) = pos;
+
+        spdlog::info("Controlpoint : {} {} {}", pos.x, pos.y, pos.z);
     }
 
     // TODO add control points
