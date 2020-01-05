@@ -11,6 +11,10 @@
             "voxel": {
                 "at": [5, 5, 5],
                 "paletteIndex": 1
+            },
+            "voxelChunk": {
+                "byteLength": 1024,
+                "uri": "3x3x3.bin"
             }
         }
     ],
