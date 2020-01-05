@@ -60,13 +60,14 @@ The *D* column means *Done* and the *O* column means *Required*
 | X | X | Show selected cube with an outline | Multiple modes | [II - D](#d---interface-and-user-controls) |
 | X | X | Paint selected cube | | [II - C](#c---brushes) |
 | X | X | Add and Remove cubes | | [II - C](#c---brushes) |
-| | X | Extrude tool | | [II - C](#c---brushes) |
+| X | X | Extrude tool | Use box mode with add brush | [II - C](#c---brushes) |
 | X | X | Procedural terrain generation with RBF | | [II - E](#e---procedural-terrain-generation) |
 | X | X | Directionnal light | | [II - A](#a---renderer) |
 |  | X | Point light | | [II - A](#a---renderer) |
 | | | Paint adjacent faces | | [II - C](#c---brushes) |
 | | | Proportional edit | | III - |
 | | | Save scene to custom file | | III - |
+| X | X | Load a custom file (.cbs) | | [II - E](#e---procedural-terrain-generation) |
 | | | Load a 3D file (.gltf) | | III - |
 | | | Change grid size | | III -  |
 | | | Textured cubes | | III - |
@@ -574,7 +575,7 @@ Then we added unit **unit tests** with the [Catch2 library](https://github.com/c
 
 [![Actions Status](https://github.com/guillaume-haerinck/voxel-editor/workflows/unit-test/badge.svg)](https://github.com/guillaume-haerinck/voxel-editor/actions)
 
-Finally, we made a [Changelog](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/CHANGELOG.md) file, and opened some [Github Projects](https://github.com/guillaume-haerinck/cube-beast-editor/projects) to show our progress publicly.
+Finally, we made a [Changelog](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/CHANGELOG.md) file (which needs to be updated), and opened some [Github Projects](https://github.com/guillaume-haerinck/cube-beast-editor/projects) to show our progress publicly.
 
 <br>
 
@@ -653,7 +654,7 @@ As you can see below, we also generate a [shadow map](https://en.wikipedia.org/w
 
 #### Render System
 
-All of our rendering logic has been put into the *RenderSystem* class. There we have an absolute control about **what we give to OpenGL, and in what order**. The first steps is to update our constant buffers if they need to. While the View-Projection matrix is updated each frame, our lights and material informations will only be updated if there has been a change.
+All of our rendering logic has been put into the **RenderSystem** class. There we have an absolute control about **what we give to OpenGL, and in what order**. The first steps is to update our constant buffers if they need to. While the View-Projection matrix is updated each frame, our lights and material informations will only be updated if there has been a change.
 
 Then we preparre for the geometry pass by updating our attribute buffers. We have translations to place our cubes in the scene, an index to the array of materials available in a constant buffer, and finally the id to the entity being drawn (more explanation on this on the selection part). Finally, we can make multiple passes for the cubes, and after all this the Gui.
 
@@ -702,13 +703,13 @@ It is easy, simple, linear in time and yet there is a problem. **It is super slo
 
 ![Profiling](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/profiling-selection-before.jpg?raw=true)
 
-Fortunately, there is a way to fix this and make it **uber-fast**. The idea is to do this asynchroniously. With a special element called a [Pixel Buffer Object](https://www.khronos.org/opengl/wiki/Pixel_Buffer_Object), we can say to OpenGL that we're going to need the color of a pixel at said position. He will continue to work but from now on, if it has time to spare, it will fill our Pixel Buffer with the data we need. Then a few times later in the same frame, we can ask for it, and it will be ready. Using this trick got us **from 0.307ms to 0.034ms**, that's an order of magnitude faster.
+Fortunately, there is a way to fix this and make it **uber-fast**. The idea is to do this asynchroniously. With a special element called a [Pixel Buffer Object](https://www.khronos.org/opengl/wiki/Pixel_Buffer_Object), we can say to OpenGL that we're going to need the color of a pixel at said position. It will continue to work but from now on, if it has time to spare, it will fill our Pixel Buffer with the data we need. Then a few times later in the same frame, we can ask for it, and it will be ready. Using this trick got us **from 0.307ms to 0.034ms**, that's an order of magnitude faster.
 
 ![Profiling](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/profiling-selection-after.jpg?raw=true)
 
 #### Raycasting
 
-Now that we had color picking, why use another technique ? Simply because color picking is not a good fit for every problem. In our case, now that we could pick an object on the screen, we wanted to **pick a selection on  the grid**. Each cells on the grid are not separate objects, it's just a texture on a cube. This meant that we had to check for the point of intersection, we had to go for raycasting.
+Now that we had color picking, why use another technique ? Simply because color picking is not a good fit for every problem. In our case, now that we could pick an object on the screen, we wanted to **pick a cell on  the grid**. Each cells on the grid are not separate objects, it's just a texture on a cube. This meant that we had to check for the point of intersection, we had to go for raycasting.
 
 The first step consist of creating a ray which goes from the near plane to the far plane, as seen below. To do so, we create a matrix to go from the Normalized Device Coordinates (NDC) to the World Coordinates. The formula to get there is straightaway `NDCtoWorld = inverse(matProj * matView)`. 
 
@@ -733,12 +734,12 @@ If we draw our vector from the camera position, we can ensure that it works usin
 <img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/debug-draw-raycast.gif?raw=true" alt="UML"/>
 </p>
 
-From there, it is just a question of line / plane intersection, with plenty of litterature online.
+From there, it is just a question of line / plane intersection, with [plenty](http://www.jeffreythompson.org/collision-detection/table_of_contents.php) [of litterature](https://www.youtube.com/watch?v=fIu_8b2n8ZM) [online](https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection).
 
 ___
 ### C - Brushes
 
-We've seen in the part I that 2 brushes are used the most. The box brush to quickly create shapes, and the voxel brush to add details. We implemented both as you can see below.
+We've seen in the part I that 2 brushes are used the most. The box brush to quickly create shapes, and the voxel brush to add details. We implemented both in a class called **BrushSystem** as you can see below.
 
 | | Add | Remove | Paint |
 | :---: | :---: | :---: | :---: |
@@ -754,7 +755,7 @@ We can see below that we've got quite the bottleneck. It starts slow, but it inc
 This means that we quickly have to find a way to get random access for our position at O(1). There are multiple ways to do so, but we are still unsure about which one to use. In particular, if we should keep ECS and use one of these methods to store an ID rather than a position.
 
 | Name | Description | Pluses | Problems |
-| --- | --- | --- | --- | --- |
+| --- | --- | --- | --- |
 | Look-Up-Table | An array, size of the scene. The index in the array represents a position. Can store only a boolean to say wether or not there is a cube | Easy | Lots of empty areas, so a lot of cache misses during iteration |
 | [Sparse set](https://www.geeksforgeeks.org/sparse-set/) | Two arrays, one dense, one sparse. The dense contains our position without holes. The sparse is of the size of the scene, and contains indices to the dense array. | Easy. Can iterate on dense without holes | Wasted memory with sparse array |
 | [Interval tree](https://www.geeksforgeeks.org/interval-tree/) | Similar to a binary tree, each parents contains an interval of min-max value. | No unsused memory | Can be tricky to implement correctly. Random access is quick but not exactly O(1) |
@@ -769,7 +770,20 @@ ___
 - Arcball camera Panning
 
 <p align="center">
+<img width="600" src="https://user-images.githubusercontent.com/8225057/46304087-00035580-c5ae-11e8-8904-f27a9434574a.gif" alt="UML"/>
+</p>
+
+<p align="center">
 <img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/icons-test.png?raw=true" alt="UML"/>
+</p>
+
+
+<p align="center">
+<img width="800" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/changelog-img/v0-5-0.png?raw=true" alt="UML"/>
+</p>
+
+<p align="center">
+<img width="600" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/arcball.jpg?raw=true" alt="UML"/>
 </p>
 
 ___
