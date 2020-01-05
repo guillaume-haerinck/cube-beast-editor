@@ -17,7 +17,7 @@ GenerationGui::~GenerationGui() {}
 void GenerationGui::update() {
     ImGui::Begin(ICON_FA_SEEDLING "  Generation", 0);
         if (ImGui::Button("Generate")) {
-             std::vector<glm::ivec3> controlPointsXYZ = {
+            std::vector<glm::ivec3> controlPointsXYZ = {
                 glm::ivec3(5, 5, 5),
                 glm::ivec3(0, 0, 0)
             };

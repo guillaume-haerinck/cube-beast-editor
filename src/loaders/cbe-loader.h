@@ -1,5 +1,6 @@
 #pragma once
 
+#include <nlohmann/json.hpp>
 #include "context.h"
 
 class CbeLoader {
@@ -13,6 +14,9 @@ public:
      * @param cbeFilePath 
      */
     void loadFile(const char* cbeFilePath);
+
+private:
+    void generation(const nlohmann::json& json);
 
 private:
     Context& m_ctx;

@@ -1,7 +1,10 @@
 #include "main-menu-bar-gui.h"
 
 #include <imgui/imgui_internal.h>
+
 #include "icons-awesome.h"
+#include "loaders/cbe-loader.h"
+
 
 MainMenuBarGui::MainMenuBarGui(Context& ctx, SingletonComponents& scomps) 
     : m_ctx(ctx), m_scomps(scomps), m_setDefaultLayout(true) {}
@@ -31,7 +34,10 @@ void MainMenuBarGui::update() {
 
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
-                ImGui::MenuItem("Available soon");
+                if (ImGui::MenuItem("Open 3x3x3 test")) {
+                    CbeLoader loader(m_ctx);
+                    loader.loadFile("models/3x3x3.cbe");
+                }
                 ImGui::EndMenu();
             }
             ImGui::EndMainMenuBar();

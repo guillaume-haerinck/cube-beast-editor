@@ -9,7 +9,7 @@
                 "paletteIndex": 1
             },
             "voxel": {
-                "at": [5, 5, 5],
+                "position": [5, 5, 5],
                 "paletteIndex": 1
             },
             "voxelChunk": {
@@ -33,11 +33,11 @@
             "mode": "move",
             "controlPoints": [
                 {
-                    "at": [0, 0, 0],
+                    "position": [0, 0, 0],
                     "weight": 5
                 },
                 {
-                    "at": [5, 5, 5],
+                    "position": [5, 5, 5],
                     "weight": 1
                 }
             ]
