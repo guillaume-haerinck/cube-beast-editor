@@ -680,14 +680,41 @@ During our research, we've also found that changing OpenGL states can quickly be
 ___
 ### B - Mouse selection
 
-- Framebuffer with color picking
-- Raycasting
+To pick an object on the screen with a mouse, there is basically 2 techniques : color picking and raycasting. Well we implemented both, not by fun (though it was), but by nescessity (it wasn't really). We started with color picking as it would be usefull to test our render target abstraction.
+
+#### Color picking
+
+<p align="center">
+<img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/color-picking.jpg?raw=true" alt="UML"/>
+</p>
+
+![Profiling](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/profiling-selection-before.jpg?raw=true)
+
+
+![Profiling](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/profiling-selection-after.jpg?raw=true)
+
+#### Raycasting
+
+<p align="center">
+<img width="750" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/ndc-cube.png?raw=true" alt="UML"/>
+</p>
+
+<p align="center">
+<img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/debug-draw-raycast.gif?raw=true" alt="UML"/>
+</p>
 
 ___
 ### C - Brushes
 
-- Voxel add tool, explosion if just add. Must limit to 1 add in height per click.
-- Color painting
+
+| Voxel Mode | Box Mode |
+| :---: | :---: |
+| ![Tool](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/add-vox.gif?raw=true) | ![Tool](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/add-box.gif?raw=true)|
+| ![Tool](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/delete-vox.gif?raw=true) | ![Tool](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/delete-cube.gif?raw=true) |
+| ![Tool](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/paint-vox.gif?raw=true) | ![Tool](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/paint-cube.gif?raw=true) |
+
+
+Bottlencek need to change data structure for o(1) random access (sparse set or interval tree)
 
 ![NVidia NSight](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/brush-bottleneck.png?raw=true)
 
@@ -714,6 +741,10 @@ ___
 - Docking branch imgui
 - imgui imagebutton not working correctly when pressed, use font icon instead
 - Arcball camera Panning
+
+<p align="center">
+<img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/icons-test.png?raw=true" alt="UML"/>
+</p>
 
 ___
 ### E - Procedural terrain generation
