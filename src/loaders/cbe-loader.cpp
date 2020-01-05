@@ -2,6 +2,7 @@
 
 #include <spdlog/spdlog.h>
 #include <vector>
+#include <Eigen/Dense>
 #include <glm/glm.hpp>
 #include <sstream>
 #include <fstream>
@@ -32,17 +33,21 @@ void CbeLoader::loadFile(const char* cbeFilePath) {
 }
 
 void CbeLoader::generation(const nlohmann::json& json) {
-    const auto& type = json["generation"].at(0)["type"];
-    const auto& interpolation = json["generation"].at(0)["interpolation"];
-    const auto& mode = json["generation"].at(0)["mode"];
+    const std::string& type = json["generation"].at(0)["type"];
+    const std::string& interpolation = json["generation"].at(0)["interpolation"];
+    const std::string& mode = json["generation"].at(0)["mode"];
     const auto& controlPoints = json["generation"].at(0)["controlPoints"];
 
-    std::vector<glm::ivec3> controlPointsXYZ;
-    // Eigen::VectorXd controlPointWeights(controlPointsXYZ.size());
-    // controlPointWeights << 1.0f, 10.0f;
+    // Get values
+    std::vector<glm::ivec3> controlPointsXYZ(controlPoints.size());
+    Eigen::VectorXd controlPointWeights(controlPoints.size());
+    for (unsigned int i = 0; i < controlPoints.size(); i++) {
+        const float& weight = controlPoints.at(i)["weight"];
+        controlPointWeights[i] = weight;
 
-    for (const auto& point : controlPoints) {
-        const auto& pos = point["position"];
-        const auto& weight = point["weight"];
+        const glm::vec3 pos = glm::vec3(controlPoints.at(i)["position"].at(0), controlPoints.at(i)["position"].at(1), controlPoints.at(i)["position"].at(2));
+        controlPointsXYZ.at(i) = pos;
     }
+
+    // TODO add control points
 }
