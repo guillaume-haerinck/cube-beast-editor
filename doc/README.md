@@ -818,16 +818,16 @@ ___
 
 #### Radial basis functions
 
-The procedural terrain generation uses Radial Basic Function (RBF) interpolation. The users gives controle points, associatied weights and a chosen radial basis function. From these parameters we approximate a R2 -> R3 function.
+The procedural terrain generation uses Radial Basic Function (RBF) interpolation. The users gives controle points, associatied weights and a chosen radial basis function. From these parameters we approximate a `R2 -> R3` function.
 
 <p align="center">
-<img width="500" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/rbf-schema.png?raw=true" alt="UML"/>
+<img width="600" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/rbf-schema.png?raw=true" alt="UML"/>
 </p>
 
-Every point in the series has a field around it : an RBF (in red). Each point has a position (x_i, y_i, z_i). We want to find the image of an arbitrary point (x,y,z) knowing x and y considering the others points. We can approximate the position of this point by adding a linear combination of the RBFs.
+Every point in the series has a field around it : an RBF (in red). Each point has a position `(Xi, Yi, Zi)`. We want to find the image of an arbitrary point `(x, y, z)` knowing x and y considering the others points. We can approximate the position of this point by adding a linear combination of the RBFs.
 
 <p align="center">
-<img width="100" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/rbf-1.png?raw=true" alt="UML"/>
+<img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/rbf-1.png?raw=true" alt="UML"/>
 </p>
 
 `|C-Ci|` is the distance between the point to interpolate and the i-th control point.
@@ -835,28 +835,81 @@ Every point in the series has a field around it : an RBF (in red). Each point ha
 We just need to find the w_i coefficients. We use the known points values from the N points to create a system of N linear equations and N unknowns.
 
 <p align="center">
-<img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/rbf-2.png?raw=true" alt="UML"/>
+<img width="600" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/rbf-2.png?raw=true" alt="UML"/>
 </p>
 
 #### Available parameters
 
 To generate a terrain, the user gives control points, weights, and a radial basis function.
 
-We have a function to determine w_i coefficients, and a function that interpolate each (x,y) point of the grid. We can see those points as a partial 3D-surface.
+We have a function to determine `Wi` coefficients, and a function that interpolate each `(x, y)` point of the grid. We can see those points as a partial 3D-surface.
 
 To generate the terrain, we browse the grid and generate cubes on each case. If the z-coordonate is lower than the z-coordonate of the interpolated point. We generate cubes below the 3D-surface we interpolated.
 
 #### Parsing a file
 
-- Ui choices todo
-- RBF maths functions testing
-- read json for scene
+Procedural generation wouldn't be that usefull if the user had no say in it. While we're still working on the user interface part, we allowed the user to **load a custom scene file**, which can contains procedural-generation data in it.
 
-[https://github.com/ephtracy/voxel-model](https://github.com/ephtracy/voxel-model)
+Our main inspiration for this format is the [gltf 2.0](https://github.com/KhronosGroup/glTF-Tutorials/tree/master/gltfTutorial), which had the clever idea to mix .json data structure and binary files. Without further detail, let's show an exemple of our format (work in progress).
 
-[https://github.com/KhronosGroup/glTF-Tutorials/tree/master/gltfTutorial](https://github.com/KhronosGroup/glTF-Tutorials/tree/master/gltfTutorial)
+<details><summary>Show .cbe file example</summary>
+<p>
 
-[https://github.com/mlabbe/nativefiledialog](https://github.com/mlabbe/nativefiledialog)
+```json
+{
+    "software": "cube-beast-editor",
+    "version": "0.0.1",
+    "geometry": [
+        {
+            "cube": {
+                "from": [0, 0, 0],
+                "to": [3, 3, 3],
+                "paletteIndex": 1
+            },
+            "voxel": {
+                "position": [5, 5, 5],
+                "paletteIndex": 1
+            },
+            "voxelChunk": {
+                "byteLength": 1024,
+                "uri": "3x3x3.bin"
+            }
+        }
+    ],
+    "palette": [
+        {
+            "color": [255, 255, 255]
+        },
+        {
+            "color": [0, 255, 0]
+        }
+    ],
+    "generation": [
+        {
+            "type": "rbf",
+            "interpolation": "linear",
+            "mode": "move",
+            "controlPoints": [
+                {
+                    "position": [0, 0, 0],
+                    "weight": 5
+                },
+                {
+                    "position": [5, 5, 5],
+                    "weight": 1
+                }
+            ]
+        }
+    ]
+}
+```
+
+</p>
+</details>
+
+ImGui can create a menu which asks the user to open a file, but it doesn't know how to access the OS-specific API to open a window to get a file. Fortunately for us, we've found a cross-platform single-file library to handle this labour for us. It is called [native file dialog](https://github.com/mlabbe/nativefiledialog), and it is magic.
+
+Then, one that we get the file path, we use yet another library - [nlohmann's json](https://github.com/nlohmann/json) - to parse the Json format. As we plan to support .gltf model import in the future (already done in other projects), we will need it anyway, and it's a really solid library.
 
 ## III - Additional features
 > It's great if it works, it's better if it works well
