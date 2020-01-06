@@ -50,7 +50,7 @@ Beast Voxel Editor is a software which allows you to easily generate, visualize 
 <details><summary>Show Specifications</summary>
 <p>
 
-The *D* column means *Done* and the *O* column means *Required*
+The *D* column means *Done* and the *R* column means *Required*
 
 | D | R | Description | Comments | Part |
 | --- | --- | --- | --- | --- |
@@ -65,12 +65,12 @@ The *D* column means *Done* and the *O* column means *Required*
 | X | X | Directionnal light | | [II - A](#a---renderer) |
 |  | X | Point light | | [II - A](#a---renderer) |
 | | | Paint adjacent faces | | [II - C](#c---brushes) |
-| | | Proportional edit | | III - |
-| | | Save scene to custom file | | III - |
+| | | Proportional edit | | IV |
+| | | Save scene to custom file | | IV |
 | X | X | Load a custom file (.cbs) | | [II - E](#e---procedural-terrain-generation) |
-| | | Load a 3D file (.gltf) | | III - |
-| | | Change grid size | | III -  |
-| | | Textured cubes | | III - |
+| | | Load a 3D file (.gltf) | | IV |
+| | | Change grid size | | IV |
+| | | Textured cubes | | IV |
 
 </p>
 </details>
@@ -83,13 +83,14 @@ Additionaly, we added features not mentionned in the specifications.
 | Description | Comments | Part |
 | --- | --- | --- |
 | [Met ECS library](https://github.com/guillaume-haerinck/met-ecs) | A post-mortem for this library is available [here](https://github.com/guillaume-haerinck/met-ecs/tree/master/docs) | [I - B](#b---architecture-and-data-structure) |
-| Shadows | | III - B |
+| Shadows | | [III - B](#b---shadows) |
 | Instanced rendering | | [II - A](#a---renderer) |
 | Deferred shading | | [II - A](#a---renderer) |
 | ArcBall Camera | | [II - D](#d---interface-and-user-controls) |
-| Benchmarking | | III - C |
-| WASM build support | | III - A |
-| ImGui Docking branch | | [II - D](#d---interface-and-user-controls) |
+| Benchmarking | | [III - C](#c---benchmarking) |
+| WASM build support | | [III - A](#a---wasm) |
+| UI Improvements | | [II - D](#d---interface-and-user-controls) |
+| History | *Soon to be implemented* | [III - D](#d---history) |
 
 </p>
 </details>
@@ -790,8 +791,20 @@ We knew that we would need to handle icons in our App. It is a way user-friendly
 
 Then we moved to font-icons, the idea of using a font to show your icons, and it went well. We used juliettef's [IconFontCppHeaders](https://github.com/juliettef/IconFontCppHeaders) with [Awesome Icons](https://fontawesome.com/icons?d=gallery) to get there. As ImGui rasterizes the fonts for display, we have to generate 2 sets of textures and switch between them to change the size of the font.
 
+#### Feedbacks
+
+To let the user know of what he is using and how to use it, we implemented a few behaviors into our app. 
+
+The first one is a context bar available at the bottom. Depending on the tool selected and the position hovered, it will give to the user available actions.
+
 <p align="center">
 <img width="800" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/changelog-img/v0-5-0.png?raw=true" alt="UML"/>
+</p>
+
+Then there is the hovered area, which is a plane of color as MagicaVoxel does. Me might add different representation depending on the selected tool in the future, or even let the choice to the user.
+
+<p align="center">
+<img width="500" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/hover-plane.gif?raw=true" alt="UML"/>
 </p>
 
 #### Arcball camera
@@ -914,11 +927,16 @@ Then, one that we get the file path, we use yet another library - [nlohmann's js
 ## III - Additional features
 > It's great if it works, it's better if it works well
 
+You have already witnessed some of them previously, but now it's time to talk about our freebies. These little features that add to the value of this project. Some of them can make our life miserable, I'm looking at you WASM, but some of them can be sources of great joy of discoveries, like benchmark my dear boy. Without further ado, let's get into this.
+
 ___
 ### A - WASM
 
+[Web Assembly](https://webassembly.org/) is kind of the new cool kid in a town of web developers. 
+
 - OpenGL es constraints
 - Using emscripten directly
+- figma
 
 <p align="center">
 <img width="400" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/wasm.jpeg?raw=true" alt="Tool"/>
@@ -939,7 +957,7 @@ ___
 - [https://renderdoc.org/docs/window/event_browser.html](https://renderdoc.org/docs/window/event_browser.html)
 
 ___
-### D - Undo & redo
+### D - History
 
 - First think with enum
 - command pattern
