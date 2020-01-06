@@ -201,7 +201,7 @@ Qubicle is a paid-software (from 75$ to 175$ for the pro version) which was used
 <img width="600" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/qubicle/final.jpg?raw=true" alt="Goxel logo"/>
 </p>
 
-It cannot be analysed by renderdoc as the OpenGL context created is legacy, but it kind-of works with [Nvidia Nsight](https://developer.nvidia.com/nsight-visual-studio-edition). And that when we have a surprise, "An unknown objet as been sent to the API". *mmmh, m'ok*. So let's capture a frame and see what we get.
+It cannot be dissected by renderdoc as the OpenGL context created is legacy, but it kind-of works with [Nvidia Nsight](https://developer.nvidia.com/nsight-visual-studio-edition). And that's when we have a surprise, "An unknown objet as been sent to the API". *mmmh, m'ok*. So let's capture a frame and see what we get.
 
 <details><summary>See what we get</summary>
 <p>
@@ -219,7 +219,7 @@ It cannot be analysed by renderdoc as the OpenGL context created is legacy, but 
 </details>
 </p>
 
-We get that the rendering is done - maybe done by this unknown object - and then the result is split into smaller textures that are rendered by OpenGL. That's an interesting design, but I have no clue about how it works.
+We see that the rendering is done elsewhere - maybe done by this unknown object - and then the result is split into smaller textures that are rendered by OpenGL. That's an interesting design, but I have no clue about how it works.
 
 <details><summary>Show Qubicle Summary</summary>
 <p>
@@ -335,7 +335,7 @@ Yet, there are still **2 problems** with their implementation that didn't worked
 
 2. In the way the library is structured, getting singleton components would have taken **at least 4 lines of code**, as we would have to check if the component existed. This is was pain and not developer-friendly.
 
-That's why we came up with another design for singleton components. **Simply store them inside a struct**. This struct will be passed by reference to our systems like the registry. The **data is private, but public function exists** to get const references to them. We used the concept of **C++ friend classes** to make those component modifiable by one or two classes only, and read only for all other.
+That's why we came up with another design for singleton components. **Simply store them inside a struct**. This struct will be passed by reference to our systems like the registry. The **data is private, but public function exists** to get const references to them. We used the concept of **C++ friend classes** to make those component modifiable by one or two classes only, and read only for all others.
 
 <br>
 
@@ -516,7 +516,7 @@ ___
 
 ### D - Laying out the tasks
 
-To get to this first version on time, we knew we had follow a planning. While some priorities where obvious, like rendering a cube on a scene, it remained difficult to make a choice about which optional features to support rapidly. We knew what the other voxel editors had, but **what was used the most often, what was the core ?** To awnser this question, we simply took a look on youtube to see how artists works.
+To get to this first version on time, we knew we had follow a planning. While some priorities where obvious, like rendering a cube on a scene, it remained difficult to make a choice about which optional features to support quickly. We knew what the other voxel editors had, but **what was used the most often, what was the core ?** To awnser this question, we simply took a look on youtube to see how artists works.
 
 #### Artist work analysis
 
@@ -627,9 +627,9 @@ Instancing becomes efficient when we start to render an important number of prim
 
 #### Deferred Shading
 
-In a - not so far - future, we want to be able to handle emissive materials for our cubes in real time. This mean that we would have to handle an important number of lights in our 3D scene. If we did this directly, we would have to process each light againts each fragment in our scene, which is way too much to handle. Instead, we want to **only compute lighting for the objects that are visible by the user**. 
+In a - not so far - future, we want to be able to handle emissive materials for our cubes in real time. This mean that we will have to handle an important number of lights in our 3D scene. If we did this directly, we would have to process each light againts each fragment in our scene, which is way too much to handle. Instead, we want to **only compute lighting for the objects that are visible by the user**. 
 
-A great way to handle this is to make use of **multiple render passes**. Different models exists to make the performance gain even more substantial (like showed by [Jeremiah on 3dgep](https://www.3dgep.com/forward-plus/) in 2015), but we decided as always to **stick to the simpler version for now**.
+A great way to handle this is to make use of **multiple render passes**, so that you put what is visible inside a texture, and only then compute lighting. Different models exists to make the performance gain even more substantial (like showed by [Jeremiah on 3dgep](https://www.3dgep.com/forward-plus/) in 2015), but we decided as always to **stick to the simpler version for now**.
 
 With deferred shading, you have at least 2 render passes :
 
@@ -693,17 +693,17 @@ To pick an object on the screen with a mouse, there are basically 2 techniques :
 
 #### Color picking
 
-To do color picking, you have to render each mesh with an unique identifier to a texture. Once that is is generated, you can ask OpenGL the color of the texture at the mouse cursor's position. With the color, you find back your identifier and know which object it is related to. We generate the following texture during the geometry pass.
+To do color picking, you have to render each mesh with an unique identifier to a texture. Once that is is generated, you can ask OpenGL the color of the texture under the mouse cursor's position. With the color, you find back your identifier and know which object it is related to. We generate the following texture during the geometry pass.
 
 <p align="center">
 <img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/renderer/color-picking.jpg?raw=true" alt="UML"/>
 </p>
 
-It is easy, simple, linear in time and yet there is a problem. **It is super slow** if we don't take gloves to implement this solution as you can see below. The problem is that to give the color, OpenGL has to finish its currents tasks, and that take time.
+It is easy, simple, linear in time and yet there is a problem. **It is super slow** if we don't take gloves to implement this solution as you can see below. The problem is that to give us the color under the mouse, OpenGL has to finish its currents tasks, and that take time.
 
 ![Profiling](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/profiling-selection-before.jpg?raw=true)
 
-Fortunately, there is a way to fix this and make it **uber-fast**. The idea is to do this asynchroniously. With a special element called a [Pixel Buffer Object](https://www.khronos.org/opengl/wiki/Pixel_Buffer_Object), we can say to OpenGL that we're going to need the color of a pixel at said position. It will continue to work but from now on, if it has time to spare, it will fill our Pixel Buffer with the data we need. Then a few times later in the same frame, we can ask for it, and it will be ready. Using this trick got us **from 0.307ms to 0.034ms**, that's an order of magnitude faster.
+Fortunately, there is a way to fix this and make it **uber-fast**. The idea is to do this asynchronously. With a special element called a [Pixel Buffer Object](https://www.khronos.org/opengl/wiki/Pixel_Buffer_Object), we can say to OpenGL that we're going to need the color of a pixel at said position. It will continue to work but from now on, if it has time to spare, it will fill our Pixel Buffer with the data we need. Then a few times later in the same frame, we can ask for it, and it will be ready. Using this trick got us **from 0.307ms to 0.034ms**, that's an order of magnitude faster.
 
 ![Profiling](https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/profiling-selection-after.jpg?raw=true)
 
@@ -759,39 +759,97 @@ This means that we quickly have to find a way to get random access for our posit
 | Look-Up-Table | An array, size of the scene. The index in the array represents a position. Can store only a boolean to say wether or not there is a cube | Easy | Lots of empty areas, so a lot of cache misses during iteration |
 | [Sparse set](https://www.geeksforgeeks.org/sparse-set/) | Two arrays, one dense, one sparse. The dense contains our position without holes. The sparse is of the size of the scene, and contains indices to the dense array. | Easy. Can iterate on dense without holes | Wasted memory with sparse array |
 | [Interval tree](https://www.geeksforgeeks.org/interval-tree/) | Similar to a binary tree, each parents contains an interval of min-max value. | No unsused memory | Can be tricky to implement correctly. Random access is quick but not exactly O(1) |
+| Octree | A tree that recursivly subdivides space into equal sized octants| No unsused memory | [Said](https://0fps.net/2012/01/14/an-analysis-of-minecraft-like-engines/) [to be](http://www.sea-of-memes.com/LetsCode32/LetsCode32.html) not that efficient for voxel-like engines because of cache misses and memory fragmentation |
 
-We might try a few of them and benchmark the results. Our main criteria being speed and not memory usage.
+We will try a few of them in the future and benchmark the results. Our main criteria being speed and not memory usage.
 
 ___
 ### D - Interface and User controls
 
-- Docking branch imgui
-- imgui imagebutton not working correctly when pressed, use font icon instead
-- Arcball camera Panning
+One of the most important part of a software. You can make the most performant and the most features-full editor, but **if it's a pain to use, no one is going to care about it**. We are not really UI Designer ourselves, but we know were to look for inspiration and what kind of toolset we need to make this happen.
+
+#### ImGui pimping
+
+It's kind of classic now to be using [ImGui](https://github.com/ocornut/imgui) to make the GUI of an editor. Performant, easy to use - though a real documentation would be nice - and to maintain, it's the tool of choice of us. Yet to make a software-like interface, and by that I mean with a resizable viewport and side-windows, it can be tricky to get there on the master branch.
+
+Fortunately for us, the **Docking branch** gives us exactly that. You might have to look on the forums to get enough understanding on how to use it, but once that it is set if offers great control to structure the layout of our application.
 
 <p align="center">
-<img width="600" src="https://user-images.githubusercontent.com/8225057/46304087-00035580-c5ae-11e8-8904-f27a9434574a.gif" alt="UML"/>
+<img width="500" src="https://user-images.githubusercontent.com/8225057/46304087-00035580-c5ae-11e8-8904-f27a9434574a.gif" alt="UML"/>
 </p>
+
+As you'll see below. We also modified the imgui styling to **depart from the easily recognizable imgui-look**. There are some great exemples on the [realeases page](https://github.com/ocornut/imgui/releases). The pimping isn't as full as can be the CSS language for exemple, but you can make really clean interfaces from it.
+
+#### Icons support
+
+We knew that we would need to handle icons in our App. It is a way user-friendly way to present your tabs and buttons. We first tried it by using an image-texture (below) applied on buttons, but the library had some problems [handling mouse clicks](https://github.com/ocornut/imgui/issues/2464).
 
 <p align="center">
 <img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/icons-test.png?raw=true" alt="UML"/>
 </p>
 
+Then we moved to font-icons, the idea of using a font to show your icons, and it went well. We used juliettef's [IconFontCppHeaders](https://github.com/juliettef/IconFontCppHeaders) with [Awesome Icons](https://fontawesome.com/icons?d=gallery) to get there. As ImGui rasterizes the fonts for display, we have to generate 2 sets of textures and switch between them to change the size of the font.
 
 <p align="center">
 <img width="800" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/changelog-img/v0-5-0.png?raw=true" alt="UML"/>
 </p>
 
+#### Arcball camera
+
+Unity, Blender, MagicaVoxel, Unreal Engine, they are all using the same kind of camera for their editor, an [arcball camera](https://threejs.org/examples/#misc_controls_orbit). It's commonly used and yet, the documentation you can find is always lacking one crucial part : **camera panning**.
+
 <p align="center">
-<img width="600" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/arcball.jpg?raw=true" alt="UML"/>
+<img width="500" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/arcball.jpg?raw=true" alt="UML"/>
 </p>
+
+We fough hard, and helped by [a dear friend](https://github.com/JulesFouchy), we finally managed to get there using this simple formula (dx and dy being the wanted amount of panning) :
+
+```
+vec4 col0 = normalize(inverse(matView).col0)
+vec4 col1 = normalize(inverse(matView).col1)
+vec4 movement = col0 * dx + col1 * dy;
+camera.target += movement.xyz;
+```
+
+The logic for the camera is handled solely in the **CameraSystem**.
 
 ___
 ### E - Procedural terrain generation
 
+#### Radial basis functions
+
+The procedural terrain generation uses Radial Basic Function (RBF) interpolation. The users gives controle points, associatied weights and a chosen radial basis function. From these parameters we approximate a R2 -> R3 function.
+
+<p align="center">
+<img width="500" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/rbf-schema.png?raw=true" alt="UML"/>
+</p>
+
+Every point in the series has a field around it : an RBF (in red). Each point has a position (x_i, y_i, z_i). We want to find the image of an arbitrary point (x,y,z) knowing x and y considering the others points. We can approximate the position of this point by adding a linear combination of the RBFs.
+
+<p align="center">
+<img width="100" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/rbf-1.png?raw=true" alt="UML"/>
+</p>
+
+`|C-Ci|` is the distance between the point to interpolate and the i-th control point.
+
+We just need to find the w_i coefficients. We use the known points values from the N points to create a system of N linear equations and N unknowns.
+
+<p align="center">
+<img width="200" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/rbf-2.png?raw=true" alt="UML"/>
+</p>
+
+#### Available parameters
+
+To generate a terrain, the user gives control points, weights, and a radial basis function.
+
+We have a function to determine w_i coefficients, and a function that interpolate each (x,y) point of the grid. We can see those points as a partial 3D-surface.
+
+To generate the terrain, we browse the grid and generate cubes on each case. If the z-coordonate is lower than the z-coordonate of the interpolated point. We generate cubes below the 3D-surface we interpolated.
+
+#### Parsing a file
+
 - Ui choices todo
 - RBF maths functions testing
-
 - read json for scene
 
 [https://github.com/ephtracy/voxel-model](https://github.com/ephtracy/voxel-model)
