@@ -23,11 +23,11 @@ void ViewportOptionBarGui::update() {
 
         ImGui::SameLine();
         if (drawButton(ICON_FA_UNDO, "Undo")) {
-            // TODO
+            m_ctx.history.undo();
         }
         ImGui::SameLine();
         if (drawButton(ICON_FA_REDO, "Redo")) {
-            // TODO
+            m_ctx.history.redo();
         }
     }
     ImGui::End();

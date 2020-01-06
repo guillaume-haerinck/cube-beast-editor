@@ -9,6 +9,7 @@
 
 #include "components/physics/transform.h"
 #include "maths/rbf.h"
+#include "history/generation/rbf-history.h"
 
 CbeLoader::CbeLoader(Context& ctx) : m_ctx(ctx) {}
 
@@ -59,6 +60,8 @@ void CbeLoader::generation(const nlohmann::json& json) {
         coordWithYtoFind.push_back(transform.position);
         entityToChange.push_back(id);
     });
+
+    m_ctx.history.pushHistory(new RBFHistory(m_ctx.registry, coordWithYtoFind));
     voxmt::rbfInterpolate(coordWithYtoFind, controlPointsXYZ, controlPointWeights, voxmt::RBFType::LINEAR, 0.5f, voxmt::RBFTransformAxis::Y);
 
     // Changes entities
