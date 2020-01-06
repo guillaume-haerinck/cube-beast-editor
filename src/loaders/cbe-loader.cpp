@@ -7,6 +7,9 @@
 #include <sstream>
 #include <fstream>
 
+#include "components/physics/transform.h"
+#include "maths/rbf.h"
+
 CbeLoader::CbeLoader(Context& ctx) : m_ctx(ctx) {}
 
 CbeLoader::~CbeLoader() {}
@@ -47,9 +50,20 @@ void CbeLoader::generation(const nlohmann::json& json) {
 
         const glm::vec3 pos = glm::vec3(controlPoints.at(i)["position"].at(0), controlPoints.at(i)["position"].at(1), controlPoints.at(i)["position"].at(2));
         controlPointsXYZ.at(i) = pos;
-
-        spdlog::info("Controlpoint : {} {} {}", pos.x, pos.y, pos.z);
     }
 
-    // TODO add control points
+    // Get entities
+    std::vector<glm::ivec3> coordWithYtoFind;
+    std::vector<met::entity> entityToChange;
+    m_ctx.registry.view<comp::Transform>().each([&](met::entity id, comp::Transform& transform){
+        coordWithYtoFind.push_back(transform.position);
+        entityToChange.push_back(id);
+    });
+    voxmt::rbfInterpolate(coordWithYtoFind, controlPointsXYZ, controlPointWeights, voxmt::RBFType::LINEAR, 0.5f, voxmt::RBFTransformAxis::Y);
+
+    // Changes entities
+    for (size_t i = 0; i < coordWithYtoFind.size(); i++) {
+        comp::Transform& trans =  m_ctx.registry.get<comp::Transform>(entityToChange.at(i));
+        trans.position = coordWithYtoFind.at(i);
+    }
 }
