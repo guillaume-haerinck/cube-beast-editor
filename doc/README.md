@@ -34,8 +34,6 @@ ___
 *	[**Benchmarking**](#c---benchmarking)
 *	[**History**](#d---history)
 
-[**IV - Planned features**](#iv---planned-features)
-
 [**Conclusion**](#conclusion)
 
 [**References**](#references)
@@ -65,12 +63,12 @@ The *D* column means *Done* and the *R* column means *Required*
 | X | X | Directionnal light | | [II - A](#a---renderer) |
 |  | X | Point light | | [II - A](#a---renderer) |
 | | | Paint adjacent faces | | [II - C](#c---brushes) |
-| | | Proportional edit | | IV |
-| | | Save scene to custom file | | IV |
+| | | Proportional edit | | |
+| | | Save scene to custom file | | |
 | X | X | Load a custom file (.cbs) | | [II - E](#e---procedural-terrain-generation) |
-| | | Load a 3D file (.gltf) | | IV |
-| | | Change grid size | | IV |
-| | | Textured cubes | | IV |
+| | | Load a 3D file (.gltf) | | |
+| | | Change grid size | | |
+| | | Textured cubes | | |
 
 </p>
 </details>
@@ -961,39 +959,9 @@ ___
 
 - First think with enum
 - command pattern
-
-## IV - Planned features
-> A sort of to-do list but with more research
-
-### Exporting
-
-### Improved data structure
-
-Sparse set might be way more efficient to store and access cube data, might ditch ecs in the future as need access in O(1) of pos for advanced brushes, and cube storage in multiple chunks instead of one big array
--> ECS might not be the best solution, but it's the one which will help me learn more for now (benchmarking, ecs use case, improving my lib)
-
-### Remesh
-See if can store neightboring cubes as one rectangle, multiple is there is a hole. Render with instanced plane, but different model mats
-
-### Object mode
-
-### Parenting
-
-### Modifiers
-
-### Custom preferences
-
-- Keymapping
-- Color editing
+- Not over because of data structure
 
 ## Conclusion
 
-## References
-
-### Selection
-
-| Link | Type | Description | Date |
-| --- | --- | --- | --- | --- |
-| TODO
-
-### Shadow maps
+- Recap major points
+- Opens on remaining stuff
