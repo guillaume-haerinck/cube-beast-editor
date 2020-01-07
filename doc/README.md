@@ -930,15 +930,13 @@ You have already witnessed some of them previously, but now it's time to talk ab
 ___
 ### A - WASM
 
-[Web Assembly](https://webassembly.org/) is kind of the new cool kid in a town of web developers. 
-
-- OpenGL es constraints
-- Using emscripten directly
-- figma
+[Web Assembly](https://webassembly.org/) is the new cool kid in a town of web developers. It is a binary instruction format playable on a virtual-machine run by a web-browser. It allows to write a piece of code in C++, C#, Go, Python, Rust or anything else, and be called by Javascript. Kind of impressive right ? (for more details about how it works, go check [mozilla](https://hacks.mozilla.org/2017/02/what-makes-webassembly-fast/) [hacks](https://hacks.mozilla.org/2017/02/a-cartoon-intro-to-webassembly/) by Lin Clark).
 
 <p align="center">
-<img width="400" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/wasm.jpeg?raw=true" alt="Tool"/>
+<img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/wasm.jpeg?raw=true" alt="Tool"/>
 </p>
+
+Our project uses C++, and SDL2 with OpenGL ES for graphics. The main C++ to WASM compiler that exist, [Emscripten](https://emscripten.org/), supports exactly that workflow.
 
 ___
 ### B - Shadows
@@ -950,9 +948,33 @@ ___
 ___
 ### C - Benchmarking
 
-- Open source chrome tracing
-- KHR debug opengl extension
-- [https://renderdoc.org/docs/window/event_browser.html](https://renderdoc.org/docs/window/event_browser.html)
+You have seen in the previous posts that we have the capacity to measure the time of special portion of our code and display it visualy. It goes the same for our OpenGL Calls, which are grouped by names under RenderDoc or NSight. These are 2 different features that we will cover.
+
+#### C++ Visual Benchmarking
+
+It's a video by [TheCherno](https://www.youtube.com/watch?v=xlAH4dbMVnU) that got us started on this subject. On it, he presents a fast an easy way to measure the time of a function, and outputs the result in a .json file. [The format](https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU/preview) is the same one used by Google Chrome performance tracer, and allows visualisation on this link : [chrome://tracing](chrome://tracing).
+
+<p align="center">
+<img width="400" src="https://www.chromium.org/_/rsrc/1441252029512/developers/how-tos/trace-event-profiling-tool/trace-event-reading/Screen%20Shot%202015-09-02%20at%208.46.48%20PM.png?width=700" alt="Tool"/>
+</p>
+
+It is so usefull that many [game developers](https://docs.google.com/presentation/d/1ST3mZgxmxqlpCFkdDhtgw116MQdCr2Fax2yjd8Az6zM/edit?usp=sharing) are using it, and we can understand them. Free, Open source, IDE-independant and available everywhere, you can shape the data in the way you like with the categories you like.
+
+For our needs, we defined a Macro called, `PROFILE_SCOPE(myName)` which start a timer on creation, and stops it when we reach the end of the scope (the next `}`). The Macro is replaced by nothing if we do not want profiling available, so that there is no performance impact on release builds.
+
+The code is available on the **lib** folder, inside the profiling section.
+
+#### OpenGL Debugging
+
+From OpenGL 4.4, you can get very detailled error information, and annotates your calls so that they are more easily debbugable. Yet, it is not available for previous versions so you have to find another workaround.
+
+Again, [TheCherno](https://www.youtube.com/watch?v=FBbPWSOQ0-w) made a video on this subject where he defines a macro called `GLCall`. The idea is that you wrap every of your glXXX functions inside of it. The macro will erease the error stack, ask OpenGL if there is any, and output the result if there is. Again, this behavior is erased on Release builds. (code is available on `src/graphics/gl-exception` file)
+
+We were lucky that, for our OpenGL target, we could use the **KHR debug extension**, which is the OpenGL 4.4 feature before that it was merged into Core specification. Because of it, we get a nicer debbuging experience with [RenderDoc](https://renderdoc.org/docs/window/event_browser.html) and way more detailled error messages.
+
+<p align="center">
+<img width="300" src="https://renderdoc.org/docs/_images/QuickStart41.png" alt="Tool"/>
+</p>
 
 ___
 ### D - History
