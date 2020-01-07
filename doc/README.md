@@ -941,8 +941,12 @@ Our project uses C++, and SDL2 with OpenGL ES for graphics. The main C++ to WASM
 ___
 ### B - Shadows
 
-- Shadow mapping
-- SSAO
+It is when they are missing that we notice them. They show deepth, allows to separate objects, and are just giving a fine look to your 3D scene. We have implemented a shadow map for the main directionnal light, and we are eager to use SSAO in the near future.
+
+#### Shadow mapping
+
+#### SSAO
+
 [https://0fps.net/2013/07/03/ambient-occlusion-for-minecraft-like-worlds/](https://0fps.net/2013/07/03/ambient-occlusion-for-minecraft-like-worlds/)
 
 ___
@@ -972,6 +976,8 @@ Again, [TheCherno](https://www.youtube.com/watch?v=FBbPWSOQ0-w) made a video on 
 
 We were lucky that, for our OpenGL target, we could use the **KHR debug extension**, which is the OpenGL 4.4 feature before that it was merged into Core specification. Because of it, we get a nicer debbuging experience with [RenderDoc](https://renderdoc.org/docs/window/event_browser.html) and way more detailled error messages.
 
+The calls are grouped with the macro `OGL_SCOPE(myName)` which also profile the calls made (we enabled synchronious mode in debug so that we get the real OpenGL time).
+
 <p align="center">
 <img width="300" src="https://renderdoc.org/docs/_images/QuickStart41.png" alt="Tool"/>
 </p>
@@ -979,11 +985,22 @@ We were lucky that, for our OpenGL target, we could use the **KHR debug extensio
 ___
 ### D - History
 
-- First think with enum
-- command pattern
-- Not over because of data structure
+Handling `ctrl + z` and `ctrl + y` (undo & redo) can be way more tricky to implement than it seems like at the first look. We were lucky that we encountered the [Command Pattern](https://gameprogrammingpatterns.com/command.html) to help us in its integration (even though it is not used yet, because we will soon change our data structure for random position O(1) access).
+
+#### IHistory abstract class
+
+As any other design pattern, our story starts in a little village, with an abstract class. This class, IHistory has 2 important methods : undo() & redo(). 
+
+#### History handler
+
+- Inside of context
 
 ## Conclusion
 
-- Recap major points
-- Opens on remaining stuff
+You might have understood that it is difficult to call this part Conclusion as **we will continue to work on this project for a while**, yet, we can have a look at what we've achieved during this month of code. Starting by getting our hands in the machinery of other engines was determinant for us, as we could better see what we were aiming for and what might be the steps to get there. It really shaped the project.
+
+Our first big achievement was the creation of the [Met ECS library](https://github.com/guillaume-haerinck/met-ecs), where we learnt a lot about data-oriented design and C++ template meta-programming. From this point, we could make our first 3D scene and start to abstract OpenGL from our DirectX and previous project knowledge. It took 2 weeks to have the **basic sets of raw functionnalities** (instancing, selecting, adding).
+
+Then we could **start to clean up, refine and add features**. Using the Docking branch of ImGui and getting the interface right was a big step of this and a lot of effort went into it. As what came after, we took the time to understand how it worked, so that the implementation was working as intented without a prototyping-feeling.
+
+Writing the post-mortem took a fair-amount of time as well, but it was important for us to explain our development process, and helps criticism about the whole architecture.
