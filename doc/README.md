@@ -922,6 +922,13 @@ ImGui can create a menu which asks the user to open a file, but it doesn't know 
 
 Then, one that we get the file path, we use yet another library - [nlohmann's json](https://github.com/nlohmann/json) - to parse the Json format. As we plan to support .gltf model import in the future (already done in other projects), we will need it anyway, and it's a really solid library.
 
+#### Trial
+
+We tried a few configuration with more or less control points. As our scene is not enormous, the benefits of RBF are particularly visible to create complex curvatures with voxels. With those we can emulate a valley, an important or small slope, or a mountain.
+
+| <img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/0.0.0-0.20.0-20.0.20.png?raw=true" alt="Tool"/> | <img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/0.0.0-20-20-20.png?raw=true" alt="Tool"/> | <img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/10.10.10-0.20.0.png?raw=true" alt="Tool"/> |  <img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/16.20.18-20.0.20.png?raw=true" alt="Tool"/> |
+| --- | --- | --- | --- |
+
 ## III - Additional features
 > It's great if it works, it's better if it works well
 
@@ -967,7 +974,7 @@ It exactly what happened when we tried to implement Pixel Buffer Objects to read
 
 For now, we read synchroniously our framebuffer when we are with Emscripten, but this has a performance hit. We are [not the firsts](https://github.com/emscripten-core/emscripten/issues/5861) to encounter this issue and there seems to have ways to fix it, but it wasn't a priority for now.
 
-There is also a problem with **[non-power of 2](https://www.khronos.org/opengl/wiki/NPOT_Texture) Render Targets**. It works for textures, but not for deepth buffer. AS the framebuffer is always the size of the viewport, we had to round our Shadow Map to the upper-power of 2. This means that on Emscripten builds, shadows do not behave that well. As well, we will try to only use power-of-2 render targets in the future, but it is not a priority.
+There is also a problem with **[non-power of 2](https://www.khronos.org/opengl/wiki/NPOT_Texture) Render Targets**. It works for textures, but not for deepth buffer. As the framebuffer is always the size of the viewport, we had to round our Shadow Map to the upper-power of 2. This means that on Emscripten builds, shadows do not behave that well. As well, we will try to only use power-of-2 render targets in the future, but it is not a priority.
 
 ___
 ### B - Shadows
@@ -1020,11 +1027,17 @@ Handling `ctrl + z` and `ctrl + y` (undo & redo) can be way more tricky to imple
 
 #### IHistory abstract class
 
-As any other design pattern, our story starts in a little village, with an abstract class. This class, IHistory has 2 important methods : undo() & redo(). 
+As any other design pattern, our story starts in a little village, with an abstract class. This class, IHistory has 2 important methods : undo() & redo(). Each classes that will implement those will need to be able to handle them. To do so, they must have access to some data, so each of these concrete classes have specific constructor to handle their specific data needs.
 
 #### History handler
 
-- Inside of context
+To handle our stack of *IHistory**, we have another class called HistoryHandled globally accessible from the Context. With it, you can know the size of the current available history, add a new IHistory and of course, undo and redo with no limits.
+
+As we've said, everything is in place but we are wainting to change our data structure before using it, it it would be a waste of time to write to same kind of algorithm multiple times.
+
+<p align="center">
+<img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/uml-5.png?raw=true" alt="Tool"/>
+</p>
 
 ## Conclusion
 
