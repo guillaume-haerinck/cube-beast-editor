@@ -9,8 +9,11 @@
 
 class VoxelBrushHistory : public IHistory {
 public:
-    VoxelBrushHistory (/* args */);
-    virtual ~VoxelBrushHistory ();
+    VoxelBrushHistory(met::registry& registry, const std::vector<glm::ivec3>& addedPoints);
+    virtual ~VoxelBrushHistory();
+
+    virtual void undo() override;
+    virtual void redo() override;
 
 private:
     met::registry& m_registry;
