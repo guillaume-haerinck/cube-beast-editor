@@ -930,13 +930,44 @@ You have already witnessed some of them previously, but now it's time to talk ab
 ___
 ### A - WASM
 
-[Web Assembly](https://webassembly.org/) is the new cool kid in a town of web developers. It is a binary instruction format playable on a virtual-machine run by a web-browser. It allows to write a piece of code in C++, C#, Go, Python, Rust or anything else, and be called by Javascript. Kind of impressive right ? (for more details about how it works, go check [mozilla](https://hacks.mozilla.org/2017/02/what-makes-webassembly-fast/) [hacks](https://hacks.mozilla.org/2017/02/a-cartoon-intro-to-webassembly/) by Lin Clark).
+[Web Assembly](https://webassembly.org/) is the new cool kid in a town of web developers. It is a binary instruction format playable on a virtual-machine run by a web-browser. It allows to **write a piece of code in C++, C#, Go, Python, Rust or anything else, and be called by Javascript**. Kind of impressive right ? (for more details about how it works, go check [mozilla](https://hacks.mozilla.org/2017/02/what-makes-webassembly-fast/) [hacks](https://hacks.mozilla.org/2017/02/a-cartoon-intro-to-webassembly/) by Lin Clark).
 
 <p align="center">
 <img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/wasm.jpeg?raw=true" alt="Tool"/>
 </p>
 
-Our project uses C++, and SDL2 with OpenGL ES for graphics. The main C++ to WASM compiler that exist, [Emscripten](https://emscripten.org/), supports exactly that workflow.
+Our project uses C++, and SDL2 with OpenGL ES for graphics. The main C++ to WASM compiler that exist, [Emscripten](https://emscripten.org/), supports exactly that workflow. It does comes with some constraints, and it is not always easy to play with it, but we think that this feature is worth some disagreements.
+
+#### Integration
+
+The first big change is the application loop that you can find in `main.cpp`. Instead of just running your app, you must put it inside a free function and call `emscripten_set_main_loop_arg()` with it on Emscripten builds.
+
+Then, [glad](https://glad.dav1d.de/), the OpenGL function loading library that we use, is incompatible with WASM. Meaning that we have to define-out portions of code which are including glad to include `<GLES3/gl3.h>` instead. Fortunately for us, with our architecture there are only 3 places where this happens : *render-command.h*, *opengl-exception.h* and  *app.h*.
+
+Finally, Emscripten is capable to emulate a [file-system](https://emscripten.org/docs/porting/files/file_systems_overview.html), yet this feature takes place in the build size (which is an important point when you target the web) and we tried to not-use it. To do so, our shaders are defined with raw-string literals and included in our sources files with a little trick. With that we do not have to load them at runtime.
+
+```C++
+// MyShader.frag
+R"(MyShaderContent
+)"
+
+// C++ code
+const char* myShader =
+	#include  "MyShader.frag"
+;
+```
+
+Then, we use filesystem to allow the user to open a `.cbe` model. For now, we simply defined-out the code to handle this, but we are seeking a better way to handle this in the future.
+
+#### Incompatibilities
+
+OpenGL ES 3.0 and [WebGL 2.0](https://www.khronos.org/registry/webgl/specs/latest/2.0/) specifications are really close to each other. This allows Emscripten to **replace OpenGL ES function calls by their WebGL equivalents**. Yet, the specification differs at some points, a feature might be available, but the way to handle it changes.
+
+It exactly what happened when we tried to implement Pixel Buffer Objects to read our Render Target asynchroniously when dealing with selection. We cannot read it using [glMapBufferRange()](https://www.khronos.org/registry/webgl/specs/latest/2.0/#5.14). There is an equivalent called glGetBufferSubData(), but we cannot use it as it does not exist in the OpenGL ES specification, so we cannot build with it on Emscripten.
+
+For now, we read synchroniously our framebuffer when we are with Emscripten, but this has a performance hit. We are [not the firsts](https://github.com/emscripten-core/emscripten/issues/5861) to encounter this issue and there seems to have ways to fix it, but it wasn't a priority for now.
+
+There is also a problem with **[non-power of 2](https://www.khronos.org/opengl/wiki/NPOT_Texture) Render Targets**. It works for textures, but not for deepth buffer. AS the framebuffer is always the size of the viewport, we had to round our Shadow Map to the upper-power of 2. This means that on Emscripten builds, shadows do not behave that well. As well, we will try to only use power-of-2 render targets in the future, but it is not a priority.
 
 ___
 ### B - Shadows
@@ -997,10 +1028,10 @@ As any other design pattern, our story starts in a little village, with an abstr
 
 ## Conclusion
 
-You might have understood that it is difficult to call this part Conclusion as **we will continue to work on this project for a while**, yet, we can have a look at what we've achieved during this month of code. Starting by getting our hands in the machinery of other engines was determinant for us, as we could better see what we were aiming for and what might be the steps to get there. It really shaped the project.
+You might have understood that it is difficult to call this part *Conclusion* as **we will continue to work on this project for a while**, yet, we can have a look at what we've achieved during this month of code and see what we've learnt from it. Starting by getting our hands in the machinery of other engines in particular was determinant for us. Because of that we could better see what we were aiming for and what might be the steps to get there. It really shaped the project and put us on good tracks.
 
-Our first big achievement was the creation of the [Met ECS library](https://github.com/guillaume-haerinck/met-ecs), where we learnt a lot about data-oriented design and C++ template meta-programming. From this point, we could make our first 3D scene and start to abstract OpenGL from our DirectX and previous project knowledge. It took 2 weeks to have the **basic sets of raw functionnalities** (instancing, selecting, adding).
+Our first big achievement was the creation of the [Met ECS library](https://github.com/guillaume-haerinck/met-ecs), where we learnt a lot about data-oriented design and C++ template meta-programming. Even though we will probably discard this library in the future, it was great to make and use it. From this point, we could make our first 3D scene and start to abstract OpenGL from our DirectX and previous project knowledge. It took 2 weeks to have the **basic sets of raw functionnalities** (instancing, selecting, adding).
 
 Then we could **start to clean up, refine and add features**. Using the Docking branch of ImGui and getting the interface right was a big step of this and a lot of effort went into it. As what came after, we took the time to understand how it worked, so that the implementation was working as intented without a prototyping-feeling.
 
-Writing the post-mortem took a fair-amount of time as well, but it was important for us to explain our development process, and helps criticism about the whole architecture.
+Writing the post-mortem took a fair-amount of time as well, but it was important for us to explain our development process, and helps criticism about the whole architecture. We feel satisfied of our work, and ready to improve it when we will have time to spare.
