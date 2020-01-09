@@ -7,6 +7,9 @@
 #include <imgui/imgui_impl_opengl3.h>
 #include <stb_image/stb_image.h>
 #include <profiling/instrumentor.h>
+#ifdef __EMSCRIPTEN__
+	#include <emscripten.h>
+#endif
 
 #include "graphics/gl-exception.h"
 
@@ -128,7 +131,7 @@ void App::update() {
 		for (IGui* gui : m_guis) {
 			gui->update();
 		}
-		ImGui::ShowDemoWindow(); // Temp
+		// ImGui::ShowDemoWindow(); // Temp
 	}
 	
 	// Render imgui
@@ -218,10 +221,19 @@ void App::initSDL() {
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
+	int width = m_scomps.viewport.size().x;
+	int height = m_scomps.viewport.size().y;
+
+#ifdef __EMSCRIPTEN__
+	width = 1024;
+	height = 768;
+	emscripten_set_canvas_size(width, height);
+#endif
+
 	m_window = SDL_CreateWindow(
 		"Cube Beast Editor",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		m_scomps.viewport.size().x, m_scomps.viewport.size().y,
+		width, height,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE
     );
 	if (m_window == nullptr) {

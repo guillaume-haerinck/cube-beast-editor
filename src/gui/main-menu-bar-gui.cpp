@@ -97,7 +97,6 @@ void MainMenuBarGui::setDefaultLayout() {
     ImGui::DockBuilderDockWindow(ICON_FA_GLOBE_AMERICAS "  Scene Outline", dock_half_right_up_id);
     ImGui::DockBuilderDockWindow(ICON_FA_PALETTE "  Palette", dock_half_right_down_id);
     ImGui::DockBuilderDockWindow(ICON_FA_SEEDLING "  Generation", dock_half_right_down_id);
-    ImGui::DockBuilderDockWindow("Dear ImGui Demo", dock_half_right_down_id);
     
     // Set appearance
     ImGui::DockBuilderGetNode(dock_main_id)->LocalFlags |= ImGuiDockNodeFlags_NoSplit;

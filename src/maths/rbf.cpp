@@ -1,7 +1,6 @@
 #include "rbf.h"
 
 #include <algorithm>
-#include <math.h>
 #include <cassert>
 
 namespace voxmt {
@@ -15,7 +14,7 @@ namespace voxmt {
 	}
 
 	float multiquadratic(float x, float eps) {
-		return sqrt(1.0f - (eps * x) * (eps * x));
+		return glm::sqrt(1.0f - (eps * x) * (eps * x));
 	}
 
 	float inverseQuadratic(float x, float eps) {
@@ -23,15 +22,15 @@ namespace voxmt {
 	}
 
 	float inverseMultiquadratic(float x, float eps) {
-		return 1.0f / (sqrt(1.0f - (eps * x) * (eps * x)));
+		return 1.0f / (glm::sqrt(1.0f - (eps * x) * (eps * x)));
 	}
 
 	float gaussian(float x, float eps) {
-		return exp(-(eps * x) * (eps * x));
+		return glm::exp(-(eps * x) * (eps * x));
 	}
 
 	float distance(const glm::ivec3& point1, const glm::ivec3& point2) {
-		return static_cast<float>(sqrt((point2.x - point1.x) * (point2.x - point1.x) + (point2.y - point1.y) * (point2.y - point1.y) + (point2.z - point1.z) * (point2.z - point1.z)));
+		return static_cast<float>(glm::sqrt((point2.x - point1.x) * (point2.x - point1.x) + (point2.y - point1.y) * (point2.y - point1.y) + (point2.z - point1.z) * (point2.z - point1.z)));
 	}
 
 	Eigen::VectorXd vectorWi(const std::vector<glm::ivec3>& controlPointCoords, const Eigen::VectorXd& controlPointWeights, const RBFType type, const float eps) {
