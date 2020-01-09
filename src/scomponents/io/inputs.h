@@ -9,6 +9,7 @@ enum class InputAction {
 	CAM_PAN,
 	CAM_DOLLY,
 	CAM_RESET,
+	DEBUG,
 	_ACTION_MAX
 };
 

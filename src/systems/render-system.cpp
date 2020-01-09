@@ -28,7 +28,11 @@ void RenderSystem::update() {
         // Set data
         cbData.cameraPos = m_scomps.camera.position();
         cbData.matViewProj =  m_scomps.camera.proj() * m_scomps.camera.view();
-        cbData.debug2 = 0;
+        if (m_scomps.inputs.isEnabled(InputAction::DEBUG)) {
+            cbData.debug2 = 1;
+        } else {
+            cbData.debug2 = 0;
+        }
 
         // Send data
 		m_ctx.rcommand.updateConstantBuffer(perFrameCB, &cbData, sizeof(cb::perFrame));

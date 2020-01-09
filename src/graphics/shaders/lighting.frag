@@ -70,8 +70,14 @@ void main() {
         diffuse = dirLights[0].color * diffuseFactor;
 	}
 
-	vec3 lighting = ambient + diffuse * albedo.rgb * shadow;
-	color = vec4(lighting, 1.0);
+	// temp
+	if (debug2 > 0.5) {
+		vec3 lighting = ambient + diffuse * albedo.rgb * shadow;
+		color = vec4(lighting, 1.0);
+	} else {
+		vec3 lighting = ambient + diffuse * albedo.rgb;
+		color = vec4(lighting, 1.0);
+	}
 }
 
 )"

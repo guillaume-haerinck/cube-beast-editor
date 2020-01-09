@@ -47,6 +47,7 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 #ifndef NDEBUG
 	m_ctx.rcommand.enableDebugOutput();
 	spdlog::info("Debug mode enabled. Performances will be impacted.");
+	spdlog::info("Press 's' to toggle shadows (WIP)");
 #endif
 
 	// Order GUIs
@@ -186,6 +187,11 @@ void App::handleSDLEvents() {
 			else if (e.button.button == SDL_BUTTON_MIDDLE)
 				m_scomps.inputs.m_actionState.at(static_cast<unsigned int>(InputAction::CAM_PAN)) = false;
             break;
+
+		case SDL_KEYDOWN:
+			if (e.key.keysym.sym == SDLK_s) {
+				m_scomps.inputs.m_actionState.at(static_cast<unsigned int>(InputAction::DEBUG)) = true;
+			}
 
         default: break;
         }
