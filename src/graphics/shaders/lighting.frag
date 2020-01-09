@@ -71,13 +71,8 @@ void main() {
 	}
 
 	// temp
-	if (debug2 > 0.5) {
-		vec3 lighting = ambient + diffuse * albedo.rgb * shadow;
-		color = vec4(clamp(lighting, 0.0, 1.0), 1.0);
-	} else {
-		vec3 lighting = ambient + diffuse * albedo.rgb;
-		color = vec4(clamp(lighting, 0.0, 1.0), 1.0);
-	}
+	vec3 lighting = ambient + diffuse * albedo.rgb * shadow;
+	color = vec4(clamp(lighting, 0.0, 1.0), 1.0);
 }
 
 )"

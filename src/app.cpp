@@ -50,7 +50,6 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 #ifndef NDEBUG
 	m_ctx.rcommand.enableDebugOutput();
 	spdlog::info("Debug mode enabled. Performances will be impacted.");
-	spdlog::info("Press 's' to toggle shadows (WIP)");
 #endif
 
 	// Order GUIs
