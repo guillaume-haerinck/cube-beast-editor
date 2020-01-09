@@ -36,8 +36,6 @@ ___
 
 [**Conclusion**](#conclusion)
 
-[**References**](#references)
-
 </p>
 </details>
 
@@ -88,7 +86,7 @@ Additionaly, we added features not mentionned in the specifications.
 | Benchmarking | | [III - C](#c---benchmarking) |
 | WASM build support | | [III - A](#a---wasm) |
 | UI Improvements | | [II - D](#d---interface-and-user-controls) |
-| History | *Soon to be implemented* | [III - D](#d---history) |
+| History | *Not used yet* | [III - D](#d---history) |
 
 </p>
 </details>
@@ -983,9 +981,31 @@ It is when they are missing that we notice them. They show deepth, allows to sep
 
 #### Shadow mapping
 
+There are multiple ways to create shadows in real time, but shadow maps techniques is, with its numerous variants, still the more popular. The idea is to render the scene from a light's point of view. This way you know the distance of each surface from the light source, and as you know the distance from the viewer as well, you can know if it's not visible by the light.
+
+<p align="center">
+<img width="600" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/shadow-map.png?raw=true" alt="UML"/>
+</p>
+
+> Real Time Rendering, Third Edition, page 235
+
+Though the implementation is **not complete yet**, as to make it work correctly you might have to add some bias and other tricks. Because of **the density of our meshes** (we render a lot of cubes for now, many can be culled, but we will change it soon) the problem is really visible with some drivers (it works correctly on many computers). When it does not work, this is what we encounter :
+
+<p align="center">
+<img width="600" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/shadow-problem.gif?raw=true" alt="UML"/>
+</p>
+
 #### SSAO
 
-[https://0fps.net/2013/07/03/ambient-occlusion-for-minecraft-like-worlds/](https://0fps.net/2013/07/03/ambient-occlusion-for-minecraft-like-worlds/)
+First developed in 2007 for the game Crysis, it became widly used in real-time rendering. In our case, **we didn't had the time but we will make use of it soon**. SSAO basically gives you a slight shadow around corners, which can help a lot to distinguish voxels in our case. The idea of this engineer was to compute the SSAO based on the deepth value of surrounding fragments. It is not that difficult to integrate with the numbers of tutorials availables, but their implementation will not be the best in our case.
+
+<p align="center">
+<img width="250" src="https://0fps.files.wordpress.com/2013/07/aovoxel2.png?w=293&h=410" alt="SSAO"/>
+</p>
+
+> SSAO in voxel worlds [by 0fps](https://0fps.net/2013/07/03/ambient-occlusion-for-minecraft-like-worlds/)
+
+As showed by 0fps, **for voxel worlds there ary only 4 different sorts of SSAO effects**, as we can predict them we can also implement it in a clever way to gain more performance. We encourage you to check the article for more details.
 
 ___
 ### C - Benchmarking
@@ -1035,9 +1055,13 @@ To handle our stack of *IHistory**, we have another class called HistoryHandled 
 
 As we've said, everything is in place but we are wainting to change our data structure before using it, it it would be a waste of time to write to same kind of algorithm multiple times.
 
+<br>
+
 <p align="center">
-<img width="300" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/uml-5.png?raw=true" alt="Tool"/>
+<img width="650" src="https://github.com/guillaume-haerinck/cube-beast-editor/blob/master/doc/post-mortem-img/uml-5.png?raw=true" alt="Tool"/>
 </p>
+
+<br>
 
 ## Conclusion
 

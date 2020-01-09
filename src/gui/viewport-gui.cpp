@@ -18,9 +18,9 @@
 ViewportGui::ViewportGui(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx), m_scomps(scomps) {
     comp::Material material;
 
-    for (size_t x = 0; x < 20; x++)
+    for (size_t x = 0; x < 1; x++)
     {
-        for (size_t z = 0; z < 20; z++)
+        for (size_t z = 0; z < 1; z++)
         {
             met::entity entity = m_ctx.registry.create();
             m_ctx.registry.assign<comp::Material>(entity, material);
