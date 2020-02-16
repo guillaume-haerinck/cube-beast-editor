@@ -8,17 +8,15 @@
 
 class BrushSystem : public ISystem {
 public:
-    BrushSystem(Context& ctx, SingletonComponents& scomps);
+    BrushSystem();
     virtual ~BrushSystem();
 
-	void update() override;
+	void update();
 
 private:
     void voxelBrush();
     void boxBrush();
 
 private:
-    Context& m_ctx;
-    SingletonComponents& m_scomps;
     std::vector<glm::ivec3> m_tempAddedPos;
 };

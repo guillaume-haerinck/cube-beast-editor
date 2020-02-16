@@ -18,6 +18,7 @@
 /**
  * @brief Global object used to store the state of the app. 
  * @note Only store data, it has no logic. Read-only for vast-majority of systems.
+ * TODO being refractored to reduce global coupling. Data saved here but not acced through this struct
  */
 struct SingletonComponents {
 	SingletonComponents() {};

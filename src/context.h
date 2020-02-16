@@ -7,6 +7,8 @@
 
 /**
  * @brief Global object used accross systems
+ * TODO Remove and store data directly in App class. Refractoring WIP to reduce global coupling.
+ * Can use service locator pattern or singleton for history and debug draw
  */
 struct Context {
 	Context(SingletonComponents& scomps) : ddraw(rcommand, scomps), history(scomps) {}

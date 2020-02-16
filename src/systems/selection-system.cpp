@@ -9,9 +9,7 @@
 #include "components/physics/transform.h"
 #include "graphics/gl-exception.h"
 
-SelectionSystem::SelectionSystem(Context& ctx, SingletonComponents& scomps) 
-    : m_ctx(ctx), m_scomps(scomps)
-{
+SelectionSystem::SelectionSystem() {
     // TODO set 19.5 to scene size
     m_planePositions = {
         glm::vec3(0),
@@ -35,25 +33,25 @@ SelectionSystem::SelectionSystem(Context& ctx, SingletonComponents& scomps)
 
 SelectionSystem::~SelectionSystem() {}
 
-void SelectionSystem::update() {
+void SelectionSystem::update(const RenderCommand& rc, const RenderTargets& rtt, const Camera& cam, const Inputs& inputs, Hovered& hovered) {
     PROFILE_SCOPE("SelectionSystem update");
 
-    m_ctx.rcommand.bindRenderTarget(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY)); // Needed for wasm
+    rc.bindRenderTarget(rtt.at(RenderTargetIndex::RTT_GEOMETRY)); // Needed for wasm
     unsigned char* pixel;
     {
         OGL_SCOPE("Read framebuffer for selection");
-        pixel = m_ctx.rcommand.readPixelBuffer(m_scomps.renderTargets.at(RenderTargetIndex::RTT_GEOMETRY).pixelBuffer);
+        pixel = rc.readPixelBuffer(rtt.at(RenderTargetIndex::RTT_GEOMETRY).pixelBuffer);
     }
 
     // FIXME intersection point take value "-+4.76837e-07" instead of 0.0 sometimes which causes flicker
-    m_scomps.hovered.m_exist = false;
+    hovered.m_exist = false;
     const auto hoveredCube = voxmt::colorToInt(pixel[0], pixel[1], pixel[2]);
 
     // Check existing cubes with framebuffer
     if (hoveredCube) {
-        m_scomps.hovered.m_exist = true;
-        m_scomps.hovered.m_isCube = true;
-        m_scomps.hovered.m_face = colorToFace(pixel[3]);
+        hovered.m_exist = true;
+        hovered.m_isCube = true;
+        hovered.m_face = colorToFace(pixel[3]);
         // TODO fill
         
     } else {
