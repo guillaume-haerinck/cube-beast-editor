@@ -55,18 +55,12 @@ void CbeLoader::generation(const nlohmann::json& json) {
 
     // Get entities
     std::vector<glm::ivec3> coordWithYtoFind;
-    std::vector<met::entity> entityToChange;
-    m_ctx.registry.view<comp::Transform>().each([&](met::entity id, comp::Transform& transform){
-        coordWithYtoFind.push_back(transform.position);
-        entityToChange.push_back(id);
-    });
 
-    m_ctx.history.pushHistory(new RBFHistory(m_ctx.registry, coordWithYtoFind));
+    m_ctx.history.pushHistory(new RBFHistory(coordWithYtoFind));
     voxmt::rbfInterpolate(coordWithYtoFind, controlPointsXYZ, controlPointWeights, voxmt::RBFType::LINEAR, 0.5f, voxmt::RBFTransformAxis::Y);
 
     // Changes entities
     for (size_t i = 0; i < coordWithYtoFind.size(); i++) {
-        comp::Transform& trans =  m_ctx.registry.get<comp::Transform>(entityToChange.at(i));
-        trans.position = coordWithYtoFind.at(i);
+
     }
 }

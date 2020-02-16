@@ -2,8 +2,8 @@
 
 #include "components/physics/transform.h"
 
-RBFHistory::RBFHistory(met::registry& registry, const std::vector<glm::ivec3>& unchangedPoints) 
-    : m_registry(registry), m_unchangedPoints(unchangedPoints) {}
+RBFHistory::RBFHistory(const std::vector<glm::ivec3>& unchangedPoints) 
+    : m_unchangedPoints(unchangedPoints) {}
 
 RBFHistory::~RBFHistory() {}
 

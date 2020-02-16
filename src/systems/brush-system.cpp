@@ -53,25 +53,14 @@ void BrushSystem::voxelBrush() {
 
     switch (m_scomps.brush.usage()) {
     case BrushUse::ADD: {
-        met::entity entity = m_ctx.registry.create();
-        comp::Material material;
-        material.sIndex = m_scomps.materials.selectedIndex();
-        m_ctx.registry.assign<comp::Material>(entity, material);
-        m_ctx.registry.assign<comp::Transform>(entity, trans);
-        m_tempAddedPos.push_back(trans.position);
+        
         break;
     }
         
     case BrushUse::REMOVE:
-        if (m_scomps.hovered.isCube())
-            m_ctx.registry.destroy(m_scomps.hovered.id());
         break;
 
     case BrushUse::PAINT:
-        if (m_scomps.hovered.isCube()) {
-            auto& material = m_ctx.registry.get<comp::Material>(m_scomps.hovered.id());
-            material.sIndex = m_scomps.materials.selectedIndex();
-        }
         break;
 
     default: break;
@@ -119,62 +108,16 @@ void BrushSystem::boxBrush() {
     switch (m_scomps.brush.usage()) {
     case BrushUse::ADD: {
         PROFILE_SCOPE("BoxBrush add");
-        // TODO use a LUT in scomps for O(1) access to pos instead of O(n)
-        for (const glm::ivec3& checkPos : selectedArea) {
-            bool exist = false;
-            m_ctx.registry.view<comp::Transform>().each([&](met::entity entity, comp::Transform& transform) {
-                if (checkPos == transform.position) {
-                    exist = true;
-                }
-            });
-
-            if (!exist) {
-                met::entity entity = m_ctx.registry.create();
-                comp::Material material;
-                comp::Transform trans;
-                trans.position = checkPos;
-                material.sIndex = m_scomps.materials.selectedIndex();
-                m_ctx.registry.assign<comp::Material>(entity, material);
-                m_ctx.registry.assign<comp::Transform>(entity, trans);
-                m_tempAddedPos.push_back(trans.position);
-            }
-        }
         break;
     }
 
     case BrushUse::REMOVE : {
         PROFILE_SCOPE("BoxBrush remove");
-        // TODO use a LUT in scomps for O(1) access to pos instead of O(n)
-        std::vector<met::entity> idToDestroy;
-        m_ctx.registry.view<comp::Transform>().each([&](met::entity entity, comp::Transform& transform) {
-            for (const glm::ivec3& checkPos : selectedArea) {
-                if (checkPos == transform.position) {
-                    // Fix lib. Destroying entities while iterating is changing the array indices.
-                    idToDestroy.push_back(entity);
-                    m_tempAddedPos.push_back(transform.position);
-                }
-            }
-        });
-
-        for (auto const& id : idToDestroy) {
-            m_ctx.registry.destroy(id);
-        }
-
         break;
     }
 
     case BrushUse::PAINT : {
         PROFILE_SCOPE("BoxBrush paint");
-    
-        // TODO use a LUT in scomps for O(1) access to pos instead of O(n)
-        m_ctx.registry.view<comp::Transform, comp::Material>().each([&](met::entity entity, comp::Transform& transform, comp::Material& material) {
-            for (const glm::ivec3& checkPos : selectedArea) {
-                if (checkPos == transform.position) {
-                    material.sIndex = m_scomps.materials.selectedIndex();
-                    m_tempAddedPos.push_back(transform.position);
-                }
-            }
-        });
         break;
     }
 

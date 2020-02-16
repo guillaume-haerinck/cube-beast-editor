@@ -1,6 +1,5 @@
 #include "viewport-gui.h"
 
-#include <met/met.hpp>
 #include <glm/glm.hpp>
 #include <imgui.h>
 #include <spdlog/spdlog.h>
@@ -16,19 +15,6 @@
 #endif
 
 ViewportGui::ViewportGui(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx), m_scomps(scomps) {
-    comp::Material material;
-
-    for (size_t x = 0; x < 1; x++)
-    {
-        for (size_t z = 0; z < 1; z++)
-        {
-            met::entity entity = m_ctx.registry.create();
-            m_ctx.registry.assign<comp::Material>(entity, material);
-            m_ctx.registry.assign<comp::Transform>(entity, glm::ivec3(x, 0, z));
-        }
-        
-    }
-    
     
 }
 

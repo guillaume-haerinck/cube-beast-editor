@@ -54,16 +54,12 @@ void GenerationGui::update() {
             }
 
             std::vector<glm::ivec3> coordWithYtoFind;
-            std::vector<met::entity> entityToChange;
-            m_ctx.registry.view<comp::Transform>().each([&](met::entity id, comp::Transform& transform){
-                coordWithYtoFind.push_back(transform.position);
-                entityToChange.push_back(id);
-            });
+            // TODO fill with every cubes
             voxmt::rbfInterpolate(coordWithYtoFind, m_controlPointsXYZ, controlPointWeights, voxmt::RBFType::LINEAR, 0.5f, voxmt::RBFTransformAxis::Y);
 
             for (size_t i = 0; i < coordWithYtoFind.size(); i++) {
-                comp::Transform& trans =  m_ctx.registry.get<comp::Transform>(entityToChange.at(i));
-                trans.position = coordWithYtoFind.at(i);
+                
+                // trans.position = coordWithYtoFind.at(i);
             }
             
         }

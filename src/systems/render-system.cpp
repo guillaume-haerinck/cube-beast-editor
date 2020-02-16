@@ -74,11 +74,12 @@ void RenderSystem::update() {
         }
 	}
 
-    auto view = m_ctx.registry.view<comp::Material, comp::Transform>();
+    
     unsigned int nbInstances = 0;
 
     // All cubes are using the same mesh and shaders
     // TODO use tag to only grab cubes
+    /*
     view.each([&](met::entity entity, comp::Material& material, comp::Transform& transform) {
         nbInstances++;
         m_tempTranslations.push_back(transform.position);
@@ -115,6 +116,7 @@ void RenderSystem::update() {
             }
         }
     });
+    */
 
 
     {

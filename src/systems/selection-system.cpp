@@ -47,20 +47,17 @@ void SelectionSystem::update() {
 
     // FIXME intersection point take value "-+4.76837e-07" instead of 0.0 sometimes which causes flicker
     m_scomps.hovered.m_exist = false;
-    const met::entity hoveredCube = voxmt::colorToInt(pixel[0], pixel[1], pixel[2]);
+    const auto hoveredCube = voxmt::colorToInt(pixel[0], pixel[1], pixel[2]);
 
     // Check existing cubes with framebuffer
-    if (hoveredCube != met::null) {
+    if (hoveredCube) {
         m_scomps.hovered.m_exist = true;
         m_scomps.hovered.m_isCube = true;
         m_scomps.hovered.m_face = colorToFace(pixel[3]);
-        const comp::Transform trans = m_ctx.registry.get<comp::Transform>(hoveredCube);
-        m_scomps.hovered.m_position = trans.position;
-        m_scomps.hovered.m_id = hoveredCube;
+        // TODO fill
         
     } else {
         PROFILE_SCOPE("Raycasting");
-        m_scomps.hovered.m_id = met::null;
 
         // Check grid with raycast
         const glm::mat4 toWorld = glm::inverse((m_scomps.camera.proj() * m_scomps.camera.view()));

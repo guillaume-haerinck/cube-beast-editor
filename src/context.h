@@ -1,7 +1,5 @@
 #pragma once
 
-#include <met/met.hpp>
-
 #include "graphics/render-command.h"
 #include "graphics/debug-draw.h"
 #include "scomponents/singleton-components.h"
@@ -13,7 +11,6 @@
 struct Context {
 	Context(SingletonComponents& scomps) : ddraw(rcommand, scomps), history(scomps) {}
 
-	met::registry registry;
 	RenderCommand rcommand;
 	DebugDraw ddraw;
 	HistoryHandler history;
