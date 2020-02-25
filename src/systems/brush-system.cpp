@@ -6,30 +6,30 @@
 #include "components/physics/transform.h"
 #include "components/graphics/material.h"
 
-BrushSystem::BrushSystem(Context& ctx, SingletonComponents& scomps) : m_ctx(ctx), m_scomps(scomps) {}
+BrushSystem::BrushSystem() {}
 
 BrushSystem::~BrushSystem() {}
 
-void BrushSystem::update() {
+void BrushSystem::update(const Brush& brush, const Hovered& hovered) {
     PROFILE_SCOPE("BrushSystem update");
 
-    if (!m_scomps.brush.started() && m_tempAddedPos.size() > 0)
+    if (!brush.started() && m_tempAddedPos.size() > 0)
         m_tempAddedPos.clear();
 
-    if (m_scomps.hovered.exist() && m_scomps.brush.started()) {
-        switch (m_scomps.brush.type()) {
-            case BrushType::VOXEL: voxelBrush(); break;
-            case BrushType::BOX: boxBrush(); break;
+    if (hovered.exist() && brush.started()) {
+        switch (brush.type()) {
+            case BrushType::VOXEL: voxelBrush(brush, hovered); break;
+            case BrushType::BOX: boxBrush(brush, hovered); break;
             default: break;
         }
     }
 }
 
-void BrushSystem::voxelBrush() {
+void BrushSystem::voxelBrush(const Brush& brush, const Hovered& hovered) {
     PROFILE_SCOPE("VoxelBrush update");    
 
     comp::Transform trans;
-    trans.position = m_scomps.hovered.position();
+    trans.position = hovered.position();
 
     for (const glm::ivec3& pos : m_tempAddedPos) {
         if (pos == trans.position) {
@@ -37,8 +37,8 @@ void BrushSystem::voxelBrush() {
         }
     }
 
-    if (m_scomps.hovered.isCube()) {
-        switch (m_scomps.hovered.face()) {
+    if (hovered.isCube()) {
+        switch (hovered.face()) {
         case Face::FRONT: trans.position.z--; break;
         case Face::BACK: trans.position.z++; break;
         case Face::RIGHT: trans.position.x++; break;
@@ -51,7 +51,7 @@ void BrushSystem::voxelBrush() {
         }
     }
 
-    switch (m_scomps.brush.usage()) {
+    switch (brush.usage()) {
     case BrushUse::ADD: {
         
         break;
@@ -67,18 +67,18 @@ void BrushSystem::voxelBrush() {
     }
 }
 
-void BrushSystem::boxBrush() {
+void BrushSystem::boxBrush(const Brush& brush, const Hovered& hovered) {
     PROFILE_SCOPE("BoxBrush update");
 
-    glm::ivec3 endPos = m_scomps.hovered.position();
+    glm::ivec3 endPos = hovered.position();
     glm::ivec3 startPos;
     if (m_tempAddedPos.size() >= 1)
         startPos = m_tempAddedPos.at(0);
     else
         startPos = endPos;
 
-    if (m_scomps.hovered.isCube()) {
-        switch (m_scomps.hovered.face()) {
+    if (hovered.isCube()) {
+        switch (hovered.face()) {
         case Face::FRONT: endPos.z--; break;
         case Face::BACK: endPos.z++; break;
         case Face::RIGHT: endPos.x++; break;
@@ -105,7 +105,7 @@ void BrushSystem::boxBrush() {
         }
     }
 
-    switch (m_scomps.brush.usage()) {
+    switch (brush.usage()) {
     case BrushUse::ADD: {
         PROFILE_SCOPE("BoxBrush add");
         break;

@@ -70,23 +70,12 @@ App::App() : m_running(true), m_ctx(m_scomps) {
 	m_scomps.meshes.init(m_ctx.rcommand);
 	m_scomps.renderTargets.init(m_ctx.rcommand, m_scomps.viewport);
 	m_scomps.textures.init(m_ctx.rcommand);
-
-	// Order system updates
-	m_systems = {
-		new RenderSystem(m_ctx, m_scomps),
-		new SelectionSystem(m_ctx, m_scomps),
-		new CameraSystem(m_scomps),
-		new BrushSystem(m_ctx, m_scomps)
-	};
 }
 
 App::~App() {
     for (IGui* gui : m_guis) {
         delete gui;
     }
-	for (ISystem* system : m_systems) {
-		delete system;
-	}
 
 	m_scomps.constantBuffers.destroy(m_ctx.rcommand);
 	m_scomps.pipelines.destroy(m_ctx.rcommand);
@@ -118,9 +107,7 @@ void App::update() {
 	ImGui::NewFrame();
 
 	// Update our app
-	for (ISystem* system : m_systems) {
-		system->update();
-	}
+	// TODO update systems
 	
 	// Update imgui
 	{
@@ -132,7 +119,7 @@ void App::update() {
 		}
 		// ImGui::ShowDemoWindow(); // Temp
 	}
-	
+
 	// Render imgui
 	{
 		OGL_SCOPE("Render ImGUI");

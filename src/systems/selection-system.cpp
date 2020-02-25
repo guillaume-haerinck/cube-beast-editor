@@ -58,9 +58,9 @@ void SelectionSystem::update(const RenderCommand& rc, const RenderTargets& rtt, 
         PROFILE_SCOPE("Raycasting");
 
         // Check grid with raycast
-        const glm::mat4 toWorld = glm::inverse((m_scomps.camera.proj() * m_scomps.camera.view()));
-        glm::vec4 from = toWorld * glm::vec4(m_scomps.inputs.ndcMousePos(), -1.0f, 1.0f);
-        glm::vec4 to = toWorld * glm::vec4(m_scomps.inputs.ndcMousePos(), 1.0f, 1.0f);
+        const glm::mat4 toWorld = glm::inverse((cam.proj() * cam.view()));
+        glm::vec4 from = toWorld * glm::vec4(inputs.ndcMousePos(), -1.0f, 1.0f);
+        glm::vec4 to = toWorld * glm::vec4(inputs.ndcMousePos(), 1.0f, 1.0f);
         from /= from.w;
         to /= to.w;
 
@@ -71,10 +71,10 @@ void SelectionSystem::update(const RenderCommand& rc, const RenderTargets& rtt, 
                 const bool isInsideMax = intersectionPoint.x <= 20.0f && intersectionPoint.y <= 20.0f && intersectionPoint.z <= 20.0f; // TODO use scomp for object size
 
                 if (isInsideMin && isInsideMax) {
-                    m_scomps.hovered.m_exist = true;
-                    m_scomps.hovered.m_isCube = false;
-                    m_scomps.hovered.m_face = normalToFace(i);
-                    m_scomps.hovered.m_position = voxmt::roundUpFloat3(intersectionPoint);
+                    hovered.m_exist = true;
+                    hovered.m_isCube = false;
+                    hovered.m_face = normalToFace(i);
+                    hovered.m_position = voxmt::roundUpFloat3(intersectionPoint);
                     break;
                 }
             }
