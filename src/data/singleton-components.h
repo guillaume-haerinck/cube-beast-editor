@@ -1,19 +1,19 @@
 #pragma once
 
-#include "scomponents/graphics/pipelines.h"
-#include "scomponents/graphics/constant-buffers.h"
-#include "scomponents/graphics/camera.h"
-#include "scomponents/graphics/materials.h"
-#include "scomponents/graphics/meshes.h"
-#include "scomponents/graphics/render-targets.h"
-#include "scomponents/graphics/textures.h"
-#include "scomponents/graphics/lights.h"
+#include "data/graphics/pipelines.h"
+#include "data/graphics/constant-buffers.h"
+#include "data/graphics/camera.h"
+#include "data/graphics/materials.h"
+#include "data/graphics/meshes.h"
+#include "data/graphics/render-targets.h"
+#include "data/graphics/textures.h"
+#include "data/graphics/lights.h"
 
-#include "scomponents/io/inputs.h"
-#include "scomponents/io/hovered.h"
-#include "scomponents/io/viewport.h"
-#include "scomponents/io/brush.h"
-#include "scomponents/graphics/ui-style.h"
+#include "data/io/inputs.h"
+#include "data/io/hovered.h"
+#include "data/io/viewport.h"
+#include "data/io/brush.h"
+#include "data/graphics/ui-style.h"
 
 /**
  * @brief Global object used to store the state of the app. 

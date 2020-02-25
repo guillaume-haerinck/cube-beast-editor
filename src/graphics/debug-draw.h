@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 
 #include "render-command.h"
-#include "scomponents/singleton-components.h"
+#include "data/singleton-components.h"
 
 class DebugDraw {
 public:

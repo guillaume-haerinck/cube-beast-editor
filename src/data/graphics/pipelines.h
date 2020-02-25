@@ -5,9 +5,9 @@
 #include <cassert>
 #include <string>
 
-#include "scomponents/graphics/constant-buffers.h"
-#include "scomponents/graphics/materials.h"
-#include "scomponents/graphics/lights.h"
+#include "data/graphics/constant-buffers.h"
+#include "data/graphics/materials.h"
+#include "data/graphics/lights.h"
 
 class RenderCommand; // Forward declaration to prevent circular inclusion
 

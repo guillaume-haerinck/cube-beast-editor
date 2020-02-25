@@ -2,11 +2,11 @@
 
 #include <array>
 
-#include "scomponents/io/hovered.h"
-#include "scomponents/io/inputs.h"
-#include "scomponents/graphics/camera.h"
-#include "scomponents/graphics/render-targets.h"
-#include "scomponents/io/hovered.h"
+#include "data/io/hovered.h"
+#include "data/io/inputs.h"
+#include "data/graphics/camera.h"
+#include "data/graphics/render-targets.h"
+#include "data/io/hovered.h"
 #include "graphics/render-command.h"
 #include "systems/i-system.h"
 

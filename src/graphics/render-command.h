@@ -7,12 +7,12 @@
 #endif
 #include <string>
 
-#include "scomponents/singleton-components.h"
-#include "scomponents/graphics/constant-buffers.h"
-#include "scomponents/graphics/pipelines.h"
-#include "scomponents/graphics/meshes.h"
-#include "scomponents/graphics/render-targets.h"
-#include "scomponents/graphics/textures.h"
+#include "data/singleton-components.h"
+#include "data/graphics/constant-buffers.h"
+#include "data/graphics/pipelines.h"
+#include "data/graphics/meshes.h"
+#include "data/graphics/render-targets.h"
+#include "data/graphics/textures.h"
 #include "graphics/pipeline-input-description.h"
 #include "graphics/pipeline-output-description.h"
 

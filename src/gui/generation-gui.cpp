@@ -7,8 +7,6 @@
 
 #include "gui/icons-awesome.h"
 #include "maths/rbf.h"
-#include "components/graphics/material.h"
-#include "components/physics/transform.h"
 
 GenerationGui::GenerationGui(Context& ctx, SingletonComponents& scomps) 
     : m_ctx(ctx), m_scomps(scomps)

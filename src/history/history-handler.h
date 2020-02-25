@@ -3,7 +3,7 @@
 #include <deque>
 
 #include "i-history.h"
-#include "scomponents/singleton-components.h"
+#include "data/singleton-components.h"
 
 class HistoryHandler {
 public:

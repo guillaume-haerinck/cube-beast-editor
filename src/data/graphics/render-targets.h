@@ -5,7 +5,7 @@
 #include <cassert>
 #include <glm/glm.hpp>
 
-#include "scomponents/io/viewport.h"
+#include "data/io/viewport.h"
 
 class RenderCommand; // Forward declaration to prevent circular inclusion
 

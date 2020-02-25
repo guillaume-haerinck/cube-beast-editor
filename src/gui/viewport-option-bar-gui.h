@@ -2,7 +2,7 @@
 
 #include "i-gui.h"
 #include "context.h"
-#include "scomponents/singleton-components.h"
+#include "data/singleton-components.h"
 
 class ViewportOptionBarGui : public IGui {
 public:

@@ -4,9 +4,6 @@
 #include <imgui.h>
 #include <spdlog/spdlog.h>
 
-#include "components/graphics/material.h"
-#include "components/physics/transform.h"
-
 // Temp
 #ifdef __EMSCRIPTEN__
 	#include <GLES3/gl3.h>

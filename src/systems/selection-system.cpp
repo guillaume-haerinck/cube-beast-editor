@@ -6,7 +6,6 @@
 
 #include "maths/intersection.h"
 #include "maths/casting.h"
-#include "components/physics/transform.h"
 #include "graphics/gl-exception.h"
 
 SelectionSystem::SelectionSystem() {

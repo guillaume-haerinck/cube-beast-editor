@@ -1,7 +1,5 @@
 #include "rbf-history.h"
 
-#include "components/physics/transform.h"
-
 RBFHistory::RBFHistory(const std::vector<glm::ivec3>& unchangedPoints) 
     : m_unchangedPoints(unchangedPoints) {}
 

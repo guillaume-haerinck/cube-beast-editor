@@ -3,15 +3,6 @@ cmake_minimum_required(VERSION 2.8)
 project(cube-beast-editor C CXX)
 set(CMAKE_CXX_STANDARD 17)
 
-# Setup warnings
-if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") 
-	# https://docs.microsoft.com/fr-fr/cpp/build/reference/compiler-option-warning-level?view=vs-2019
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Wall")
-elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-	# https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall")
-endif()
-
 # Setup Wasm build
 if (EMSCRIPTEN)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2 -s USE_WEBGL2=1 -s ALLOW_MEMORY_GROWTH=1")

@@ -5,8 +5,6 @@
 
 #include "graphics/constant-buffer.h"
 #include "graphics/gl-exception.h"
-#include "components/graphics/material.h"
-#include "components/physics/transform.h"
 #include "maths/casting.h"
 
 

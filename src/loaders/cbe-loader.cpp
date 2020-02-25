@@ -7,7 +7,6 @@
 #include <sstream>
 #include <fstream>
 
-#include "components/physics/transform.h"
 #include "maths/rbf.h"
 #include "history/generation/rbf-history.h"
 

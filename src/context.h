@@ -2,7 +2,7 @@
 
 #include "graphics/render-command.h"
 #include "graphics/debug-draw.h"
-#include "scomponents/singleton-components.h"
+#include "data/singleton-components.h"
 #include "history/history-handler.h"
 
 /**

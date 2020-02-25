@@ -3,9 +3,6 @@
 #include <profiling/instrumentor.h>
 #include <algorithm>
 
-#include "components/physics/transform.h"
-#include "components/graphics/material.h"
-
 BrushSystem::BrushSystem() {}
 
 BrushSystem::~BrushSystem() {}
@@ -28,15 +25,13 @@ void BrushSystem::update(const Brush& brush, const Hovered& hovered) {
 void BrushSystem::voxelBrush(const Brush& brush, const Hovered& hovered) {
     PROFILE_SCOPE("VoxelBrush update");    
 
-    comp::Transform trans;
-    trans.position = hovered.position();
-
     for (const glm::ivec3& pos : m_tempAddedPos) {
-        if (pos == trans.position) {
+        if (pos == hovered.position()) {
             return;
         }
     }
 
+    /*
     if (hovered.isCube()) {
         switch (hovered.face()) {
         case Face::FRONT: trans.position.z--; break;
@@ -50,6 +45,7 @@ void BrushSystem::voxelBrush(const Brush& brush, const Hovered& hovered) {
             assert(false && "Unknown hovered face");
         }
     }
+    */
 
     switch (brush.usage()) {
     case BrushUse::ADD: {

@@ -5,8 +5,8 @@
 
 #include "systems/i-system.h"
 #include "context.h"
-#include "scomponents/io/brush.h"
-#include "scomponents/io/hovered.h"
+#include "data/io/brush.h"
+#include "data/io/hovered.h"
 
 class BrushSystem : public ISystem {
 public:

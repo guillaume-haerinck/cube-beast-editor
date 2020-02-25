@@ -2,8 +2,8 @@
 
 #include "i-system.h"
 
-#include "scomponents/graphics/camera.h"
-#include "scomponents/io/inputs.h"
+#include "data/graphics/camera.h"
+#include "data/io/inputs.h"
 
 class CameraSystem : public ISystem {
 public:

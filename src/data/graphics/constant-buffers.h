@@ -4,8 +4,8 @@
 #include <string>
 #include <cassert>
 
-#include "scomponents/graphics/materials.h"
-#include "scomponents/graphics/lights.h"
+#include "data/graphics/materials.h"
+#include "data/graphics/lights.h"
 
 class RenderCommand; // Forward declaration to prevent circular inclusion
 
