@@ -7,6 +7,11 @@
 #include "gui/i-gui.h"
 #include "systems/i-system.h"
 
+#include "systems/brush-system.h"
+#include "systems/render-system.h"
+#include "systems/selection-system.h"
+#include "systems/camera-system.h"
+
 /**
  * @brief Base root of the app
  */
@@ -34,5 +39,10 @@ private:
     Context m_ctx;
     SingletonComponents m_scomps;
     std::vector<IGui*> m_guis;
-    std::vector<ISystem*> m_systems;
+    
+    // Systems
+    BrushSystem brushSystem;
+    SelectionSystem selectionSystem;
+    CameraSystem cameraSystem;
+    RenderSystem renderSystem;
 };

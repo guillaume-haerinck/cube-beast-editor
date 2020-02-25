@@ -107,7 +107,13 @@ void App::update() {
 	ImGui::NewFrame();
 
 	// Update our app
-	// TODO update systems
+	brushSystem.update(m_scomps.brush, m_scomps.hovered);
+    selectionSystem.update(m_ctx.rcommand, m_scomps.renderTargets, m_scomps.camera, m_scomps.inputs, m_scomps.hovered);
+    cameraSystem.update(m_scomps.camera, m_scomps.inputs);
+    renderSystem.update(m_ctx.rcommand, m_scomps.constantBuffers, m_scomps.meshes, m_scomps.pipelines,
+		m_scomps.renderTargets, m_scomps.materials, m_scomps.lights, m_scomps.camera, m_scomps.inputs,
+		m_scomps.hovered, m_scomps.viewport
+	);
 	
 	// Update imgui
 	{
