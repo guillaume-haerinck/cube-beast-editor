@@ -39,4 +39,8 @@ struct SingletonComponents {
 	Hovered hovered;
 	Viewport viewport;
 	Brush brush;
+
+	// Voxels
+	
+
 };
