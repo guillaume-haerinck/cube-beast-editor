@@ -2,7 +2,6 @@
 [![Actions Status](https://github.com/guillaume-haerinck/voxel-editor/workflows/wasm/badge.svg)](https://github.com/guillaume-haerinck/voxel-editor/actions)
 [![Actions Status](https://github.com/guillaume-haerinck/voxel-editor/workflows/unit-test/badge.svg)](https://github.com/guillaume-haerinck/voxel-editor/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Try online](https://img.shields.io/badge/try-online-brightgreen)](https://www.guillaumehaerinck.com/wasm/)
 
 <p align="center">
 <img src="doc/readme-img/logo-black.png?raw=true" alt="Screenshot">
