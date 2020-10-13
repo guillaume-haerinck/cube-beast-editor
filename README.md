@@ -11,7 +11,7 @@
 
 Small voxel map editor with an Entity Component System (ECS) architecture.
 
-Supports WASM build so it can be played on any web-browser like Chrome, Firefox or Safari. Just run the content of the `www` folder on a web server or open [this link](https://www.guillaumehaerinck.com/wasm/). A Post-Mortem about the project evolution is available [here](/doc).
+Supports WASM build so it can be played on any web-browser like Chrome, Firefox or Safari. Just run the content of the `www` folder on a web server. A Post-Mortem about the project evolution is available [here](/doc).
 
 <p align="center">
 <img src="doc/changelog-img/v0-5-0.png?raw=true" width="800px" alt="Screenshot">
